@@ -59,7 +59,7 @@ const Dashboard: React.FC = () => {
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-blue-100">Tamamlanan Projeler</p>
-                      <p className="text-3xl font-bold mt-1">12</p>
+                      <p className="text-3xl font-bold mt-1">0</p>
                     </div>
                     <FiUsers className="w-8 h-8 opacity-75" />
                   </div>
@@ -72,7 +72,7 @@ const Dashboard: React.FC = () => {
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-indigo-100">Devam Eden Projeler</p>
-                      <p className="text-3xl font-bold mt-1">5</p>
+                      <p className="text-3xl font-bold mt-1">0</p>
                     </div>
                     <FiFileText className="w-8 h-8 opacity-75" />
                   </div>
@@ -85,7 +85,7 @@ const Dashboard: React.FC = () => {
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-purple-100">Mutlu Müşteriler</p>
-                      <p className="text-3xl font-bold mt-1">1000+</p>
+                      <p className="text-3xl font-bold mt-1">0</p>
                     </div>
                     <FiActivity className="w-8 h-8 opacity-75" />
                   </div>
