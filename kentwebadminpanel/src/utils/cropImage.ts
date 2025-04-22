@@ -12,62 +12,67 @@ export const createImage = (url: string): Promise<HTMLImageElement> =>
     image.src = url;
   });
 
+import { Crop } from 'react-image-crop';
+
 /**
  * Bir resmi belirtilen piksel koordinatlarına göre kırpar
- * @param imageSrc - Resim kaynağı (URL veya base64 string)
- * @param pixelCrop - Kırpma alanının piksel koordinatları
+ * @param image - Resim nesnesi
+ * @param crop - Kırpma alanı
  * @param fileName - Oluşturulacak dosyanın adı
  * @returns Kırpılmış resim dosyası ve URL'yi içeren bir Promise
  */
 export const getCroppedImg = async (
-  imageSrc: string,
-  pixelCrop: { x: number; y: number; width: number; height: number },
-  fileName: string = 'cropped-image.jpeg'
-): Promise<{ file: File; url: string }> => {
-  const image = await createImage(imageSrc);
+  image: HTMLImageElement,
+  crop: Crop,
+  fileName: string
+): Promise<{ file: File; url: string } | null> => {
   const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
+  const scaleX = image.naturalWidth / image.width;
+  const scaleY = image.naturalHeight / image.height;
+  const pixelRatio = window.devicePixelRatio;
+  
+  canvas.width = Math.floor(crop.width * scaleX * pixelRatio);
+  canvas.height = Math.floor(crop.height * scaleY * pixelRatio);
 
+  const ctx = canvas.getContext('2d');
   if (!ctx) {
-    throw new Error('Canvas context oluşturulamadı');
+    throw new Error('No 2d context');
   }
 
-  // Canvas boyutunu kırpılmış resmin boyutuna ayarla
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
+  ctx.scale(pixelRatio, pixelRatio);
+  ctx.imageSmoothingQuality = 'high';
 
-  // Canvas'a resmi çiz (kırpılmış bölgeyi)
+  const cropX = crop.x * scaleX;
+  const cropY = crop.y * scaleY;
+  const cropWidth = crop.width * scaleX;
+  const cropHeight = crop.height * scaleY;
+
   ctx.drawImage(
     image,
-    pixelCrop.x,
-    pixelCrop.y,
-    pixelCrop.width,
-    pixelCrop.height,
+    cropX,
+    cropY,
+    cropWidth,
+    cropHeight,
     0,
     0,
-    pixelCrop.width,
-    pixelCrop.height
+    crop.width,
+    crop.height
   );
 
-  // Canvas'ı blob'a dönüştür
-  return new Promise<{ file: File; url: string }>((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     canvas.toBlob(
       (blob) => {
         if (!blob) {
-          reject(new Error('Canvas blobu oluşturulamadı'));
+          reject(new Error('Canvas is empty'));
           return;
         }
 
-        // Blob'dan dosya oluştur
         const file = new File([blob], fileName, { type: 'image/jpeg' });
-        
-        // URL oluştur
         const url = URL.createObjectURL(blob);
-        
         resolve({ file, url });
       },
       'image/jpeg',
-      0.95 // Kalite
+      0.95
     );
   });
 }; 

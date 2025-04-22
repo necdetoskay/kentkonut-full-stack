@@ -14,6 +14,10 @@ export interface SeoMetadata {
   altText: LocalizedText;
 }
 
+export interface CarouselTiming { // Added Timing interface
+  display_duration: number;
+}
+
 export interface CarouselItem {
   id?: string;
   title: LocalizedText;
@@ -24,6 +28,10 @@ export interface CarouselItem {
   isActive: boolean;
   seoMetadata: SeoMetadata;
   imageFile?: File;
+  timing?: CarouselTiming; // Added timing
+  startDate?: Date | string | null; // Added startDate (allow string for form input)
+  endDate?: Date | string | null;   // Added endDate (allow string for form input)
+  deviceVisibility?: 'all' | 'mobile' | 'desktop'; // Added device visibility
 }
 
 // Resim kırpma ile ilgili tipler
@@ -43,17 +51,19 @@ export interface PixelCropArea {
 
 // Form durumu için tipler
 export interface CarouselFormData {
-  title: LocalizedText;
-  subtitle: LocalizedText;
-  buttonText: LocalizedText;
-  buttonUrl: string;
-  seoTitle: LocalizedText;
-  seoDescription: LocalizedText;
-  seoAltText: LocalizedText;
-  imageUrl: string;
+  item: {
+    title: LocalizedText;
+    subtitle: LocalizedText;
+    button?: CarouselButton; // Made button optional
+    seoMetadata: SeoMetadata;
+    order: number;
+    isActive: boolean;
+    timing?: CarouselTiming; // Added timing
+    startDate?: Date | string | null; // Added startDate
+    endDate?: Date | string | null;   // Added endDate
+    deviceVisibility?: 'all' | 'mobile' | 'desktop'; // Added device visibility
+  };
   imageFile?: File;
-  isActive: boolean;
-  order: number;
 }
 
 // API istekleri için tipler
@@ -97,4 +107,4 @@ export interface CropConfig {
   width: number;
   height: number;
   aspect?: number;
-} 
+}

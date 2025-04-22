@@ -23,10 +23,12 @@ import {
   updateCarouselItem,
   deleteCarouselItem,
   updateCarouselOrder,
+  uploadCarouselImage,
 } from '../../services/carouselService';
 import {
   CarouselItem,
   CarouselFormData,
+  CreateCarouselItemRequest,
 } from '../../types/carousel.types';
 import { CarouselForm } from './CarouselForm';
 
@@ -122,7 +124,7 @@ export const CarouselManager: React.FC = () => {
 
   // Form gönderimi
   const handleFormSubmit = useCallback(
-    async (formData: CarouselFormData, imageFile?: File) => {
+    async (formData: CarouselFormData) => {
       try {
         setLoading(true);
         setError(null);
@@ -131,68 +133,38 @@ export const CarouselManager: React.FC = () => {
           // Güncelleme
           const updateData: Partial<CarouselItem> = {
             id: selectedItem.id,
-            title: formData.title,
-            subtitle: formData.subtitle,
-            button: {
-              text: formData.buttonText,
-              url: formData.buttonUrl,
-            },
-            order: formData.order,
-            isActive: formData.isActive,
-            seoMetadata: {
-              title: formData.seoTitle,
-              description: formData.seoDescription,
-              altText: formData.seoAltText,
-            },
+            ...formData.item,
           };
           
-          if (imageFile) {
-            // Yeni resim yüklendiyse formData'dan imageUrl kullan
-            // Yüklenen yeni resmin URL'si ayrıca bir API çağrısı yapılarak elde edilmeli
-            // veya CarouselForm'dan gelen formData.imageUrl kullanılmalı
+          if (formData.imageFile) {
+            const uploadResponse = await uploadCarouselImage(formData.imageFile);
+            updateData.imageUrl = uploadResponse.imageUrl;
           }
           
           await updateCarouselItem(Number(selectedItem.id), updateData);
         } else {
-          // Yeni ekleme
-          if (!imageFile) {
-            throw new Error('Yeni öğe için resim yüklemeniz gerekiyor.');
+          // Yeni kayıt
+          if (!formData.imageFile) {
+            throw new Error('Resim zorunludur');
           }
-          
-          // createCarouselItem fonksiyonu Omit<CarouselItem, 'id' | 'createdAt' | 'updatedAt'> bekliyor
-          const newItem = {
-            title: formData.title,
-            subtitle: formData.subtitle,
-            button: {
-              text: formData.buttonText,
-              url: formData.buttonUrl,
+
+          const createData: CreateCarouselItemRequest = {
+            item: {
+              ...formData.item,
             },
-            order: formData.order,
-            isActive: formData.isActive,
-            seoMetadata: {
-              title: formData.seoTitle,
-              description: formData.seoDescription,
-              altText: formData.seoAltText,
-            },
-            imageUrl: formData.imageUrl, // Resim URL'si API tarafında oluşturulacak
-            imageFile, // Bu özellik API tarafında işlenecek
+            imageFile: formData.imageFile,
           };
           
-          await createCarouselItem(newItem);
+          await createCarouselItem(createData);
         }
 
-        // Listeyi yenile
         await loadItems();
-        // Form gönderildikten sonra formu kapat
         handleFormClose();
-        return Promise.resolve(); // Başarılı tamamlanma
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Bir hata oluştu';
-        setError(`Carousel öğesi kaydedilirken bir hata oluştu: ${errorMessage}`);
-        console.error(err);
-        // Hata durumunda yükleme durumunu kapat ama formu açık tut
+      } catch (error) {
+        console.error('Form submission error:', error);
+        setError(error instanceof Error ? error.message : 'Beklenmeyen bir hata oluştu');
+      } finally {
         setLoading(false);
-        return Promise.reject(err); // Hatayı dışarı ilet ki form kapanmasın
       }
     },
     [selectedItem, loadItems, handleFormClose]
@@ -424,10 +396,10 @@ export const CarouselManager: React.FC = () => {
 
       {/* Carousel Formu */}
       <CarouselForm
-        item={selectedItem}
-        onSubmit={handleFormSubmit}
-        onCancel={handleFormClose}
         open={formOpen}
+        onClose={handleFormClose}
+        onSubmit={handleFormSubmit}
+        initialData={selectedItem}
       />
       
       {/* Sayfa üzerinde yükleniyor göstergesi */}

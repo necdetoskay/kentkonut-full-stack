@@ -1,11 +1,9 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Box, Button, Typography, Paper } from '@mui/material';
-// @ts-ignore
-import ReactCrop, { Crop, PixelCrop, PercentCrop } from 'react-image-crop';
+import ReactCrop, { Crop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { useDropzone } from 'react-dropzone';
 import { getCroppedImg } from '../../utils/cropImage';
-import { PixelCropArea } from '../../types/carousel.types';
 
 interface ImageUploaderProps {
   cropperImgSrc: string | null;
@@ -35,8 +33,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     x: 0,
     y: 0,
   });
-  const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -53,7 +49,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             onSetShowCropTool(true);
             onSetCroppedImageData(null);
             setCrop({ unit: '%', width: 100, height: 100, x: 0, y: 0 });
-            setCompletedCrop(null);
           }
         });
         reader.readAsDataURL(file);
@@ -71,7 +66,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           onSetShowCropTool(true);
           onSetCroppedImageData(null);
           setCrop({ unit: '%', width: 100, height: 100, x: 0, y: 0 });
-          setCompletedCrop(null);
         }
       });
       reader.readAsDataURL(file);
@@ -81,50 +75,24 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     }
   };
 
-  const handleCropComplete = useCallback((pixelCrop: PixelCrop, _: PercentCrop) => {
-    setCompletedCrop(pixelCrop);
-  }, []);
-
-  const handleSaveCroppedImage = useCallback(async () => {
-    if (!cropperImgSrc || !completedCrop || !completedCrop.width || !completedCrop.height) {
-      console.error('Kırpma işlemi için gerekli bilgiler eksik.', { cropperImgSrc, completedCrop });
-      return;
-    }
-
-    setIsLoading(true);
+  const onCropComplete = useCallback(async () => {
     try {
-      const pixelCropArea: PixelCropArea = {
-        x: completedCrop.x,
-        y: completedCrop.y,
-        width: completedCrop.width,
-        height: completedCrop.height,
-      };
+      if (!imgRef.current || !cropperImgSrc) return;
 
-      console.log('Kırpma alanı:', pixelCropArea);
-      console.log('Kaynak URL:', cropperImgSrc.substring(0, 100) + '...');
+      const croppedImageResult = await getCroppedImg(
+        imgRef.current,
+        crop,
+        'cropped.jpg'
+      );
 
-      const croppedImageResult = await getCroppedImg(cropperImgSrc, pixelCropArea, 'carousel-image.jpeg');
-      console.log('Kırpma sonucu alındı:', croppedImageResult);
-
-      onImageCropped(croppedImageResult);
-      onSetShowCropTool(false);
-
-    } catch (error) {
-      console.error('Resim kırpma hatası:', error);
-    } finally {
-      setIsLoading(false);
+      if (croppedImageResult) {
+        const { file, url } = croppedImageResult;
+        onImageCropped({ file, url });
+      }
+    } catch (e) {
+      console.error('Error cropping image:', e);
     }
-  }, [cropperImgSrc, completedCrop, onImageCropped, onSetShowCropTool]);
-
-  const handleCancelCrop = useCallback(() => {
-    onSetShowCropTool(false);
-  }, [onSetShowCropTool]);
-
-  const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    // const { width, height } = e.currentTarget; // Kullanılmadığı için kaldırıldı
-    // console.log('Image loaded:', e.currentTarget.naturalWidth, e.currentTarget.naturalHeight);
-    // İsteğe bağlı: Burada varsayılan bir crop ayarlanabilir
-  };
+  }, [crop, cropperImgSrc, onImageCropped]);
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -148,18 +116,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 variant="outlined"
                 color="primary"
                 onClick={() => onSetShowCropTool(true)}
-              >
-                Resmi Kırp/Düzenle
-              </Button>
-            )}
-            {displayImageUrl && !cropperImgSrc && (
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={() => {
-                  onSetCropperImgSrc(displayImageUrl);
-                  onSetShowCropTool(true);
-                }}
               >
                 Resmi Kırp/Düzenle
               </Button>
@@ -222,42 +178,35 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
       {showCropTool && cropperImgSrc && (
         <Box sx={{ mt: 2 }}>
-          <Box sx={{ mb: 2, display: 'flex', gap: 2 }}>
+          <ReactCrop
+            crop={crop}
+            onChange={(c) => setCrop(c)}
+            aspect={aspectRatio}
+          >
+            <img
+              ref={imgRef}
+              src={cropperImgSrc}
+              alt="Kırpılacak resim"
+              style={{ maxWidth: '100%' }}
+            />
+          </ReactCrop>
+          <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
             <Button
               variant="contained"
               color="primary"
-              onClick={handleSaveCroppedImage}
-              disabled={isLoading || !completedCrop || !completedCrop.width || !completedCrop.height}
+              onClick={onCropComplete}
             >
-              {isLoading ? 'İşleniyor...' : 'Kırpılmış Resmi Uygula'}
+              Kırpmayı Tamamla
             </Button>
             <Button
               variant="outlined"
-              color="secondary"
-              onClick={handleCancelCrop}
+              onClick={() => {
+                onSetShowCropTool(false);
+                setCrop({ unit: '%', width: 100, height: 100, x: 0, y: 0 });
+              }}
             >
               İptal
             </Button>
-          </Box>
-          
-          <Box sx={{ border: '1px solid #ddd', borderRadius: 1, overflow: 'hidden', background: '#f0f0f0' }}>
-            <ReactCrop
-              crop={crop}
-              onChange={(c: Crop) => setCrop(c)}
-              onComplete={handleCropComplete}
-              aspect={aspectRatio}
-            >
-              <img
-                ref={imgRef}
-                src={cropperImgSrc}
-                alt="Kırpılacak Resim"
-                style={{ width: '100%', display: 'block' }}
-                onLoad={onImageLoad}
-              />
-            </ReactCrop>
-            <Typography variant="caption" sx={{ display: 'block', mt: 1, p: 1, textAlign: 'center', color: 'text.secondary' }}>
-              Kırpmak için alanı sürükleyin veya kenarlarından boyutlandırın.
-            </Typography>
           </Box>
         </Box>
       )}
