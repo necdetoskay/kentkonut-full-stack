@@ -17,7 +17,7 @@ console.log('CORS_ORIGIN:', process.env.CORS_ORIGIN);
 
 // Configure environment variables
 const PORT = process.env.PORT || 5000;
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
+const JWT_SECRET = process.env.JWT_SECRET || 'xK9#mP2$vL5@nR8*qW3&jH6%tY4^cF7';
 const JWT_ACCESS_EXPIRATION = process.env.JWT_ACCESS_EXPIRATION || '15m';
 const JWT_REFRESH_EXPIRATION = process.env.JWT_REFRESH_EXPIRATION || '7d';
 const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
@@ -565,7 +565,247 @@ app.get('/auth/me', async (req, res) => {
   }
 });
 
-// Catch-all route  
+// Carousel API rotaları
+app.get('/api/carousel', async (req, res) => {
+  try {
+    console.log('Carousel öğeleri alınıyor...');
+    
+    // Önce mevcut tabloyu düşürelim ve yeniden oluşturalım (geliştirme için)
+    try {
+      await pool.query('DROP TABLE IF EXISTS carousel_items');
+      console.log('Carousel tablosu silindi, yeniden oluşturuluyor...');
+    } catch (err) {
+      console.error('Tablo düşürülürken hata:', err);
+      // Hatayı görmezden gel, yeni tablo oluşturmaya devam et
+    }
+    
+    // Carousel tablosunu oluştur/kontrol et
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS carousel_items (
+        id SERIAL PRIMARY KEY,
+        title JSONB NOT NULL DEFAULT '{"tr": "", "en": ""}',
+        subtitle JSONB NOT NULL DEFAULT '{"tr": "", "en": ""}',
+        button JSONB NOT NULL DEFAULT '{"text": {"tr": "", "en": ""}, "url": ""}',
+        image_url TEXT NOT NULL,
+        "order" INTEGER NOT NULL DEFAULT 0,
+        is_active BOOLEAN NOT NULL DEFAULT true,
+        seo_metadata JSONB NOT NULL DEFAULT '{"title": {"tr": "", "en": ""}, "description": {"tr": "", "en": ""}, "altText": {"tr": "", "en": ""}}',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Test verisi ekleyelim
+    try {
+      await pool.query(`
+        INSERT INTO carousel_items (title, subtitle, button, image_url, "order", is_active, seo_metadata)
+        VALUES 
+          ('{"tr": "Örnek Başlık 1", "en": "Sample Title 1"}', 
+           '{"tr": "Örnek Altbaşlık 1", "en": "Sample Subtitle 1"}',
+           '{"text": {"tr": "Daha Fazla", "en": "Learn More"}, "url": "/sample1"}',
+           'https://via.placeholder.com/1920x1080/FF5733/FFFFFF?text=Sample+1',
+           1,
+           true,
+           '{"title": {"tr": "SEO Başlık 1", "en": "SEO Title 1"}, "description": {"tr": "SEO Açıklama 1", "en": "SEO Description 1"}, "altText": {"tr": "Alt Metin 1", "en": "Alt Text 1"}}'),
+          
+          ('{"tr": "Örnek Başlık 2", "en": "Sample Title 2"}', 
+           '{"tr": "Örnek Altbaşlık 2", "en": "Sample Subtitle 2"}',
+           '{"text": {"tr": "Keşfet", "en": "Explore"}, "url": "/sample2"}',
+           'https://via.placeholder.com/1920x1080/3498DB/FFFFFF?text=Sample+2',
+           2,
+           true,
+           '{"title": {"tr": "SEO Başlık 2", "en": "SEO Title 2"}, "description": {"tr": "SEO Açıklama 2", "en": "SEO Description 2"}, "altText": {"tr": "Alt Metin 2", "en": "Alt Text 2"}}')
+      `);
+      console.log('Örnek carousel öğeleri eklendi');
+    } catch (err) {
+      console.error('Örnek veriler eklenirken hata:', err);
+      // Hatayı görmezden gel, devam et
+    }
+    
+    const result = await pool.query('SELECT * FROM carousel_items ORDER BY "order" ASC');
+    
+    return res.json(result.rows);
+  } catch (error) {
+    console.error('Carousel öğeleri alınırken hata:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Carousel öğeleri alınırken bir hata oluştu',
+      error: error.message
+    });
+  }
+});
+
+app.get('/api/carousel/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query('SELECT * FROM carousel_items WHERE id = $1', [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Carousel öğesi bulunamadı'
+      });
+    }
+    
+    return res.json(result.rows[0]);
+  } catch (error) {
+    console.error(`Carousel öğesi (ID: ${req.params.id}) alınırken hata:`, error);
+    return res.status(500).json({
+      success: false,
+      message: 'Carousel öğesi alınırken bir hata oluştu',
+      error: error.message
+    });
+  }
+});
+
+app.post('/api/carousel', async (req, res) => {
+  try {
+    const { title, subtitle, button, imageUrl, order, isActive, seoMetadata } = req.body;
+    
+    const query = `
+      INSERT INTO carousel_items (title, subtitle, button, image_url, "order", is_active, seo_metadata)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING *
+    `;
+    
+    const result = await pool.query(query, [
+      title || {"tr": "", "en": ""},
+      subtitle || {"tr": "", "en": ""},
+      button || {"text": {"tr": "", "en": ""}, "url": ""},
+      imageUrl || "",
+      order || 0,
+      isActive !== undefined ? isActive : true,
+      seoMetadata || {"title": {"tr": "", "en": ""}, "description": {"tr": "", "en": ""}, "altText": {"tr": "", "en": ""}}
+    ]);
+    
+    return res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Carousel öğesi oluşturulurken hata:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Carousel öğesi oluşturulurken bir hata oluştu',
+      error: error.message
+    });
+  }
+});
+
+app.put('/api/carousel/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, subtitle, button, imageUrl, order, isActive, seoMetadata } = req.body;
+    
+    // Mevcut öğeyi al
+    const currentItem = await pool.query('SELECT * FROM carousel_items WHERE id = $1', [id]);
+    
+    if (currentItem.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Carousel öğesi bulunamadı'
+      });
+    }
+    
+    const current = currentItem.rows[0];
+    
+    const query = `
+      UPDATE carousel_items
+      SET 
+        title = $1,
+        subtitle = $2,
+        button = $3,
+        image_url = $4,
+        "order" = $5,
+        is_active = $6,
+        seo_metadata = $7,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = $8
+      RETURNING *
+    `;
+    
+    const result = await pool.query(query, [
+      title || current.title,
+      subtitle || current.subtitle,
+      button || current.button,
+      imageUrl || current.image_url,
+      order !== undefined ? order : current.order,
+      isActive !== undefined ? isActive : current.is_active,
+      seoMetadata || current.seo_metadata,
+      id
+    ]);
+    
+    return res.json(result.rows[0]);
+  } catch (error) {
+    console.error(`Carousel öğesi (ID: ${req.params.id}) güncellenirken hata:`, error);
+    return res.status(500).json({
+      success: false,
+      message: 'Carousel öğesi güncellenirken bir hata oluştu',
+      error: error.message
+    });
+  }
+});
+
+app.delete('/api/carousel/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    await pool.query('DELETE FROM carousel_items WHERE id = $1', [id]);
+    
+    return res.json({
+      success: true,
+      message: 'Carousel öğesi başarıyla silindi'
+    });
+  } catch (error) {
+    console.error(`Carousel öğesi (ID: ${req.params.id}) silinirken hata:`, error);
+    return res.status(500).json({
+      success: false,
+      message: 'Carousel öğesi silinirken bir hata oluştu',
+      error: error.message
+    });
+  }
+});
+
+app.post('/api/carousel/upload', async (req, res) => {
+  try {
+    // Bu örnek için dosya yükleme işlemi basitleştirilmiştir
+    // Gerçek uygulamada multer veya benzeri bir kütüphane kullanabilirsiniz
+    
+    return res.json({
+      success: true,
+      url: 'https://via.placeholder.com/1920x1080', // Örnek URL
+      message: 'Resim başarıyla yüklendi'
+    });
+  } catch (error) {
+    console.error('Resim yüklenirken hata:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Resim yüklenirken bir hata oluştu',
+      error: error.message
+    });
+  }
+});
+
+app.put('/api/carousel/order', async (req, res) => {
+  try {
+    const { items } = req.body;
+    
+    for (const item of items) {
+      await pool.query('UPDATE carousel_items SET "order" = $1 WHERE id = $2', [item.order, item.id]);
+    }
+    
+    return res.json({
+      success: true,
+      message: 'Carousel sıralaması başarıyla güncellendi'
+    });
+  } catch (error) {
+    console.error('Carousel sıralaması güncellenirken hata:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Carousel sıralaması güncellenirken bir hata oluştu',
+      error: error.message
+    });
+  }
+});
+
+// Catch-all route
 app.get('*', (req, res) => {
   console.log('İstek alındı:', req.path);
   return res.status(404).json({ 

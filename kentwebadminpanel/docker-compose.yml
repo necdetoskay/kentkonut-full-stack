@@ -18,7 +18,7 @@ services:
   # Kentkonut Web uygulaması
   kentkonut-web:
     build:
-      context: ../../kentkonut-kurumsal/kentkonut-web
+      context: ../kentkonut-kurumsal/kentkonut-web
       dockerfile: Dockerfile
     container_name: kentkonut-web
     restart: unless-stopped

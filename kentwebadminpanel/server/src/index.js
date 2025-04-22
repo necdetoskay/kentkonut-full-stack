@@ -4,18 +4,6 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { rateLimit } from 'express-rate-limit';
 import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-// Routes
-import authRoutes from './routes/auth.routes.js';
-import userRoutes from './routes/user.routes.js';
-import roleRoutes from './routes/role.routes.js';
-import permissionRoutes from './routes/permission.routes.js';
-
-// Middleware
-import { globalErrorHandler } from './middleware/error.middleware.js';
-import { requestLogger } from './middleware/logger.middleware.js';
 
 // Utilities
 import logger from './utils/logger.js';
@@ -37,24 +25,22 @@ app.use(cors({
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(morgan('combined')); // HTTP request logger
-app.use(requestLogger); // Custom request logger
 
-// Rate limiting
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: 'Too many requests from this IP, please try again after 15 minutes'
+// Logger middleware - API rotalarından ÖNCE yerleştirildi
+app.use((req, res, next) => {
+  logger.info(`İstek alındı: ${req.originalUrl}`);
+  next();
 });
-app.use(apiLimiter);
 
-// API routes
-const API_PREFIX = process.env.API_PREFIX || '/api/v1';
-app.use(`${API_PREFIX}/auth`, authRoutes);
-app.use(`${API_PREFIX}/users`, userRoutes);
-app.use(`${API_PREFIX}/roles`, roleRoutes);
-app.use(`${API_PREFIX}/permissions`, permissionRoutes);
+// Basit test end-point'i
+app.get('/api/carousel', (req, res) => {
+  logger.info('Carousel API çağrıldı');
+  res.status(200).json({ 
+    success: true, 
+    message: 'Carousel API çalışıyor', 
+    data: [] 
+  });
+});
 
 // Health check route
 app.get('/health', (req, res) => {
@@ -66,14 +52,12 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Error handling middleware
-app.use(globalErrorHandler);
-
 // Handle 404 routes
 app.use((req, res) => {
   res.status(404).json({
-    status: 'error',
-    message: `Route ${req.originalUrl} not found`
+    success: false,
+    message: "Endpoint not found",
+    endpoint: req.originalUrl
   });
 });
 
