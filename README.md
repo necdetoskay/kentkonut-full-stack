@@ -1,98 +1,69 @@
-# Kent Konut Platform
+# Kent Konut Full Stack Application
 
-Bu proje, Kent Konut için geliştirilmiş web platformudur. İki ana bileşenden oluşur:
+This is a full-stack web application built with Next.js.
 
-1. Kent Konut Web (Ana Site)
-2. Kent Konut Admin Panel
+## Authentication System
 
-## Teknolojiler
+The application uses NextAuth.js for authentication with a PostgreSQL database backend. Authentication is handled through a combination of JWT tokens and database storage for user information.
 
-- Frontend: React + TypeScript + Vite
-- Backend: Node.js + Express
-- Veritabanı: PostgreSQL
-- Konteynerizasyon: Docker
+### Database Authentication (PostgreSQL)
 
-## Kurulum
+Authentication data is stored in a PostgreSQL database using the DrizzleORM adapter for NextAuth.
 
-### Docker ile Tam Kurulum
+Database configuration:
 
-Projeyi tamamen Docker üzerinde çalıştırmak için Docker ve Docker Compose gereklidir.
+1. Make sure PostgreSQL is running (you can use the included Docker Compose configuration)
+2. Set up your environment variables in `.env` file:
+
+```
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/kentkonutdb
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your-secret-token
+```
+
+### Database Setup
+
+To set up the database:
 
 ```bash
-# Projeyi klonlayın
-git clone https://github.com/your-username/kentkonut-platform.git
-cd kentkonut-platform
-
-# Docker container'larını başlatın
+# Start PostgreSQL using Docker
 docker-compose up -d
+
+# Run database migrations
+npm run db:migrate
 ```
 
-### Yerel Geliştirme Kurulumu
+## Development
 
-Sadece veritabanını Docker'da çalıştırıp, frontend ve backend'i yerel olarak çalıştırabilirsiniz. Bu yaklaşım, geliştirme sırasında kod değişikliklerinin anında uygulanmasını sağlar.
-
-#### Windows
+To start the development server:
 
 ```bash
-# Sadece veritabanını çalıştırın
-run-local.bat
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun run dev
 ```
 
-#### Linux/Mac
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-```bash
-# Çalıştırma iznini ayarlayın
-chmod +x run-local.sh
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-# Sadece veritabanını çalıştırın
-./run-local.sh
-```
+This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-Veya manuel olarak:
+## Learn More
 
-```bash
-# Sadece veritabanı servislerini başlatın
-docker-compose -f docker-compose.db.yml up -d
+To learn more about Next.js, take a look at the following resources:
 
-# Backend API'yi başlatın (ayrı bir terminalde)
-cd kentwebadminpanel/server
-npm install
-npm run dev
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-# Frontend uygulamasını başlatın (ayrı bir terminalde)
-cd kentwebadminpanel
-npm install
-npm run dev
-```
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Servisler
+## Deploy on Vercel
 
-Proje aşağıdaki servisleri içerir:
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-1. Ana Site: http://localhost:3000
-2. Admin Panel: http://localhost:5173 (yerel geliştirme) veya http://localhost:8080 (Docker)
-3. Admin API: http://localhost:5000
-4. PostgreSQL: localhost:5433
-5. pgAdmin: http://localhost:5050
-   - Email: admin@kentwebadmin.com
-   - Şifre: admin
-
-## Geliştirme
-
-Her iki proje de (web ve admin panel) kendi klasörlerinde bağımsız olarak geliştirilebilir:
-
-```bash
-# Ana site için
-cd kentkonut-web
-npm install
-npm run dev
-
-# Admin panel için
-cd kentwebadminpanel
-npm install
-npm run dev
-```
-
-## Lisans
-
-Bu proje özel lisans altında geliştirilmiştir. Tüm hakları saklıdır. 
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
