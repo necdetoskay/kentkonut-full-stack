@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, Users, Settings, Image } from "lucide-react"
+import { LayoutDashboard, Users, Settings, Image, BarChart } from "lucide-react"
 
 const sidebarNavItems = [
   {
@@ -21,6 +21,11 @@ const sidebarNavItems = [
     title: "Banner Yönetimi",
     href: "/dashboard/banners",
     icon: Image,
+  },
+  {
+    title: "İstatistikler",
+    href: "/dashboard/statistics",
+    icon: BarChart,
   },
   {
     title: "Ayarlar",
