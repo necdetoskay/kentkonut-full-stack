@@ -1,3 +1,5 @@
+"use client";
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { FaHome, FaExclamationTriangle, FaTruck, FaHardHat, FaTools, FaDigitalTachograph } from 'react-icons/fa';
