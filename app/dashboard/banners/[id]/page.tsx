@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { Plus, GripVertical, RefreshCw } from "lucide-react"
 import { toast } from "sonner"
 import Image from "next/image"
+import Link from "next/link"
 import {
   DndContext,
   closestCenter,
@@ -127,6 +128,10 @@ function SortableTableRow({ banner, groupWidth, groupHeight, ...props }: Sortabl
     }
   }, [banner.imageUrl]);
 
+  // İdeal boyutlar varsa ve görsel boyutları farklıysa
+  const isWrongSize = groupWidth && groupHeight && imageDimensions && 
+    (imageDimensions.width !== groupWidth || imageDimensions.height !== groupHeight);
+
   return (
     <TableRow ref={setNodeRef} style={style} {...props}>
       <TableCell>
@@ -175,13 +180,16 @@ function SortableTableRow({ banner, groupWidth, groupHeight, ...props }: Sortabl
         <Badge variant={banner.active ? "default" : "secondary"}>
           {banner.active ? "Aktif" : "Pasif"}
         </Badge>
+        {!banner.active && isWrongSize && (
+          <p className="text-xs text-yellow-600 mt-1">Boyut uyumsuz</p>
+        )}
       </TableCell>
       <TableCell>
         {imageDimensions ? (
           <div className="text-sm">
             {imageDimensions.width} × {imageDimensions.height} px
             {groupWidth && groupHeight && (
-              <div className="text-xs text-muted-foreground mt-1">
+              <div className={`text-xs mt-1 ${isWrongSize ? 'text-yellow-600' : 'text-muted-foreground'}`}>
                 İdeal: {groupWidth} × {groupHeight} px
               </div>
             )}
@@ -191,8 +199,10 @@ function SortableTableRow({ banner, groupWidth, groupHeight, ...props }: Sortabl
         )}
       </TableCell>
       <TableCell className="text-right">
-        <Button variant="ghost" size="sm" className="h-8">
-          Düzenle
+        <Button variant="ghost" size="sm" className="h-8" asChild>
+          <Link href={`/dashboard/banners/${banner.id}/edit`}>
+            Düzenle
+          </Link>
         </Button>
         <Button variant="ghost" size="sm" className="h-8 text-red-500 hover:text-red-700">
           Sil
@@ -502,14 +512,6 @@ export default function BannerGroupDetailPage({ params }: { params: Promise<{ id
                 </DialogContent>
               </Dialog>
               
-              <Button 
-                variant="outline" 
-                onClick={handleResizeBanners} 
-                disabled={isResizingBanners || bannerGroup.banners.length === 0}
-              >
-                <RefreshCw className={`mr-2 h-4 w-4 ${isResizingBanners ? 'animate-spin' : ''}`} />
-                {isResizingBanners ? "İşleniyor..." : "Görselleri Yeniden Boyutlandır"}
-              </Button>
               <Button variant="destructive" onClick={handleDelete}>
                 Grubu Sil
               </Button>
@@ -563,8 +565,8 @@ export default function BannerGroupDetailPage({ params }: { params: Promise<{ id
                     Bu gruptaki bannerların listesi. Sıralamayı değiştirmek için bannerları sürükleyebilirsiniz.
                     {bannerGroup.banners.some(b => !b.active) && (
                       <p className="text-yellow-600 mt-2">
-                        Pasif banner'lar mevcut. Bunları yeniden boyutlandırıp aktifleştirmek için 
-                        &quot;Görselleri Yeniden Boyutlandır&quot; butonunu kullanabilirsiniz.
+                        Pasif banner'lar mevcut. Bunları aktifleştirmek için önce banner'ı düzenleyin ve 
+                        görseli değiştirerek kaydedin.
                       </p>
                     )}
                   </CardDescription>

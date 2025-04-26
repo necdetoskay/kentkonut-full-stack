@@ -330,59 +330,59 @@ export function BannerForm({
 
   // İlerleme göstergeli dosya yükleme
   const uploadFile = async (file: File) => {
+    if (!file) return null;
+    
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("width", groupWidth.toString());
+    formData.append("height", groupHeight.toString());
+    formData.append("groupId", groupId.toString());
+    
     try {
-      setIsLoading(true)
-      setUploadProgress(0)
+      const xhr = new XMLHttpRequest();
       
-      // Dosyayı FormData olarak hazırla
-      const formData = new FormData()
-      formData.append("file", file)
-      formData.append("groupId", groupId.toString())
-      formData.append("width", groupWidth.toString())
-      formData.append("height", groupHeight.toString())
-
-      // İlerleme izleme için XMLHttpRequest kullanın
-      return new Promise<void>((resolve, reject) => {
-        const xhr = new XMLHttpRequest()
-        
-        xhr.open('POST', '/api/upload-simple')
-        
-        xhr.upload.onprogress = (event) => {
-          if (event.lengthComputable) {
-            const progress = Math.round((event.loaded / event.total) * 100)
-            setUploadProgress(progress)
-          }
+      xhr.open("POST", "/api/upload", true);
+      
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          setUploadProgress(Math.round((event.loaded / event.total) * 100));
         }
-        
-        xhr.onload = () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            const response = JSON.parse(xhr.responseText)
-            form.setValue("imageUrl", response.url)
-            setPreviewImage(response.url)
-            setFormChanged(true)
-            if (onFormChange) onFormChange(true)
-            toast.success("Resim başarıyla yüklendi")
-            resolve()
+      };
+      
+      const uploadPromise = new Promise<string>((resolve, reject) => {
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            resolve(response.url);
           } else {
-            reject(new Error("Yükleme başarısız: " + xhr.statusText))
+            reject(new Error("Yükleme başarısız oldu"));
           }
-        }
+        };
         
-        xhr.onerror = () => {
-          reject(new Error("Ağ hatası"))
-        }
-        
-        xhr.send(formData)
-      })
+        xhr.onerror = function() {
+          reject(new Error("Yükleme sırasında bir hata oluştu"));
+        };
+      });
       
+      xhr.send(formData);
+      
+      // Upload tamamlandığında
+      const imageUrl = await uploadPromise;
+      form.setValue("imageUrl", imageUrl, { shouldDirty: true });
+      form.setValue("isActive", true, { shouldDirty: true }); // Yeni görsel yüklendiğinde banner'ı aktif yap
+      
+      return imageUrl;
     } catch (error) {
-      console.error("Resim yükleme hatası:", error)
-      toast.error(error instanceof Error ? error.message : "Resim yüklenirken bir hata oluştu")
+      console.error("Dosya yükleme hatası:", error);
+      toast.error("Dosya yüklenirken bir hata oluştu");
+      return null;
     } finally {
-      setIsLoading(false)
-      setUploadProgress(0)
+      // Yükleme tamamlandığında progressi sıfırla
+      setTimeout(() => {
+        setUploadProgress(0);
+      }, 500);
     }
-  }
+  };
 
   const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     if (aspect) {
@@ -402,84 +402,55 @@ export function BannerForm({
   const onSubmit = async (values: FormValues) => {
     try {
       setIsLoading(true)
-      
-      // URL formatını düzelt
-      const formattedValues = { ...values };
-      
-      // Eğer link '/' ile başlıyorsa ve tam URL değilse, düzelt
-      if (formattedValues.link && !formattedValues.link.match(/^https?:\/\//)) {
-        // Link yalnızca '/' ise, olduğu gibi bırak (ana sayfa yönlendirme)
-        if (formattedValues.link === '/') {
-          // Link zaten doğru formatta
-        }
-        // Başka bir local path ise, tam URL'e çevir
-        else if (formattedValues.link.startsWith('/')) {
-          // Mevcut origin'i al (window.location.origin)
-          const origin = typeof window !== 'undefined' ? window.location.origin : '';
-          formattedValues.link = `${origin}${formattedValues.link}`;
-        } else {
-          // Başlangıç protokolü ekle
-          formattedValues.link = `https://${formattedValues.link}`;
+
+      if (!values.imageUrl) {
+        toast.error("Lütfen bir görsel seçin")
+        return
+      }
+
+      // Banner grubunun boyutlarını kontrol et
+      if (previewImage) {
+        // Gerçek görsel boyutlarını kontrol et
+        const img = new Image()
+        img.src = previewImage
+        await new Promise((resolve) => {
+          img.onload = resolve
+        })
+
+        // Görsel boyutları ile istenen boyutları karşılaştır
+        if (img.width !== groupWidth || img.height !== groupHeight) {
+          // İdeal boyutlarda değilse kullanıcıyı uyar ve pasif olarak kaydet
+          const confirmMessage = `Görsel boyutları (${img.width}x${img.height}px) banner grubu boyutlarıyla uyumlu değil (${groupWidth}x${groupHeight}px). Görsel boyutu uyumlu olmadığı için banner pasif olarak kaydedilecektir.`
+          
+          toast.warning(confirmMessage)
+          values.isActive = false
         }
       }
 
-      // API'ye gönderilecek veriyi hazırla
-      const apiData = {
-        groupId: parseInt(groupId.toString()),
-        title: formattedValues.title,
-        description: formattedValues.description || "",
-        imageUrl: formattedValues.imageUrl || "",
-        linkUrl: formattedValues.link || "",
-        isActive: formattedValues.isActive,
-        // Opsiyonel alanları kaldıralım
-        // order otomatik atanacak
-      };
-
-      console.log("Gönderilecek veriler:", apiData);
-      
-      // Doğru API endpoint'ini kullan
-      const url = bannerId
-        ? `/api/banners/${bannerId}`
-        : `/api/banners`;
-      
-      const response = await fetch(url, {
+      // API isteği
+      const response = await fetch(`/api/banners${bannerId ? `/${bannerId}` : ''}`, {
         method: bannerId ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(apiData),
+        body: JSON.stringify({
+          ...values,
+          groupId
+        }),
       })
 
-      // API yanıtını ayrıntılı işle
-      let responseData;
-      try {
-        // JSON yanıtı varsa parse et
-        if (response.headers.get("content-type")?.includes("application/json")) {
-          responseData = await response.json();
-        } else {
-          // JSON yanıtı yoksa text olarak al
-          responseData = { message: await response.text() };
-        }
-      } catch (e) {
-        console.error("API yanıtı parse edilemedi:", e);
-        responseData = null;
-      }
-      
-      console.log("API yanıtı:", response.status, responseData);
-
       if (!response.ok) {
-        const errorMessage = responseData?.error || responseData?.message || "Banner kaydedilirken bir hata oluştu";
-        throw new Error(errorMessage);
+        throw new Error(`Banner ${bannerId ? 'güncellenirken' : 'oluşturulurken'} bir hata oluştu`)
       }
 
-      toast.success(bannerId ? "Banner güncellendi" : "Banner eklendi")
-      form.reset()
-      setFormChanged(false)
-      if (onFormChange) onFormChange(false)
-      onSuccess?.()
+      toast.success(`Banner başarıyla ${bannerId ? 'güncellendi' : 'oluşturuldu'}`)
+      
+      if (onSuccess) {
+        onSuccess()
+      }
     } catch (error) {
-      console.error("Banner form hatası:", error)
-      toast.error(error instanceof Error ? error.message : "Bir hata oluştu")
+      console.error("Banner formu gönderilirken hata:", error)
+      toast.error(error instanceof Error ? error.message : "Beklenmeyen bir hata oluştu")
     } finally {
       setIsLoading(false)
     }
