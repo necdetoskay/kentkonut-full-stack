@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useRef } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -22,7 +22,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { Progress } from "@/components/ui/progress"
 
@@ -61,6 +61,7 @@ interface BannerFormProps {
   onSuccess?: () => void
   groupWidth?: number
   groupHeight?: number
+  onFormChange?: (isDirty: boolean) => void
 }
 
 // Aspect ratio hesaplama yardımcı fonksiyonu
@@ -69,11 +70,15 @@ function centerAspectCrop(
   mediaHeight: number,
   aspect: number,
 ) {
+  // Resmin doğal boyutlarına daha uygun bir başlangıç kırpma alanı oluştur
+  // Tüm resmi kaplamaya çalışan bir yaklaşım
+  const width = Math.min(90, (mediaHeight * aspect * 100) / mediaWidth)
+  
   return centerCrop(
     makeAspectCrop(
       {
         unit: '%',
-        width: 90,
+        width: width,
       },
       aspect,
       mediaWidth,
@@ -90,7 +95,8 @@ export function BannerForm({
   initialData,
   onSuccess,
   groupWidth = 1920,
-  groupHeight = 1080
+  groupHeight = 1080,
+  onFormChange
 }: BannerFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [previewImage, setPreviewImage] = useState<string | null>(initialData?.imageUrl || null)
@@ -102,6 +108,7 @@ export function BannerForm({
   const [uploadProgress, setUploadProgress] = useState(0)
   const imgRef = useRef<HTMLImageElement>(null)
   const [isDragging, setIsDragging] = useState(false)
+  const [formChanged, setFormChanged] = useState(false)
   
   const aspect = groupWidth / groupHeight
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -119,6 +126,98 @@ export function BannerForm({
     }
   })
 
+  // Kırpma alanını hedef boyutlara göre otomatik ayarlama fonksiyonu
+  const setOptimalCrop = useCallback(() => {
+    if (!imgRef.current) return;
+    
+    const img = imgRef.current;
+    const { naturalWidth, naturalHeight, width, height } = img;
+    
+    // Tam olarak hedef boyutlara göre hesaplama yap
+    const targetAspect = groupWidth / groupHeight;
+    const imageAspect = width / height;
+    
+    // Kırpma alanının genişliği ve yüksekliği (yüzde olarak)
+    let cropWidth, cropHeight;
+    
+    if (targetAspect >= imageAspect) {
+      // Hedef daha geniş, yatay sınırlama olacak
+      cropWidth = 100; // Tam genişlik
+      cropHeight = (width / targetAspect) * 100 / height; // Hedef oranı koruyacak yükseklik
+    } else {
+      // Hedef daha dar, dikey sınırlama olacak
+      cropHeight = 100; // Tam yükseklik
+      cropWidth = (height * targetAspect) * 100 / width; // Hedef oranı koruyacak genişlik
+    }
+    
+    // Merkeze konumlandırılmış bir kırpma alanı oluştur
+    const x = (100 - cropWidth) / 2;
+    const y = (100 - cropHeight) / 2;
+    
+    const newCrop: Crop = {
+      unit: '%',
+      x,
+      y,
+      width: cropWidth,
+      height: cropHeight
+    };
+    
+    setCrop(newCrop);
+    
+    // Piksel bazlı kırpma bilgilerini de güncelle
+    const pixelCrop: PixelCrop = {
+      x: (newCrop.x * width) / 100,
+      y: (newCrop.y * height) / 100,
+      width: (newCrop.width * width) / 100,
+      height: (newCrop.height * height) / 100,
+      unit: 'px',
+    };
+    
+    setCompletedCrop(pixelCrop);
+  }, [aspect, groupWidth, groupHeight]);
+
+  // Form değişikliğini watch ile izle
+  form.watch((value) => {
+    // Eğer daha önce form değişmediyse ve şu an değiştiyse
+    const title = value.title !== (initialData?.title ?? "");
+    const description = value.description !== (initialData?.description ?? "");
+    const imageUrl = value.imageUrl !== (initialData?.imageUrl ?? "");
+    const isActive = value.isActive !== (initialData?.isActive ?? true);
+    const link = value.link !== (initialData?.link ?? "");
+
+    const isChanged = title || description || imageUrl || isActive || link;
+    if (formChanged !== isChanged) {
+      setFormChanged(isChanged);
+      
+      // Üst bileşene bildir
+      if (onFormChange) {
+        onFormChange(isChanged);
+      }
+    }
+  });
+
+  // Görsel yüklendiğinde formu değişmiş olarak işaretle
+  useEffect(() => {
+    if (previewImage && previewImage !== initialData?.imageUrl) {
+      setFormChanged(true);
+      if (onFormChange) {
+        onFormChange(true);
+      }
+    }
+  }, [previewImage, initialData?.imageUrl, onFormChange]);
+
+  // Resim yüklendiğinde optimal kırpma alanını ayarla
+  useEffect(() => {
+    if (imgRef.current && isCropDialogOpen && imgSrc) {
+      // Bir süre bekleyerek resmin tam olarak yüklenmesini sağla
+      const timer = setTimeout(() => {
+        setOptimalCrop();
+      }, 200);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isCropDialogOpen, imgSrc, setOptimalCrop]);
+
   const onSelectFile = (file: File) => {
     if (!file) return
     
@@ -135,6 +234,11 @@ export function BannerForm({
     reader.addEventListener('load', () => {
       setImgSrc(reader.result?.toString() || '')
       setIsCropDialogOpen(true)
+      
+      // Diyalog açıldığında kırpma alanını sıfırla
+      // Sonrasında onImageLoad ile otomatik ayarlanacak
+      setCrop(undefined)
+      setCompletedCrop(undefined)
     })
     reader.readAsDataURL(file)
   }
@@ -155,24 +259,31 @@ export function BannerForm({
       return null
     }
 
-    // Canvas boyutlarını ayarla
-    canvas.width = completedCrop.width
-    canvas.height = completedCrop.height
+    // Kırpılan görüntünün tam olarak hedef boyutlarda olmasını sağla
+    canvas.width = groupWidth
+    canvas.height = groupHeight
 
     // Resmi kırp
     const scaleX = image.naturalWidth / image.width
     const scaleY = image.naturalHeight / image.height
     
+    // Önce kırpma işlemini gerçekleştir
+    const sourceX = completedCrop.x * scaleX
+    const sourceY = completedCrop.y * scaleY
+    const sourceWidth = completedCrop.width * scaleX
+    const sourceHeight = completedCrop.height * scaleY
+    
+    // Kırpılmış görseli tam hedef boyutlara ölçekle
     ctx.drawImage(
       image,
-      completedCrop.x * scaleX,
-      completedCrop.y * scaleY,
-      completedCrop.width * scaleX,
-      completedCrop.height * scaleY,
+      sourceX,
+      sourceY,
+      sourceWidth,
+      sourceHeight,
       0,
       0,
-      completedCrop.width,
-      completedCrop.height
+      groupWidth,
+      groupHeight
     )
 
     // Canvas'ı blob'a dönüştür
@@ -248,6 +359,8 @@ export function BannerForm({
             const response = JSON.parse(xhr.responseText)
             form.setValue("imageUrl", response.url)
             setPreviewImage(response.url)
+            setFormChanged(true)
+            if (onFormChange) onFormChange(true)
             toast.success("Resim başarıyla yüklendi")
             resolve()
           } else {
@@ -273,8 +386,16 @@ export function BannerForm({
 
   const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     if (aspect) {
-      const { width, height } = e.currentTarget
-      setCrop(centerAspectCrop(width, height, aspect))
+      // Başlangıçta manuel olarak setOptimalCrop çağrılacağından burada temel ayarları yap
+      const { width, height } = e.currentTarget;
+      
+      // Resmin yüklendiğini işaretle ama kırpma alanını setOptimalCrop belirleyecek
+      // Bu sayede useEffect ile daha doğru bir zamanlama sağlanır
+      if (!crop) {
+        // Geçici bir crop değeri ata, setOptimalCrop bunu düzeltecek
+        const initialCrop = centerAspectCrop(width, height, aspect);
+        setCrop(initialCrop);
+      }
     }
   }
 
@@ -353,12 +474,23 @@ export function BannerForm({
 
       toast.success(bannerId ? "Banner güncellendi" : "Banner eklendi")
       form.reset()
+      setFormChanged(false)
+      if (onFormChange) onFormChange(false)
       onSuccess?.()
     } catch (error) {
       console.error("Banner form hatası:", error)
       toast.error(error instanceof Error ? error.message : "Bir hata oluştu")
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  // İptal fonksiyonu
+  function handleCancel() {
+    setFormChanged(false)
+    if (onFormChange) onFormChange(false)
+    if (onSuccess) {
+      onSuccess();
     }
   }
 
@@ -561,45 +693,108 @@ export function BannerForm({
             )}
           />
 
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Kaydediliyor..." : bannerId ? "Güncelle" : "Ekle"}
-          </Button>
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={handleCancel}>
+              İptal
+            </Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Kaydediliyor..." : bannerId ? "Güncelle" : "Ekle"}
+            </Button>
+          </div>
         </form>
       </Form>
 
       <Dialog 
         open={isCropDialogOpen} 
         onOpenChange={(open) => {
-          // Sadece dialog kapatılmak istendiğinde kontrol yap
-          if (!open) {
-            // Dialog dışına tıklandığında kapanmasını engelle
-            return;
+          // Sadece açma işleminde izin ver, kapanma işlemleri butonlarla yönetilsin
+          if (open) {
+            setIsCropDialogOpen(true);
           }
-          setIsCropDialogOpen(open);
+          // Açıkça kapatma isteği geldiğinde (dışarı tıklama, escape tuşu vb.) hiçbir işlem yapmayız
         }}
       >
         <DialogContent className="max-w-4xl">
           <DialogHeader>
             <DialogTitle>Resmi Kırp</DialogTitle>
+            <DialogDescription>
+              Önerilen Banner Boyutu: {groupWidth}x{groupHeight}px
+            </DialogDescription>
           </DialogHeader>
           
           <div className="py-4">
             {imgSrc && (
-              <ReactCrop
-                crop={crop}
-                onChange={(_, percentCrop) => setCrop(percentCrop)}
-                onComplete={(c) => setCompletedCrop(c)}
-                aspect={aspect}
-                className="max-h-[500px] mx-auto"
-              >
-                <img
-                  ref={imgRef}
-                  alt="Crop me"
-                  src={imgSrc}
-                  onLoad={onImageLoad}
+              <>
+                <div className="flex justify-between items-center mb-2 text-sm">
+                  <div className="text-muted-foreground">
+                    Orijinal Boyut: {imgRef.current ? `${imgRef.current.naturalWidth}x${imgRef.current.naturalHeight}px` : 'Yükleniyor...'}
+                  </div>
+                  <div className="text-muted-foreground">
+                    Kırpma Boyutu: {completedCrop 
+                      ? `${Math.round(completedCrop.width * (imgRef.current?.naturalWidth || 0) / 100)}x${Math.round(completedCrop.height * (imgRef.current?.naturalHeight || 0) / 100)}px` 
+                      : 'Kırpma alanı seçilmedi'}
+                  </div>
+                </div>
+                <ReactCrop
+                  crop={crop}
+                  onChange={(_, percentCrop) => {
+                    setCrop(percentCrop);
+                    // onChange sırasında da boyut bilgilerini güncelle
+                    if (imgRef.current) {
+                      const { width, height, naturalWidth, naturalHeight } = imgRef.current;
+                      const pixelCrop: PixelCrop = {
+                        x: (percentCrop.x * width) / 100,
+                        y: (percentCrop.y * height) / 100,
+                        width: (percentCrop.width * width) / 100,
+                        height: (percentCrop.height * height) / 100,
+                        unit: 'px',
+                      };
+                      setCompletedCrop(pixelCrop);
+                    }
+                  }}
+                  onComplete={(c) => setCompletedCrop(c)}
+                  aspect={aspect}
                   className="max-h-[500px] mx-auto"
-                />
-              </ReactCrop>
+                >
+                  <img
+                    ref={imgRef}
+                    alt="Crop me"
+                    src={imgSrc}
+                    onLoad={onImageLoad}
+                    className="max-h-[500px] mx-auto"
+                  />
+                </ReactCrop>
+                <div className="flex justify-between items-center mt-2 text-sm">
+                  <button 
+                    type="button"
+                    className="text-muted-foreground hover:text-primary flex items-center gap-1.5 px-2 py-1 rounded hover:bg-primary/5 transition-colors"
+                    onClick={setOptimalCrop}
+                    title="Kırpma alanını otomatik ayarla"
+                  >
+                    <span>Hedef Boyuta Ayarla:</span>
+                    <span className="font-medium">{groupWidth}x{groupHeight}px</span>
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      className="h-4 w-4" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
+                    </svg>
+                  </button>
+                  <div className="text-primary font-medium">
+                    {completedCrop && imgRef.current && (
+                      <>
+                        {Math.round(completedCrop.width * imgRef.current.naturalWidth / imgRef.current.width)}
+                        x
+                        {Math.round(completedCrop.height * imgRef.current.naturalHeight / imgRef.current.height)}
+                        px
+                      </>
+                    ) || 'Kırpma işlemini tamamlayın'}
+                  </div>
+                </div>
+              </>
             )}
           </div>
           

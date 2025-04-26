@@ -87,3 +87,192 @@ label,
     @apply bg-background text-foreground;
   }
 }
+
+/* Banner animasyonları */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slideOutLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+@keyframes zoomIn {
+  from { transform: scale(1.2); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes zoomOut {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(0.8); opacity: 0; }
+}
+
+/* Yeni animasyonlar */
+@keyframes rotateIn {
+  from { transform: rotate(180deg); opacity: 0; }
+  to { transform: rotate(0); opacity: 1; }
+}
+
+@keyframes rotateOut {
+  from { transform: rotate(0); opacity: 1; }
+  to { transform: rotate(-180deg); opacity: 0; }
+}
+
+@keyframes blurIn {
+  from { filter: blur(20px); opacity: 0; }
+  to { filter: blur(0); opacity: 1; }
+}
+
+@keyframes blurOut {
+  from { filter: blur(0); opacity: 1; }
+  to { filter: blur(20px); opacity: 0; }
+}
+
+@keyframes flipIn {
+  from { transform: perspective(400px) rotateY(90deg); opacity: 0; }
+  to { transform: perspective(400px) rotateY(0deg); opacity: 1; }
+}
+
+@keyframes flipOut {
+  from { transform: perspective(400px) rotateY(0deg); opacity: 1; }
+  to { transform: perspective(400px) rotateY(-90deg); opacity: 0; }
+}
+
+@keyframes elasticIn {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.1); opacity: 1; }
+  80% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+@keyframes elasticOut {
+  0% { transform: scale(1); }
+  20% { transform: scale(1.1); }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+@keyframes waveIn {
+  0% { transform: skewY(20deg); opacity: 0; }
+  50% { transform: skewY(-10deg); opacity: 0.5; }
+  100% { transform: skewY(0); opacity: 1; }
+}
+
+@keyframes waveOut {
+  0% { transform: skewY(0); opacity: 1; }
+  50% { transform: skewY(10deg); opacity: 0.5; }
+  100% { transform: skewY(-20deg); opacity: 0; }
+}
+
+@keyframes stepIn {
+  0% { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); }
+  100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+}
+
+@keyframes stepOut {
+  0% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+  100% { clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%); }
+}
+
+@keyframes spiralIn {
+  0% { transform: scale(0) rotate(360deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+@keyframes spiralOut {
+  0% { transform: scale(1) rotate(0); opacity: 1; }
+  100% { transform: scale(0) rotate(-360deg); opacity: 0; }
+}
+
+/* Mevcut animasyon sınıfları */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.5s ease forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.5s ease forwards;
+}
+
+.animate-slide-out-left {
+  animation: slideOutLeft 0.5s ease forwards;
+}
+
+.animate-zoom-in {
+  animation: zoomIn 0.5s ease forwards;
+}
+
+.animate-zoom-out {
+  animation: zoomOut 0.5s ease forwards;
+}
+
+/* Yeni animasyon sınıfları */
+.animate-rotate-in {
+  animation: rotateIn 0.5s ease forwards;
+}
+
+.animate-rotate-out {
+  animation: rotateOut 0.5s ease forwards;
+}
+
+.animate-blur-in {
+  animation: blurIn 0.5s ease forwards;
+}
+
+.animate-blur-out {
+  animation: blurOut 0.5s ease forwards;
+}
+
+.animate-flip-in {
+  animation: flipIn 0.5s ease forwards;
+}
+
+.animate-flip-out {
+  animation: flipOut 0.5s ease forwards;
+}
+
+.animate-elastic-in {
+  animation: elasticIn 0.7s ease forwards;
+}
+
+.animate-elastic-out {
+  animation: elasticOut 0.7s ease forwards;
+}
+
+.animate-wave-in {
+  animation: waveIn 0.5s ease forwards;
+}
+
+.animate-wave-out {
+  animation: waveOut 0.5s ease forwards;
+}
+
+.animate-step-in {
+  animation: stepIn 0.5s steps(10) forwards;
+}
+
+.animate-step-out {
+  animation: stepOut 0.5s steps(10) forwards;
+}
+
+.animate-spiral-in {
+  animation: spiralIn 0.7s ease forwards;
+}
+
+.animate-spiral-out {
+  animation: spiralOut 0.7s ease forwards;
+}

@@ -23,6 +23,30 @@ export default async function RootLayout({
 
   return (
     <html lang="tr" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            // Global değişken, formların düzenlenip düzenlenmediğini takip etmek için
+            window.isAnyFormDirty = false;
+            
+            // Varsayılan tarayıcı beforeunload uyarılarını kontrol etmek için
+            window.addEventListener('beforeunload', function (e) {
+              // Sadece bir form değiştiyse uyarı gösterelim, aksi takdirde sessizce kapatalım
+              if (!window.isAnyFormDirty) {
+                // Hiçbir form değişmedi, olayı engelleyelim ve sayfanın kapanmasına izin verelim
+                e.preventDefault();
+                e.returnValue = '';
+                return '';
+              }
+              
+              // Bir form değiştiyse, tarayıcının kendi uyarısının gösterilmesine izin ver
+              // Ancak modern tarayıcılar kendi mesajlarını kullanacaklar
+              // e'yi engellemeyelim, ancak boş returnValue ayarlayalım
+              e.returnValue = '';
+            });
+          `
+        }} />
+      </head>
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
@@ -32,11 +56,15 @@ export default async function RootLayout({
         >
           <SessionProvider session={session}>
             <UserProvider>
-              {children}
+              <div className="flex min-h-screen flex-col">
+                <div className="flex-1">{children}</div>
+                <div className="fixed bottom-4 right-4 w-[400px] z-50">
+                  <Toaster />
+                </div>
+              </div>
             </UserProvider>
           </SessionProvider>
         </ThemeProvider>
-        <Toaster />
       </body>
     </html>
   );

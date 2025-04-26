@@ -2,15 +2,20 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import * as z from "zod";
+import { PlayMode, AnimationType } from "@/lib/constants/banner";
 
 const bannerGroupSchema = z.object({
   name: z.string().min(2, "Grup adı en az 2 karakter olmalıdır"),
   status: z.enum(["active", "passive"]),
-  playMode: z.enum(["sequential", "random"]),
-  animationType: z.enum(["fade", "slide"]),
+  playMode: z.enum([PlayMode.MANUAL, PlayMode.AUTO]),
+  animationType: z.enum([AnimationType.FADE, AnimationType.SLIDE, AnimationType.ZOOM]),
   displayDuration: z.number().min(1),
   transitionDuration: z.number().min(0.1),
+  width: z.number().min(1),
+  height: z.number().min(1),
 });
+
+type BannerGroupInput = z.infer<typeof bannerGroupSchema>;
 
 export async function GET() {
   try {
@@ -52,7 +57,7 @@ export async function POST(req: Request) {
     const json = await req.json();
     console.log("Gelen veri:", json);
     
-    const body = bannerGroupSchema.parse(json);
+    const body = bannerGroupSchema.parse(json) as BannerGroupInput;
     console.log("Doğrulanmış veri:", body);
 
     const bannerGroup = await db.bannerGroup.create({
@@ -61,7 +66,9 @@ export async function POST(req: Request) {
         active: body.status === "active",
         playMode: body.playMode,
         animation: body.animationType,
-        duration: body.displayDuration * 1000, // Convert to milliseconds
+        duration: body.displayDuration,
+        width: body.width,
+        height: body.height,
       }
     });
 

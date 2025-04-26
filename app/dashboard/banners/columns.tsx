@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useContext, useEffect } from "react"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, ArrowUpDown, Pencil, Trash2, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -25,6 +25,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { BannerGroupForm } from "./banner-group-form"
+import { DialogContext } from "./page"
 
 export type BannerGroup = {
   id: string
@@ -142,6 +143,12 @@ export const columns: ColumnDef<BannerGroup>[] = [
       const router = useRouter()
       const [editOpen, setEditOpen] = useState(false)
       const [deleteOpen, setDeleteOpen] = useState(false)
+      const { setIsDialogOpen } = useContext(DialogContext)
+      const [isEditFormDirty, setIsEditFormDirty] = useState(false)
+
+      useEffect(() => {
+        setIsDialogOpen(editOpen || deleteOpen)
+      }, [editOpen, deleteOpen, setIsDialogOpen])
 
       const handleDelete = async () => {
         try {
@@ -165,6 +172,30 @@ export const columns: ColumnDef<BannerGroup>[] = [
       const handleDetail = () => {
         router.push(`/dashboard/banners/${bannerGroup.id}`)
       }
+
+      const handleEditOpenChange = (openState: boolean) => {
+        if (!openState) {
+          if (isEditFormDirty) {
+            if (confirm("Düzenleme formunu kapatmak istediğinize emin misiniz? Kaydedilmemiş değişiklikler kaybolacaktır.")) {
+              setEditOpen(false);
+              setIsEditFormDirty(false);
+            }
+          } else {
+            setEditOpen(false);
+          }
+        } else {
+          setEditOpen(openState);
+          setIsEditFormDirty(false);
+        }
+      };
+
+      const handleEditFormChange = (isDirty: boolean) => {
+        setIsEditFormDirty(isDirty);
+      };
+
+      const handleDeleteOpenChange = (openState: boolean) => {
+        setDeleteOpen(openState);
+      };
 
       return (
         <>
@@ -198,8 +229,10 @@ export const columns: ColumnDef<BannerGroup>[] = [
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Dialog open={editOpen} onOpenChange={setEditOpen}>
-            <DialogContent className="sm:max-w-[600px]">
+          <Dialog open={editOpen} onOpenChange={handleEditOpenChange}>
+            <DialogContent 
+              className="sm:max-w-[600px]"
+            >
               <DialogHeader>
                 <DialogTitle>Banner Grubunu Düzenle</DialogTitle>
                 <DialogDescription>
@@ -216,13 +249,15 @@ export const columns: ColumnDef<BannerGroup>[] = [
                 }}
                 onSuccess={() => {
                   setEditOpen(false)
+                  setIsEditFormDirty(false)
                   router.refresh()
                 }}
+                onFormChange={handleEditFormChange}
               />
             </DialogContent>
           </Dialog>
 
-          <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+          <Dialog open={deleteOpen} onOpenChange={handleDeleteOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Banner Grubunu Sil</DialogTitle>
