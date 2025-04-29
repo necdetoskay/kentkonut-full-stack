@@ -113,13 +113,14 @@ export default function UsersPage() {
             </TableBody>
           </Table>
         </div>
-        <UserFormModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          user={selectedUser}
-          mode={mode}
-        />
       </div>
+      
+      <UserFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        user={selectedUser}
+        mode={mode}
+      />
     </div>
   );
 } 

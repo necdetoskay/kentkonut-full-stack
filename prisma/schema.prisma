@@ -128,3 +128,73 @@ enum AnimationType {
   SLIDE
   ZOOM
 }
+
+enum ProjectStatus {
+  PLANNING
+  ONGOING
+  COMPLETED
+}
+
+model Project {
+  id             Int            @id @default(autoincrement())
+  title          String
+  description    String         @db.Text
+  location       String
+  features       Json?
+  details        Json?
+  status         ProjectStatus  @default(PLANNING)
+  completionDate DateTime?
+  isActive       Boolean        @default(true)
+  coverImage     String?
+  mainImage      String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  images         ProjectImage[]
+  videos         ProjectVideo[]
+
+  @@index([isActive])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model ProjectImage {
+  id        Int      @id @default(autoincrement())
+  url       String
+  projectId Int
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+}
+
+model ProjectVideo {
+  id        Int      @id @default(autoincrement())
+  url       String
+  projectId Int
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+}
+
+model Media {
+  id           String   @id @default(cuid())
+  url          String   @unique
+  filename     String
+  size         Int
+  type         String   // "image" veya "video"
+  mimeType     String?
+  width        Int?
+  height       Int?
+  duration     Float?   // Video süresi (saniye)
+  uploadedAt   DateTime @default(now())
+  lastAccessed DateTime @default(now())
+  isReferenced Boolean  @default(false)
+  references   String[] // JSON formatında referans kayıtları
+  
+  @@index([type])
+  @@index([isReferenced])
+  @@index([uploadedAt])
+}

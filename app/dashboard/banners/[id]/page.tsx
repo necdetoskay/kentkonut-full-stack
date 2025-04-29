@@ -64,6 +64,10 @@ import {
 } from "@/components/ui/tabs"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
+import {
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { Loader2 } from "lucide-react"
 
 type Banner = {
   id: number
@@ -93,9 +97,11 @@ interface SortableTableRowProps {
   banner: Banner
   groupWidth?: number
   groupHeight?: number
+  onEdit?: (banner: Banner) => void
+  onBannerDeleted?: () => void
 }
 
-function SortableTableRow({ banner, groupWidth, groupHeight, ...props }: SortableTableRowProps) {
+function SortableTableRow({ banner, groupWidth, groupHeight, onEdit, onBannerDeleted, ...props }: SortableTableRowProps) {
   const {
     attributes,
     listeners,
@@ -114,6 +120,8 @@ function SortableTableRow({ banner, groupWidth, groupHeight, ...props }: Sortabl
   }
 
   const [imageDimensions, setImageDimensions] = useState<{width: number, height: number} | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (banner.imageUrl && typeof window !== 'undefined') {
@@ -132,83 +140,179 @@ function SortableTableRow({ banner, groupWidth, groupHeight, ...props }: Sortabl
   const isWrongSize = groupWidth && groupHeight && imageDimensions && 
     (imageDimensions.width !== groupWidth || imageDimensions.height !== groupHeight);
 
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDeleteDialogOpen(true);
+  };
+  
+  const handleDeleteConfirm = async () => {
+    try {
+      setIsDeleting(true);
+      const response = await fetch(`/api/banners/${banner.id}`, {
+        method: "DELETE",
+      });
+      
+      if (!response.ok) {
+        throw new Error("Banner silinirken bir hata oluştu");
+      }
+      
+      toast.success("Banner başarıyla silindi");
+      setDeleteDialogOpen(false);
+      
+      // Yeniden banner listesini yüklemek için bir callback çağırılabilir
+      if (onBannerDeleted) {
+        onBannerDeleted();
+      }
+    } catch (error) {
+      console.error("Banner silme hatası:", error);
+      toast.error("Banner silinirken bir hata oluştu");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
-    <TableRow ref={setNodeRef} style={style} {...props}>
-      <TableCell>
-        <div className="flex items-center gap-2">
-          <button
-            {...attributes}
-            {...listeners}
-            className="cursor-grab hover:text-foreground/70 touch-none"
-          >
-            <GripVertical className="h-4 w-4" />
-          </button>
-          <div className="flex flex-col">
+    <>
+      <TableRow ref={setNodeRef} style={style} {...props}>
+        <TableCell>
+          <div className="flex items-center gap-2">
+            <button
+              {...attributes}
+              {...listeners}
+              className="cursor-grab hover:text-foreground/70 touch-none"
+            >
+              <GripVertical className="h-4 w-4" />
+            </button>
+            <div className="flex flex-col">
             <ImageModal
               src={banner.imageUrl}
               alt={banner.title}
               width={groupWidth}
               height={groupHeight}
             />
+            </div>
           </div>
-        </div>
-      </TableCell>
-      <TableCell>
-        <div>
-          <p className="font-medium">{banner.title}</p>
-          {banner.description && (
-            <p className="text-sm text-muted-foreground">{banner.description}</p>
-          )}
-        </div>
-      </TableCell>
-      <TableCell>
-        {banner.targetUrl ? (
-          <a 
-            href={banner.targetUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:underline"
-          >
-            {banner.targetUrl}
-          </a>
-        ) : (
-          <span className="text-muted-foreground">-</span>
-        )}
-      </TableCell>
-      <TableCell>{banner.order}</TableCell>
-      <TableCell>
-        <Badge variant={banner.active ? "default" : "secondary"}>
-          {banner.active ? "Aktif" : "Pasif"}
-        </Badge>
-        {!banner.active && isWrongSize && (
-          <p className="text-xs text-yellow-600 mt-1">Boyut uyumsuz</p>
-        )}
-      </TableCell>
-      <TableCell>
-        {imageDimensions ? (
-          <div className="text-sm">
-            {imageDimensions.width} × {imageDimensions.height} px
-            {groupWidth && groupHeight && (
-              <div className={`text-xs mt-1 ${isWrongSize ? 'text-yellow-600' : 'text-muted-foreground'}`}>
-                İdeal: {groupWidth} × {groupHeight} px
-              </div>
+        </TableCell>
+        <TableCell>
+          <div>
+            <p className="font-medium">{banner.title}</p>
+            {banner.description && (
+              <p className="text-sm text-muted-foreground">{banner.description}</p>
             )}
           </div>
-        ) : (
-          <span className="text-muted-foreground">Yükleniyor...</span>
-        )}
-      </TableCell>
-      <TableCell className="text-right">
-        <Button variant="ghost" size="sm" className="h-8" asChild>
-          <Link href={`/dashboard/banners/${banner.id}/edit`}>
+        </TableCell>
+        <TableCell>
+          {banner.targetUrl ? (
+            <a 
+              href={banner.targetUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:underline"
+            >
+              {banner.targetUrl}
+            </a>
+          ) : (
+            <span className="text-muted-foreground">-</span>
+          )}
+        </TableCell>
+        <TableCell>{banner.order}</TableCell>
+        <TableCell>
+          <Badge variant={banner.active ? "default" : "secondary"}>
+            {banner.active ? "Aktif" : "Pasif"}
+          </Badge>
+          {!banner.active && isWrongSize && (
+            <p className="text-xs text-yellow-600 mt-1">Boyut uyumsuz</p>
+          )}
+        </TableCell>
+        <TableCell>
+          {imageDimensions ? (
+            <div className="text-sm">
+              {imageDimensions.width} × {imageDimensions.height} px
+              {groupWidth && groupHeight && (
+                <div className={`text-xs mt-1 ${isWrongSize ? 'text-yellow-600' : 'text-muted-foreground'}`}>
+                  İdeal: {groupWidth} × {groupHeight} px
+                </div>
+              )}
+            </div>
+          ) : (
+            <span className="text-muted-foreground">Yükleniyor...</span>
+          )}
+        </TableCell>
+        <TableCell className="text-right">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8"
+            onClick={(e) => {
+              e.stopPropagation(); // Satır tıklama olayını engelle
+              if (onEdit) onEdit(banner);
+            }}
+          >
             Düzenle
-          </Link>
-        </Button>
-        <Button variant="ghost" size="sm" className="h-8 text-red-500 hover:text-red-700">
-          Sil
-        </Button>
-      </TableCell>
-    </TableRow>
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 text-red-500 hover:text-red-700"
+            onClick={handleDeleteClick}
+          >
+            Sil
+          </Button>
+        </TableCell>
+      </TableRow>
+      
+      {/* Banner Silme Onay Dialog'u */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Banner Silme</DialogTitle>
+            <DialogDescription>
+              "{banner.title}" başlıklı banneri silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            {banner.imageUrl && (
+              <div className="flex justify-center">
+                <div className="relative h-32 w-auto overflow-hidden rounded-md">
+                  <Image
+                    src={banner.imageUrl}
+                    alt={banner.title}
+                    fill
+                    style={{ objectFit: "contain" }}
+                  />
+                </div>
+              </div>
+            )}
+            <p className="text-sm text-destructive">
+              Banner verisi ve ilişkili görselin bağlantısı tamamen silinecektir.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setDeleteDialogOpen(false)}
+              disabled={isDeleting}
+            >
+              İptal
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Siliniyor...
+                </>
+              ) : (
+                "Sil"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 
@@ -223,6 +327,8 @@ export default function BannerGroupDetailPage({ params }: { params: Promise<{ id
   const router = useRouter()
   const [bannerGroup, setBannerGroup] = useState<BannerGroup | null>(null)
   const [isAddBannerOpen, setIsAddBannerOpen] = useState(false)
+  const [isEditBannerOpen, setIsEditBannerOpen] = useState(false)
+  const [currentEditBanner, setCurrentEditBanner] = useState<Banner | null>(null)
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false)
   const [isFormDirty, setIsFormDirty] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -276,16 +382,44 @@ export default function BannerGroupDetailPage({ params }: { params: Promise<{ id
     fetchBannerGroup()
   }, [resolvedParams.id])
 
+  // URL'deki editBanner parametresini kontrol et
+  useEffect(() => {
+    // Client-side URL sorgusu için
+    if (typeof window !== 'undefined' && bannerGroup && bannerGroup.banners.length > 0) {
+      const searchParams = new URLSearchParams(window.location.search);
+      const editBannerId = searchParams.get('editBanner');
+      
+      if (editBannerId) {
+        // Banner ID'sine göre banner'ı bul
+        const bannerToEdit = bannerGroup.banners.find(
+          banner => banner.id.toString() === editBannerId
+        );
+        
+        if (bannerToEdit) {
+          // Banner'ı düzenleme modunu aç
+          setCurrentEditBanner(bannerToEdit);
+          setIsEditBannerOpen(true);
+          
+          // URL'den parametreyi temizle (daha temiz bir URL için)
+          const newUrl = window.location.pathname;
+          window.history.replaceState({}, '', newUrl);
+        }
+      }
+    }
+  }, [bannerGroup]);
+
   // Dialog açılıp kapandığında global state'i güncelliyoruz
   useEffect(() => {
-    setIsDialogOpen(isAddBannerOpen);
-  }, [isAddBannerOpen]);
+    setIsDialogOpen(isAddBannerOpen || isEditBannerOpen);
+  }, [isAddBannerOpen, isEditBannerOpen]);
 
   const handleBannerSuccess = () => {
     setIsAddBannerOpen(false)
+    setIsEditBannerOpen(false)
+    setCurrentEditBanner(null)
     setIsFormDirty(false)
-    fetchBannerGroup() // Banner ekledikten sonra grubu yeniden yükle
-    toast.success("Banner başarıyla eklendi")
+    fetchBannerGroup() // Banner ekledikten/düzenledikten sonra grubu yeniden yükle
+    toast.success("Banner başarıyla kaydedildi")
   }
 
   // Banner ekleme dialogu yönetimi
@@ -313,6 +447,8 @@ export default function BannerGroupDetailPage({ params }: { params: Promise<{ id
   const handleConfirmClose = () => {
     setIsConfirmDialogOpen(false);
     setIsAddBannerOpen(false); // Banner ekleme dialogunu kapat
+    setIsEditBannerOpen(false); // Banner düzenleme dialogunu kapat
+    setCurrentEditBanner(null); // Düzenlenen banner'ı sıfırla
     setIsFormDirty(false); // Form değişiklik durumunu sıfırla
   };
 
@@ -418,6 +554,35 @@ export default function BannerGroupDetailPage({ params }: { params: Promise<{ id
     console.log("Animation changed to:", animation)
   }
 
+  // Banner düzenleme işlemi
+  const handleEditBanner = (banner: Banner) => {
+    setCurrentEditBanner(banner)
+    setIsEditBannerOpen(true)
+    setIsFormDirty(false)
+  }
+
+  // Banner düzenleme dialogu yönetimi
+  const handleEditBannerOpenChange = (openState: boolean) => {
+    // Eğer kapanmak isteniyorsa (openState = false)
+    if (!openState) {
+      // Form değiştiyse onay dialogunu göster, değişmediyse doğrudan kapat
+      if (isFormDirty) {
+        setIsConfirmDialogOpen(true);
+        // Dialog'u kapatmayız, açık tutuyoruz
+      } else {
+        setIsEditBannerOpen(false);
+        setCurrentEditBanner(null);
+      }
+    } else {
+      setIsEditBannerOpen(openState);
+      setIsFormDirty(false); // Yeni form açıldığında değişiklik durumunu sıfırla
+    }
+  };
+
+  const handleBannerDeleted = () => {
+    fetchBannerGroup(); // Banner silindiğinde grubu yeniden yükle
+  };
+
   if (isLoading) {
     return <div>Yükleniyor...</div>
   }
@@ -437,9 +602,9 @@ export default function BannerGroupDetailPage({ params }: { params: Promise<{ id
 
   return (
     <DetailDialogContext.Provider value={{ isDialogOpen, setIsDialogOpen }}>
-      <div className="container mx-auto py-10">
-        <Breadcrumb items={breadcrumbItems} />
-        <div className="space-y-6">
+    <div className="container mx-auto py-10">
+      <Breadcrumb items={breadcrumbItems} />
+      <div className="space-y-6">
           {showResizeAlert && (
             <Alert className="bg-yellow-50 border-yellow-200">
               <AlertCircle className="h-4 w-4 text-yellow-600" />
@@ -451,193 +616,167 @@ export default function BannerGroupDetailPage({ params }: { params: Promise<{ id
             </Alert>
           )}
           
-          <div className="flex justify-between items-start">
-            <div>
-              <h2 className="text-3xl font-bold tracking-tight">{bannerGroup.name}</h2>
-              <p className="text-muted-foreground">
-                Banner grubundaki içerikleri yönetin
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Dialog open={isAddBannerOpen} onOpenChange={handleAddBannerOpenChange}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Banner Ekle
-                  </Button>
-                </DialogTrigger>
-                <DialogContent 
-                  className="max-w-2xl"
-                >
-                  <DialogHeader>
-                    <DialogTitle>Yeni Banner</DialogTitle>
-                    <DialogDescription>
-                      Banner grubuna yeni bir banner ekleyin.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <BannerForm
-                    groupId={resolvedParams.id}
-                    onSuccess={handleBannerSuccess}
-                    groupWidth={bannerGroup?.width || 1920}
-                    groupHeight={bannerGroup?.height || 1080}
-                    onFormChange={handleFormChange}
-                  />
-                </DialogContent>
-              </Dialog>
-              
-              {/* Onay dialogu */}
-              <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Değişiklikleri Kaydetmediniz</DialogTitle>
-                    <DialogDescription>
-                      Banner formunda değişiklik yaptınız ancak kaydetmediniz. 
-                      Bu değişiklikleri kaydetmeden formu kapatmak istediğinize emin misiniz?
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="flex justify-end gap-4 mt-4">
-                    <Button
-                      variant="outline"
-                      onClick={handleCancelClose}
-                    >
-                      Forma Geri Dön
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={handleConfirmClose}
-                    >
-                      Değişiklikleri İptal Et
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-              
+        <div className="flex justify-between items-start">
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight">{bannerGroup.name}</h2>
+            <p className="text-muted-foreground">
+              Banner grubundaki içerikleri yönetin
+            </p>
+          </div>
+          <div className="flex gap-2">
               <Button variant="destructive" onClick={handleDelete}>
                 Grubu Sil
               </Button>
-            </div>
           </div>
+        </div>
 
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle>Grup Bilgileri</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-5 gap-4">
-                <div>
-                  <span className="text-sm text-muted-foreground block">Durum</span>
-                  <Badge variant={bannerGroup.active ? "default" : "secondary"}>
-                    {bannerGroup.active ? "Aktif" : "Pasif"}
-                  </Badge>
-                </div>
-                <div>
-                  <span className="text-sm text-muted-foreground block">Oynatma Modu</span>
-                  <span>{bannerGroup.playMode === "MANUAL" ? "Manuel" : "Otomatik"}</span>
-                </div>
-                <div>
-                  <span className="text-sm text-muted-foreground block">Animasyon</span>
-                  <span>{getAnimationText(bannerGroup.animation)}</span>
-                </div>
-                <div>
-                  <span className="text-sm text-muted-foreground block">Görüntülenme Süresi</span>
-                  <span>{bannerGroup.duration / 1000} saniye</span>
-                </div>
-                <div>
-                  <span className="text-sm text-muted-foreground block">Boyut</span>
-                  <span>{bannerGroup.width}x{bannerGroup.height} px</span>
-                </div>
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle>Grup Bilgileri</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-5 gap-4">
+              <div>
+                <span className="text-sm text-muted-foreground block">Durum</span>
+                <Badge variant={bannerGroup.active ? "default" : "secondary"}>
+                  {bannerGroup.active ? "Aktif" : "Pasif"}
+                </Badge>
               </div>
-            </CardContent>
-          </Card>
+              <div>
+                <span className="text-sm text-muted-foreground block">Oynatma Modu</span>
+                <span>{bannerGroup.playMode === "MANUAL" ? "Manuel" : "Otomatik"}</span>
+              </div>
+              <div>
+                <span className="text-sm text-muted-foreground block">Animasyon</span>
+                <span>{getAnimationText(bannerGroup.animation)}</span>
+              </div>
+              <div>
+                <span className="text-sm text-muted-foreground block">Görüntülenme Süresi</span>
+                <span>{bannerGroup.duration / 1000} saniye</span>
+              </div>
+              <div>
+                <span className="text-sm text-muted-foreground block">Boyut</span>
+                <span>{bannerGroup.width}x{bannerGroup.height} px</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid grid-cols-3 w-[600px]">
-              <TabsTrigger value="banners">Bannerlar</TabsTrigger>
-              <TabsTrigger value="preview">Önizleme</TabsTrigger>
+            <TabsTrigger value="banners">Bannerlar</TabsTrigger>
+            <TabsTrigger value="preview">Önizleme</TabsTrigger>
               <TabsTrigger value="statistics">İstatistikler</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="banners" className="mt-6">
-              <Card className="w-full">
-                <CardHeader>
+          </TabsList>
+          
+          <TabsContent value="banners" className="mt-6">
+            <Card className="w-full">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
                   <CardTitle>Bannerlar</CardTitle>
                   <CardDescription>
                     Bu gruptaki bannerların listesi. Sıralamayı değiştirmek için bannerları sürükleyebilirsiniz.
-                    {bannerGroup.banners.some(b => !b.active) && (
-                      <p className="text-yellow-600 mt-2">
-                        Pasif banner'lar mevcut. Bunları aktifleştirmek için önce banner'ı düzenleyin ve 
-                        görseli değiştirerek kaydedin.
-                      </p>
-                    )}
+                      {bannerGroup.banners.some(b => !b.active) && (
+                        <p className="text-yellow-600 mt-2">
+                          Pasif banner'lar mevcut. Bunları aktifleştirmek için önce banner'ı düzenleyin ve 
+                          görseli değiştirerek kaydedin.
+                        </p>
+                      )}
                   </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {bannerGroup?.banners.length === 0 ? (
-                    <p className="text-muted-foreground text-center py-8">Henüz banner eklenmemiş</p>
-                  ) : (
-                    <div className="rounded-md border">
+                </div>
+                <Dialog open={isAddBannerOpen} onOpenChange={handleAddBannerOpenChange}>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Banner Ekle
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl">
+                    <DialogHeader>
+                      <DialogTitle>Yeni Banner Ekle</DialogTitle>
+                      <DialogDescription>
+                        Banner grubuna yeni bir banner ekleyin
+                      </DialogDescription>
+                    </DialogHeader>
+                    <BannerForm
+                      groupId={resolvedParams.id}
+                      onSuccess={handleBannerSuccess}
+                      groupWidth={bannerGroup?.width}
+                      groupHeight={bannerGroup?.height}
+                      onFormChange={handleFormChange}
+                    />
+                  </DialogContent>
+                </Dialog>
+              </CardHeader>
+              <CardContent>
+                {bannerGroup?.banners.length === 0 ? (
+                  <p className="text-muted-foreground text-center py-8">Henüz banner eklenmemiş</p>
+                ) : (
+                  <div className="rounded-md border">
                       <DndContext
                         sensors={sensors}
                         collisionDetection={closestCenter}
                         onDragEnd={handleDragEnd}
                       >
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead className="w-[140px]">Görsel</TableHead>
-                              <TableHead>Başlık</TableHead>
-                              <TableHead>Hedef URL</TableHead>
-                              <TableHead>Sıra</TableHead>
-                              <TableHead>Durum</TableHead>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-[140px]">Görsel</TableHead>
+                          <TableHead>Başlık</TableHead>
+                          <TableHead>Hedef URL</TableHead>
+                          <TableHead>Sıra</TableHead>
+                          <TableHead>Durum</TableHead>
                               <TableHead>Boyutlar</TableHead>
-                              <TableHead className="text-right">İşlemler</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            <SortableContext
-                              items={bannerGroup?.banners || []}
-                              strategy={verticalListSortingStrategy}
-                            >
-                              {bannerGroup?.banners.map((banner) => (
-                                <SortableTableRow 
-                                  key={banner.id} 
-                                  banner={banner}
-                                  groupWidth={bannerGroup.width}
-                                  groupHeight={bannerGroup.height}
-                                />
-                              ))}
-                            </SortableContext>
-                          </TableBody>
+                          <TableHead className="text-right">İşlemler</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                        <TableBody>
+                          <SortableContext
+                            items={bannerGroup?.banners || []}
+                            strategy={verticalListSortingStrategy}
+                          >
+                            {bannerGroup?.banners.map((banner) => (
+                              <SortableTableRow 
+                                key={banner.id} 
+                                banner={banner}
+                                groupWidth={bannerGroup.width}
+                                groupHeight={bannerGroup.height}
+                                onEdit={handleEditBanner}
+                                onBannerDeleted={handleBannerDeleted}
+                              />
+                            ))}
+                          </SortableContext>
+                        </TableBody>
                         </Table>
                       </DndContext>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="preview" className="mt-6">
-              <Card className="w-full">
-                <CardHeader>
-                  <CardTitle>Önizleme</CardTitle>
-                  <CardDescription>
-                    Bu banner grubunun web sitesinde nasıl görüneceğini önizleyin. Farklı bir animasyon seçip kaydedebilirsiniz.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <BannerPreview
-                    banners={bannerGroup.banners}
-                    animation={bannerGroup.animation as AnimationType}
-                    duration={bannerGroup.duration}
-                    playMode={bannerGroup.playMode}
-                    width={bannerGroup.width}
-                    height={bannerGroup.height}
-                    groupId={resolvedParams.id}
-                    onAnimationChange={handleAnimationChange}
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="preview" className="mt-6">
+            <Card className="w-full">
+              <CardHeader>
+                <CardTitle>Önizleme</CardTitle>
+                <CardDescription>
+                  Bu banner grubunun web sitesinde nasıl görüneceğini önizleyin. Farklı bir animasyon seçip kaydedebilirsiniz.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <BannerPreview
+                  banners={bannerGroup.banners}
+                  animation={bannerGroup.animation as AnimationType}
+                  duration={bannerGroup.duration}
+                  playMode={bannerGroup.playMode}
+                  width={bannerGroup.width}
+                  height={bannerGroup.height}
+                  groupId={resolvedParams.id}
+                  onAnimationChange={handleAnimationChange}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
             
             <TabsContent value="statistics" className="mt-6">
               <Card className="w-full">
@@ -655,9 +794,55 @@ export default function BannerGroupDetailPage({ params }: { params: Promise<{ id
                 </CardContent>
               </Card>
             </TabsContent>
-          </Tabs>
-        </div>
+        </Tabs>
       </div>
+    </div>
+      
+      {/* Banner düzenleme dialogu */}
+      <Dialog open={isEditBannerOpen} onOpenChange={handleEditBannerOpenChange}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Bannerı Düzenle</DialogTitle>
+            <DialogDescription>
+              Banner bilgilerini güncelleyin
+            </DialogDescription>
+          </DialogHeader>
+          {currentEditBanner && (
+            <BannerForm
+              groupId={resolvedParams.id}
+              bannerId={currentEditBanner.id.toString()}
+              initialData={{
+                title: currentEditBanner.title,
+                description: currentEditBanner.description,
+                imageUrl: currentEditBanner.imageUrl,
+                isActive: currentEditBanner.active,
+                link: currentEditBanner.targetUrl,
+              }}
+              onSuccess={handleBannerSuccess}
+              groupWidth={bannerGroup?.width}
+              groupHeight={bannerGroup?.height}
+              onFormChange={handleFormChange}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+      
+      <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Değişiklikleri kaydetmeden çıkmak istediğinize emin misiniz?</DialogTitle>
+            <DialogDescription>
+              Kaydedilmemiş veriler kaybolacaktır.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={handleCancelClose}>İptal</Button>
+            <Button variant="destructive" onClick={handleConfirmClose}>
+              Evet, Kapat
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </DetailDialogContext.Provider>
   )
 }

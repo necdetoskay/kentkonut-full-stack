@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Check, Play, Pause, ChevronLeft, ChevronRight, Save } from "lucide-react"
@@ -50,7 +50,13 @@ export function BannerPreview({
   const [isPlaying, setIsPlaying] = useState(playMode === "AUTO")
   const [animationState, setAnimationState] = useState<"enter" | "active" | "exit">("active")
   const [isSaving, setIsSaving] = useState(false)
+  const [progress, setProgress] = useState(0)
   
+  // Banner görüntüleme takibi için referanslar
+  const viewedBanners = useRef<Set<number>>(new Set())
+  const viewTimer = useRef<NodeJS.Timeout | null>(null)
+  const minViewDuration = 2000 // Minimum 2 saniye görüntüleme süresi
+
   // Banner sayısı 0 veya 1 ise otomatik oynatma devre dışı bırak
   useEffect(() => {
     if (activeBanners.length <= 1) {
@@ -58,11 +64,60 @@ export function BannerPreview({
     }
   }, [activeBanners.length])
   
-  // Görüntüleme istatistiği kaydet
+  // İlerleme çubuğu için
   useEffect(() => {
+    if (!isPlaying || activeBanners.length <= 1) {
+      setProgress(0)
+      return
+    }
+
+    // İlerleme çubuğunu sıfırla
+    setProgress(0)
+    
+    // Hızlı bir şekilde 100'e ilerlet
+    const startTime = Date.now()
+    const animationDuration = duration
+    
+    const updateProgress = () => {
+      const elapsedTime = Date.now() - startTime
+      const calculatedProgress = Math.min(100, (elapsedTime / animationDuration) * 100)
+      setProgress(calculatedProgress)
+      
+      if (calculatedProgress < 100) {
+        requestAnimationFrame(updateProgress)
+      }
+    }
+    
+    const animationId = requestAnimationFrame(updateProgress)
+    return () => cancelAnimationFrame(animationId)
+  }, [currentIndex, isPlaying, activeBanners.length, duration])
+  
+  // Görüntüleme istatistiği kaydet - Optimize edilmiş versiyon
+  useEffect(() => {
+    // Dashboard tarafında (admin panel) istatistik tutma - pathname kontrolü
+    const isDashboard = typeof window !== 'undefined' && window.location.pathname.includes('/dashboard');
+    if (isDashboard) {
+      return; // Dashboard'da istatistik kaydetme
+    }
+    
+    // Geçersiz durumlar için erken çıkış
     if (activeBanners.length === 0 || !activeBanners[currentIndex]) return;
     
-    const trackView = async () => {
+    // Var olan zamanlayıcıyı temizle
+    if (viewTimer.current) {
+      clearTimeout(viewTimer.current);
+      viewTimer.current = null;
+    }
+    
+    const currentBannerId = activeBanners[currentIndex].id;
+    
+    // Bu banner zaten görüntülendi mi kontrol et
+    if (viewedBanners.current.has(currentBannerId)) {
+      return; // Bu banner için zaten görüntüleme kaydı yapıldı
+    }
+    
+    // Yeni bir zamanlayıcı başlat - sadece banner belirli bir süre görüntülendiğinde kaydet
+    viewTimer.current = setTimeout(async () => {
       try {
         await fetch('/api/statistics/view', {
           method: 'POST',
@@ -70,16 +125,57 @@ export function BannerPreview({
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            bannerId: activeBanners[currentIndex].id
+            bannerId: currentBannerId
           }),
         });
+        
+        // Görüntülenen bannerı işaretle - tarayıcı oturumu boyunca hatırlamak için
+        viewedBanners.current.add(currentBannerId);
+        
+        // LocalStorage'a kaydederek sayfalar arasında da hatırla
+        try {
+          // Daha önce kaydedilmiş banner ID'lerini al
+          const viewedBannerIds = JSON.parse(localStorage.getItem('viewedBannerIds') || '[]');
+          
+          // Eğer bu ID daha önce kaydedilmemişse, ekle
+          if (!viewedBannerIds.includes(currentBannerId)) {
+            viewedBannerIds.push(currentBannerId);
+            localStorage.setItem('viewedBannerIds', JSON.stringify(viewedBannerIds));
+          }
+        } catch (storageError) {
+          console.error('Banner görüntüleme localStorage kaydı yapılamadı:', storageError);
+        }
+        
       } catch (error) {
         console.error('Görüntüleme istatistiği kaydedilemedi:', error);
+      } finally {
+        viewTimer.current = null;
+      }
+    }, minViewDuration);
+    
+    // Component unmount olduğunda zamanlayıcıyı temizle
+    return () => {
+      if (viewTimer.current) {
+        clearTimeout(viewTimer.current);
+        viewTimer.current = null;
       }
     };
-    
-    trackView();
   }, [currentIndex, activeBanners]);
+  
+  // LocalStorage'dan daha önce görüntülenen banner ID'lerini al
+  useEffect(() => {
+    // Dashboard tarafında işlem yapma
+    const isDashboard = typeof window !== 'undefined' && window.location.pathname.includes('/dashboard');
+    if (isDashboard) return;
+    
+    try {
+      const viewedBannerIds = JSON.parse(localStorage.getItem('viewedBannerIds') || '[]');
+      // Set'e ekle
+      viewedBannerIds.forEach((id: number) => viewedBanners.current.add(id));
+    } catch (error) {
+      console.error('Banner görüntüleme verileri localStorage\'dan alınamadı:', error);
+    }
+  }, []);
   
   // Otomatik oynatma
   useEffect(() => {
@@ -128,6 +224,7 @@ export function BannerPreview({
   const handlePrev = () => {
     if (activeBanners.length <= 1) return
     setAnimationState("exit")
+    setProgress(0) // İlerlemeyi sıfırla
     setTimeout(() => {
       setCurrentIndex((prev) => (prev - 1 + activeBanners.length) % activeBanners.length)
       setAnimationState("enter")
@@ -138,6 +235,7 @@ export function BannerPreview({
   const handleNext = () => {
     if (activeBanners.length <= 1) return
     setAnimationState("exit")
+    setProgress(0) // İlerlemeyi sıfırla
     setTimeout(() => {
       setCurrentIndex((prev) => (prev + 1) % activeBanners.length)
       setAnimationState("enter")
@@ -148,6 +246,7 @@ export function BannerPreview({
   const togglePlay = () => {
     if (activeBanners.length <= 1) return
     setIsPlaying(!isPlaying)
+    setProgress(0) // İlerlemeyi sıfırla
   }
   
   const handleSaveAnimation = async () => {
@@ -343,6 +442,21 @@ export function BannerPreview({
           </div>
         )}
         
+        {/* Oynat/Durdur butonu */}
+        {activeBanners.length > 1 && (
+          <div className="absolute bottom-4 right-4 z-20">
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm"
+              onClick={togglePlay}
+              title={isPlaying ? "Durdur" : "Oynat"}
+            >
+              {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+            </Button>
+          </div>
+        )}
+        
         {/* Banner içeriği */}
         <div 
           className="absolute inset-0 cursor-pointer"
@@ -361,6 +475,16 @@ export function BannerPreview({
             />
           </div>
         </div>
+        
+        {/* İlerleme çubuğu - Minimal ve zarif */}
+        {isPlaying && activeBanners.length > 1 && (
+          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-200/30 z-20">
+            <div 
+              className="h-full bg-primary/50 transition-all duration-300 ease-linear"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        )}
         
         {/* İlerleme göstergesi */}
         {activeBanners.length > 1 && (

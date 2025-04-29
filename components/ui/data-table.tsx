@@ -28,12 +28,18 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   onRowClick?: (row: TData) => void;
+  searchPlaceholder?: string;
+  searchColumn?: string;
+  isLoading?: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   onRowClick,
+  searchPlaceholder = "Ara...",
+  searchColumn = "name",
+  isLoading = false
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -60,10 +66,10 @@ export function DataTable<TData, TValue>({
     <div>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Banner grubu ara..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          placeholder={searchPlaceholder}
+          value={(table.getColumn(searchColumn)?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
+            table.getColumn(searchColumn)?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -89,7 +95,16 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  Yükleniyor...
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}

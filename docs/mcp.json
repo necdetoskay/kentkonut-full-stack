@@ -1,0 +1,25 @@
+{
+    "mcpServers": {
+      "context7": {
+        "command": "npx",
+        "args": ["-y", "@upstash/context7-mcp@latest"]
+      },"st": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@modelcontextprotocol/server-sequential-thinking"
+        ]
+      },
+      "@magicui": {
+        "command": "npx",
+        "args": ["-y", "@magicuidesign/mcp@latest"]
+      },
+      "memory": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@modelcontextprotocol/server-memory"
+        ]
+      }
+    }
+  }

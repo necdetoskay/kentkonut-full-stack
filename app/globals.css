@@ -276,3 +276,163 @@ label,
 .animate-spiral-out {
   animation: spiralOut 0.7s ease forwards;
 }
+
+/* Zoom container ve crop container stilleri */
+.zoom-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.crop-outer-container {
+  position: relative;
+  max-width: 100%;
+}
+
+.ReactCrop-wrapper {
+  position: relative;
+  max-width: 100%;
+  display: inline-block;
+}
+
+/* ReactCrop ana stiller */
+.ReactCrop {
+  position: relative !important;
+  display: inline-block !important;
+  max-width: 100% !important;
+  background-color: transparent !important;
+  touch-action: none !important;
+}
+
+/* Image stilleri */
+.crop-image {
+  max-width: 100%;
+  max-height: 60vh;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Kırpma seçim alanı */
+.ReactCrop__crop-selection {
+  border: 2px solid white !important;
+  box-shadow: 0 0 0 9999em rgba(0, 0, 0, 0.5) !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
+
+/* Tutamaçlar için */
+.ReactCrop__drag-handle {
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+  background-color: white !important;
+  border: 1px solid black !important;
+  opacity: 1 !important;
+  z-index: 100 !important;
+  margin-left: -5px !important;
+  margin-top: -5px !important;
+}
+
+/* Köşe tutamaçları daha büyük */
+.ReactCrop__drag-handle.ord-nw,
+.ReactCrop__drag-handle.ord-ne,
+.ReactCrop__drag-handle.ord-se,
+.ReactCrop__drag-handle.ord-sw {
+  width: 14px !important;
+  height: 14px !important;
+  margin-left: -7px !important;
+  margin-top: -7px !important;
+}
+
+/* Tutamaç hover durumu */
+.ReactCrop__drag-handle:hover {
+  background-color: #2563eb !important;
+}
+
+/* Grid çizgileri */
+.ReactCrop__rule-of-thirds-hz::after,
+.ReactCrop__rule-of-thirds-vt::after {
+  background-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Overlay'in sadece resim içerisinde olmasını sağla */
+.ReactCrop > img {
+  position: relative;
+  z-index: 1;
+}
+
+.ReactCrop .ReactCrop__crop-selection {
+  z-index: 2;
+}
+
+/* Overlay sınırlaması için */
+.ReactCrop__child-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Overlay'i sınırla */
+.ReactCrop .ReactCrop__crop-selection {
+  box-shadow: 0 0 0 9999em rgba(0, 0, 0, 0.5);
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Özel kırpma container stilleri */
+.crop-container {
+  display: inline-block;
+  overflow: hidden !important;
+  position: relative;
+  max-width: 100%;
+  max-height: 70vh;
+}
+
+.crop-container-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  overflow: hidden;
+}
+
+.image-crop-container {
+  display: inline-block;
+  position: relative;
+  touch-action: none;
+  max-width: 100%;
+  background-color: transparent !important;
+}
+
+/* ReactCrop içindeki img elementi için stil */
+.crop-image {
+  max-width: 100%;
+  max-height: 65vh;
+  margin: 0 auto;
+  display: block;
+}
+
+/* ReactCrop overlay'i sadece resim içerisinde tutma */
+.image-crop-container .ReactCrop__crop-selection {
+  box-shadow: 0 0 0 9999em rgba(0, 0, 0, 0.5);
+  /* Kırpma alanı dışındaki karartma bölgesinin sınırları */
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+/* ReactCrop container'ının kendisi */
+.ReactCrop {
+  position: relative !important;
+  display: inline-block !important;
+  cursor: crosshair !important;
+  overflow: visible !important; /* Tutamaçların görünmesi için */
+  max-width: 100% !important;
+  background-color: transparent !important;
+  touch-action: none;
+}
+
+/* ReactCrop wrapper */
+.ReactCrop__child-wrapper {
+  max-width: 100%;
+}

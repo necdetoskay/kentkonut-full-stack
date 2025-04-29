@@ -136,6 +136,9 @@ export default function BannersPage() {
           columns={columns} 
           data={bannerGroups} 
           onRowClick={handleRowClick}
+          searchColumn="name"
+          searchPlaceholder="Banner grup adı ara..."
+          isLoading={isLoading}
         />
       </div>
     </DialogContext.Provider>
