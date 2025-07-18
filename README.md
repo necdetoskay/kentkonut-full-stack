@@ -80,7 +80,7 @@ Kent Konut is a full-stack CMS solution designed for municipal and corporate con
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/your-username/kentkonut-full-stack.git
+git clone https://github.com/necdetoskay/kentkonut-full-stack.git
 cd kentkonut-full-stack
 ```
 
