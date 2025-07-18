@@ -1,0 +1,179 @@
+/* TipTap Render CSS - Floating Images */
+.tiptap-render {
+  line-height: 1.6;
+  color: #374151;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.tiptap-render::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.tiptap-render p {
+  margin: 0 0 16px 0;
+  text-align: justify;
+  overflow: hidden;
+  line-height: 1.6;
+}
+
+/* TEXT ALIGNMENT */
+.tiptap-render p[style*="text-align: left"],
+.tiptap-render h1[style*="text-align: left"],
+.tiptap-render h2[style*="text-align: left"],
+.tiptap-render h3[style*="text-align: left"] {
+  text-align: left !important;
+}
+
+.tiptap-render p[style*="text-align: center"],
+.tiptap-render h1[style*="text-align: center"],
+.tiptap-render h2[style*="text-align: center"],
+.tiptap-render h3[style*="text-align: center"] {
+  text-align: center !important;
+}
+
+.tiptap-render p[style*="text-align: right"],
+.tiptap-render h1[style*="text-align: right"],
+.tiptap-render h2[style*="text-align: right"],
+.tiptap-render h3[style*="text-align: right"] {
+  text-align: right !important;
+}
+
+.tiptap-render p[style*="text-align: justify"],
+.tiptap-render h1[style*="text-align: justify"],
+.tiptap-render h2[style*="text-align: justify"],
+.tiptap-render h3[style*="text-align: justify"] {
+  text-align: justify !important;
+}
+
+.tiptap-render h1 {
+  margin: 24px 0 16px 0;
+  font-size: 2em;
+  font-weight: 700;
+  clear: both;
+}
+
+.tiptap-render h2 {
+  margin: 24px 0 16px 0;
+  font-size: 1.5em;
+  font-weight: 600;
+  clear: both;
+}
+
+.tiptap-render h3 {
+  margin: 20px 0 12px 0;
+  font-size: 1.25em;
+  font-weight: 600;
+  clear: both;
+}
+
+/* FLOATING IMAGES - CORE FUNCTIONALITY */
+.tiptap-render img[data-float="left"] {
+  float: left !important;
+  margin: 0 20px 10px 0 !important;
+  vertical-align: top;
+  height: auto;
+  border-radius: 4px;
+  max-width: 100%;
+}
+
+.tiptap-render img[data-float="right"] {
+  float: right !important;
+  margin: 0 0 10px 20px !important;
+  vertical-align: top;
+  height: auto;
+  border-radius: 4px;
+  max-width: 100%;
+}
+
+.tiptap-render img[data-float="none"],
+.tiptap-render img[data-float="center"] {
+  float: none !important;
+  margin: 16px auto !important;
+  display: block;
+  height: auto;
+  border-radius: 4px;
+  max-width: 100%;
+}
+
+/* TEXT FORMATTING */
+.tiptap-render strong {
+  font-weight: 700;
+}
+
+.tiptap-render em {
+  font-style: italic;
+}
+
+.tiptap-render u {
+  text-decoration: underline;
+}
+
+/* LISTS */
+.tiptap-render ul {
+  margin: 0 0 16px 0;
+  padding-left: 24px;
+  list-style-type: disc;
+}
+
+.tiptap-render ol {
+  margin: 0 0 16px 0;
+  padding-left: 24px;
+  list-style-type: decimal;
+}
+
+.tiptap-render li {
+  margin: 0 0 4px 0;
+  line-height: 1.6;
+}
+
+/* LINKS */
+.tiptap-render a {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+
+.tiptap-render a:hover {
+  color: #1d4ed8;
+}
+
+/* BLOCKQUOTES */
+.tiptap-render blockquote {
+  margin: 16px 0;
+  padding: 12px 16px;
+  border-left: 4px solid #e5e7eb;
+  background: #f9fafb;
+  font-style: italic;
+}
+
+/* RESPONSIVE - Mobile */
+@media (max-width: 768px) {
+  .tiptap-render img[data-float="left"],
+  .tiptap-render img[data-float="right"] {
+    float: none !important;
+    display: block;
+    margin: 16px auto !important;
+    max-width: 100%;
+  }
+  
+  .tiptap-render {
+    font-size: 14px;
+  }
+  
+  .tiptap-render p {
+    text-align: left;
+  }
+}
+
+/* PRINT STYLES */
+@media print {
+  .tiptap-render img[data-float="left"],
+  .tiptap-render img[data-float="right"] {
+    float: none !important;
+    display: block;
+    margin: 16px auto !important;
+    max-width: 100%;
+  }
+}

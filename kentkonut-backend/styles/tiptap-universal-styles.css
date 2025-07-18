@@ -1,0 +1,321 @@
+/* tiptap-render.css - Industry Standard WYSIWYG Consistency */
+/* Based on Notion/Linear approach with design tokens */
+
+/* Design Tokens - Single Source of Truth */
+:root {
+  /* Typography Scale */
+  --typography-font-size-base: 16px;
+  --typography-line-height-base: 1.6;
+  --typography-font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Computed Values for Consistency */
+  --typography-computed-line-height: calc(var(--typography-font-size-base) * var(--typography-line-height-base)); /* 25.6px */
+
+  /* Spacing Scale */
+  --spacing-paragraph: 1em;
+  --spacing-margin-bottom: 16px;
+
+  /* Colors */
+  --color-text-primary: #374151;
+  --color-background: #ffffff;
+
+  /* Turkish Language Optimizations */
+  --font-feature-settings: "liga" 1, "kern" 1;
+  --text-rendering: optimizeLegibility;
+}
+
+/* Industry Standard Base Styles - Notion/Linear Approach */
+.tiptap-render {
+  /* Typography Foundation */
+  font-size: var(--typography-font-size-base);
+  line-height: var(--typography-line-height-base);
+  font-family: var(--typography-font-family-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+
+  /* Cross-Browser Consistency */
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: var(--text-rendering);
+  font-feature-settings: var(--font-feature-settings);
+
+  /* Layout Foundation */
+  overflow: hidden; /* Float clearfix */
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* Clearfix - Float'ları temizler */
+.tiptap-render::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Paragraph Styles - Industry Standard Approach */
+.tiptap-render p,
+.tiptap-render .ProseMirror p {
+  /* Inherit from parent for consistency */
+  font-size: inherit;
+  line-height: inherit;
+  font-family: inherit;
+  color: inherit;
+
+  /* Paragraph-specific styles */
+  margin: 0 0 var(--spacing-margin-bottom) 0;
+  text-align: justify;
+  overflow: hidden; /* Float clearfix */
+
+  /* Ensure box model consistency */
+  box-sizing: border-box;
+}
+
+/* NUCLEAR OPTION - Maximum specificity for TipTap editor ProseMirror container */
+html body .tiptap-render .ProseMirror,
+html body .tiptap-render.tiptap-render .ProseMirror,
+html body div.tiptap-render .ProseMirror,
+.tiptap-render .ProseMirror[style],
+.tiptap-render .ProseMirror[class] {
+  line-height: var(--tiptap-line-height) !important;
+  font-size: var(--tiptap-font-size) !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  /* Double enforcement */
+  line-height: 1.6 !important;
+  font-size: 16px !important;
+}
+
+/* Empty Paragraphs - Google Docs/Notion Approach */
+.tiptap-render p:empty,
+.tiptap-render .ProseMirror p:empty {
+  /* Use computed line-height for consistent spacing */
+  min-height: var(--typography-computed-line-height);
+
+  /* Maintain paragraph spacing */
+  margin: 0 0 var(--spacing-margin-bottom) 0;
+
+  /* Ensure visibility for editing */
+  position: relative;
+}
+
+/* Add invisible content for empty paragraphs (Notion approach) */
+.tiptap-render p:empty::before,
+.tiptap-render .ProseMirror p:empty::before {
+  content: '\00a0'; /* Non-breaking space */
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tiptap-render h1 {
+  margin: 32px 0 20px 0;
+  font-size: 2em;
+  font-weight: 700;
+  clear: both; /* Başlıklar float'ı temizler */
+}
+
+.tiptap-render h2 {
+  margin: 24px 0 16px 0;
+  font-size: 1.5em;
+  font-weight: 600;
+  clear: both;
+}
+
+.tiptap-render h3 {
+  margin: 20px 0 12px 0;
+  font-size: 1.25em;
+  font-weight: 600;
+  clear: both;
+}
+
+.tiptap-render h4 {
+  margin: 16px 0 8px 0;
+  font-size: 1.125em;
+  font-weight: 600;
+  clear: both;
+}
+
+.tiptap-render h5 {
+  margin: 16px 0 8px 0;
+  font-size: 1em;
+  font-weight: 600;
+  clear: both;
+}
+
+.tiptap-render h6 {
+  margin: 16px 0 8px 0;
+  font-size: 0.875em;
+  font-weight: 600;
+  clear: both;
+}
+
+/* Liste stilleri */
+.tiptap-render ul,
+.tiptap-render ol {
+  margin: 0 0 16px 0;
+  padding-left: 24px;
+}
+
+.tiptap-render li {
+  margin: 4px 0;
+}
+
+/* Blockquote stilleri */
+.tiptap-render blockquote {
+  margin: 16px 0;
+  padding: 12px 20px;
+  border-left: 4px solid #e5e7eb;
+  background: #f9fafb;
+  font-style: italic;
+}
+
+/* Kod stilleri */
+.tiptap-render code {
+  background: #f3f4f6;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+.tiptap-render pre {
+  background: #f3f4f6;
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 16px 0;
+}
+
+.tiptap-render pre code {
+  background: none;
+  padding: 0;
+}
+
+/* Yatay çizgi */
+.tiptap-render hr {
+  margin: 24px 0;
+  border: none;
+  height: 1px;
+  background: #e5e7eb;
+}
+
+/* Link stilleri */
+.tiptap-render a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.tiptap-render a:hover {
+  text-decoration: underline;
+}
+
+/* Tablo stilleri */
+.tiptap-render table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0;
+}
+
+.tiptap-render th,
+.tiptap-render td {
+  border: 1px solid #e5e7eb;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.tiptap-render th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+/* KRİTİK: Float'lı resim stilleri */
+.tiptap-render img[data-float="left"] {
+  float: left;
+  margin: 0 20px 10px 0;
+  vertical-align: top;
+  height: auto;
+  border-radius: 4px;
+  max-width: 100%;
+}
+
+.tiptap-render img[data-float="right"] {
+  float: right;
+  margin: 0 0 10px 20px;
+  vertical-align: top;
+  height: auto;
+  border-radius: 4px;
+  max-width: 100%;
+}
+
+.tiptap-render img[data-float="none"] {
+  float: none;
+  margin: 16px auto;
+  display: block;
+  height: auto;
+  border-radius: 4px;
+  max-width: 100%;
+}
+
+/* Responsive resim stilleri */
+@media (max-width: 768px) {
+  .tiptap-render img[data-float="left"],
+  .tiptap-render img[data-float="right"] {
+    float: none;
+    display: block;
+    margin: 16px auto;
+    max-width: 100%;
+  }
+}
+
+/* Metin formatları */
+.tiptap-render strong {
+  font-weight: 600;
+}
+
+.tiptap-render em {
+  font-style: italic;
+}
+
+.tiptap-render u {
+  text-decoration: underline;
+}
+
+.tiptap-render s {
+  text-decoration: line-through;
+}
+
+/* Highlight (vurgu) */
+.tiptap-render mark {
+  background: #fef3c7;
+  padding: 1px 2px;
+  border-radius: 2px;
+}
+
+/* Subscript ve Superscript */
+.tiptap-render sub {
+  font-size: 0.8em;
+  vertical-align: sub;
+}
+
+.tiptap-render sup {
+  font-size: 0.8em;
+  vertical-align: super;
+}
+
+/* Boş paragraflar için min-height */
+.tiptap-render p:empty {
+  min-height: 1.2em;
+}
+
+/* Print stilleri */
+@media print {
+  .tiptap-render {
+    color: black;
+  }
+  
+  .tiptap-render img[data-float="left"],
+  .tiptap-render img[data-float="right"] {
+    float: none;
+    display: block;
+    margin: 16px auto;
+  }
+}
