@@ -1,7 +1,9 @@
 /**
- * SEO Utilities for Hafriyat Module
+ * SEO Utilities for various modules
  * Generates SEO-friendly URLs and meta data
  */
+
+import { db } from '@/lib/db';
 
 /**
  * Converts text to SEO-friendly URL slug
@@ -135,4 +137,76 @@ export function validateSeoData(seoData: any) {
     isValid: errors.length === 0,
     errors
   };
+}
+
+/**
+ * Department-specific slug generation utilities
+ */
+
+/**
+ * Generates a URL-friendly slug from department name
+ * @param name - Department name
+ * @returns URL-friendly slug
+ */
+export function generateDepartmentSlug(name: string): string {
+  if (!name) return '';
+
+  return name
+    .toLowerCase()
+    .replace(/[çğıöşüÇĞIÖŞÜ]/g, (char) => {
+      const map: { [key: string]: string } = {
+        'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u',
+        'Ç': 'c', 'Ğ': 'g', 'I': 'i', 'Ö': 'o', 'Ş': 's', 'Ü': 'u'
+      };
+      return map[char] || char;
+    })
+    .replace(/[^\w\s-]/g, '')     // Remove special chars except letters, numbers, spaces, and dashes
+    .replace(/\s+/g, '-')          // Replace spaces with dashes
+    .replace(/-+/g, '-')           // Replace multiple dashes with single
+    .trim()
+    .replace(/^-|-$/g, '');        // Remove leading/trailing dashes
+}
+
+/**
+ * Generates a unique slug for a department
+ * @param name - Department name
+ * @param excludeId - Department ID to exclude from uniqueness check (for updates)
+ * @returns Promise<string> - Unique slug
+ */
+export async function generateUniqueDepartmentSlug(name: string, excludeId?: string): Promise<string> {
+  let baseSlug = generateDepartmentSlug(name);
+  let slug = baseSlug;
+  let counter = 1;
+
+  while (true) {
+    const existing = await db.department.findFirst({
+      where: {
+        slug: slug,
+        ...(excludeId && { id: { not: excludeId } })
+      }
+    });
+
+    if (!existing) {
+      return slug;
+    }
+
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+}
+
+/**
+ * Validates department slug format
+ * @param slug - The slug to validate
+ * @returns true if valid, false otherwise
+ */
+export function validateDepartmentSlug(slug: string): boolean {
+  if (!slug) return false;
+
+  const pattern = /^[a-z0-9-]+$/;
+  return pattern.test(slug) &&
+         slug.length >= 2 &&
+         slug.length <= 100 &&
+         !slug.startsWith('-') &&
+         !slug.endsWith('-');
 }

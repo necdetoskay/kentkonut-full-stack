@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Building2, Save, Image as ImageIcon } from "lucide-react"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
 import RichTextEditor from "@/components/ui/rich-text-editor-tiptap"
@@ -19,6 +20,7 @@ interface DepartmentFormData {
   slug: string
   imageUrl: string
   services: string[]
+  managerId: string
   isActive: boolean
   order: number
 }
@@ -28,19 +30,39 @@ export default function NewDepartmentPage() {
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [servicesText, setServicesText] = useState('')
+  const [executives, setExecutives] = useState<any[]>([])
+  const [executivesLoading, setExecutivesLoading] = useState(false)
   const [formData, setFormData] = useState<DepartmentFormData>({
     name: '',
     content: '',
     slug: '',
     imageUrl: '',
     services: [],
+    managerId: '',
     isActive: true,
     order: 0
   })
 
   useEffect(() => {
     setServicesText(formData.services.join('\n'))
+    fetchExecutives()
   }, [])
+
+  const fetchExecutives = async () => {
+    try {
+      setExecutivesLoading(true)
+      const response = await fetch('/api/executives?isActive=true')
+
+      if (response.ok) {
+        const data = await response.json()
+        setExecutives(data.data || data)
+      }
+    } catch (err) {
+      console.error('Error fetching executives:', err)
+    } finally {
+      setExecutivesLoading(false)
+    }
+  }
 
   const updateServices = (text: string) => {
     setServicesText(text)
@@ -125,13 +147,37 @@ export default function NewDepartmentPage() {
                 />
               </div>
             </div>
-            
+
+            <div className="space-y-2">
+              <Label htmlFor="managerId">Birim Yöneticisi (Yönetici)</Label>
+              <Select
+                value={formData.managerId}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, managerId: value }))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Birim yöneticisi seçin..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Yönetici seçilmedi</SelectItem>
+                  {executives.map((executive) => (
+                    <SelectItem key={executive.id} value={executive.id}>
+                      {executive.name} - {executive.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {executivesLoading && (
+                <p className="text-sm text-gray-500">Yöneticiler yükleniyor...</p>
+              )}
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="content">İçerik</Label>
               <RichTextEditor
                 content={formData.content}
                 onChange={(content) => setFormData(prev => ({ ...prev, content }))}
                 minHeight="200px"
+                mediaFolder="kurumsal"
               />
             </div>            <div className="space-y-2">
               <Label>Görsel</Label>
@@ -163,7 +209,8 @@ export default function NewDepartmentPage() {
                   onSelect={(media: GlobalMediaFile) => {
                     setFormData(prev => ({ ...prev, imageUrl: media.url }))
                   }}
-                  defaultCategory="department-images"
+                  defaultCategory="kurumsal"
+                  restrictToCategory="kurumsal"
                   trigger={
                     <Button type="button" variant="outline" className="w-full">
                       <ImageIcon className="w-4 h-4 mr-2" />

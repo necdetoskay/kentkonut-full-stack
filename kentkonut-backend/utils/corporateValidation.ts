@@ -63,26 +63,33 @@ export const ExecutiveValidationSchema = z.object({
   name: z.string()
     .min(2, "İsim en az 2 karakter olmalıdır")
     .max(100, "İsim 100 karakteri geçemez")
-    .regex(/^[a-zA-ZÀ-ÿĞğıİöÖşŞüÜçÇ\s]+$/, "İsim sadece harflerden oluşmalıdır"),
+    .regex(/^[a-zA-ZÀ-ÿĞğıİöÖşŞüÜçÇ0-9\s\.\-]+$/, "İsim sadece harfler, rakamlar, boşluk, nokta ve tire içerebilir"),
   
   title: z.string()
     .min(2, "Başlık en az 2 karakter olmalıdır")
     .max(200, "Başlık 200 karakteri geçemez"),
   
   position: z.string()
-    .min(2, "Pozisyon en az 2 karakter olmalıdır")
-    .max(200, "Pozisyon 200 karakteri geçemez"),
+    .optional()
+    .transform(val => val === "" ? undefined : val)
+    .refine((val) => {
+      if (!val) return true; // Allow empty/undefined
+      return val.length >= 2;
+    }, "Pozisyon en az 2 karakter olmalıdır")
+    .refine((val) => {
+      if (!val) return true; // Allow empty/undefined
+      return val.length <= 200;
+    }, "Pozisyon 200 karakteri geçemez"),
   
   slug: z.string()
-    .regex(/^[a-z0-9-]+$/, "Slug sadece küçük harf, sayı ve tire içerebilir")
     .optional()
-    .or(z.literal("")),
+    .or(z.literal(""))
+    .refine((val) => {
+      if (!val || val === "") return true;
+      return /^[a-z0-9-]+$/.test(val);
+    }, "Slug sadece küçük harf, sayı ve tire içerebilir"),
   
-  biography: z.string()
-    .max(5000, "Biyografi 5000 karakteri geçemez")
-    .transform(sanitizeHtml)
-    .optional()
-    .or(z.literal("")),
+
   
   imageUrl: z.string()
     .optional()
@@ -103,10 +110,45 @@ export const ExecutiveValidationSchema = z.object({
     .optional()
     .or(z.literal(""))
     .refine(validateLinkedInUrl, "Geçersiz LinkedIn URL'si"),
-  
-  type: z.enum(["PRESIDENT", "GENERAL_MANAGER", "DIRECTOR", "MANAGER"], {
+
+  quickAccessUrl: z.string()
+    .optional()
+    .transform(val => val === "" ? undefined : val)
+    .refine((url) => {
+      if (!url) return true;
+
+      // Allow relative URLs starting with /
+      if (url.startsWith('/')) return true;
+
+      // Validate absolute URLs
+      try {
+        new URL(url);
+        return true;
+      } catch (error) {
+        console.log('URL validation error for:', url, error);
+        return false;
+      }
+    }, {
+      message: "Lütfen geçerli bir URL girin. Örnek: https://example.com veya /sayfa-yolu"
+    }),
+
+  hasQuickAccessLinks: z.boolean()
+    .optional()
+    .default(false),
+
+  type: z.enum(["PRESIDENT", "GENERAL_MANAGER", "DIRECTOR", "MANAGER", "DEPARTMENT", "STRATEGY", "GOAL"], {
     required_error: "Yönetici tipi seçilmelidir",
   }),
+
+  pageId: z.string()
+    .optional()
+    .or(z.literal(""))
+    .or(z.literal("none"))
+    .refine((val) => {
+      if (!val || val === "" || val === "none") return true;
+      // Basic validation for CUID format
+      return /^[a-z0-9]{25}$/.test(val);
+    }, "Geçersiz sayfa ID'si"),
   
   order: z.number()
     .min(0, "Sıra numarası 0'dan küçük olamaz")
@@ -114,6 +156,50 @@ export const ExecutiveValidationSchema = z.object({
     .int("Sıra numarası tam sayı olmalıdır"),
   
   isActive: z.boolean(),
+});
+
+// Executive Quick Link Validation Schema
+export const ExecutiveQuickLinkValidationSchema = z.object({
+  title: z.string()
+    .min(1, "Başlık zorunludur")
+    .max(100, "Başlık en fazla 100 karakter olabilir"),
+
+  url: z.string()
+    .min(1, "URL zorunludur")
+    .refine((url) => {
+      // Allow relative URLs starting with /
+      if (url.startsWith('/')) return true;
+
+      // Validate absolute URLs
+      try {
+        new URL(url);
+        return true;
+      } catch {
+        return false;
+      }
+    }, "Geçersiz URL formatı"),
+
+  description: z.string()
+    .optional()
+    .or(z.literal(""))
+    .refine((desc) => {
+      if (!desc || desc === "") return true;
+      return desc.length <= 500;
+    }, "Açıklama en fazla 500 karakter olabilir"),
+
+  icon: z.string()
+    .optional()
+    .default("link"),
+
+  order: z.number()
+    .int()
+    .min(0)
+    .optional()
+    .default(0),
+
+  isActive: z.boolean()
+    .optional()
+    .default(true),
 });
 
 // Quick Link Validation Schema
@@ -161,27 +247,31 @@ export const DepartmentValidationSchema = z.object({
   name: z.string()
     .min(2, "Departman adı en az 2 karakter olmalıdır")
     .max(100, "Departman adı 100 karakteri geçemez"),
-  
+
   content: z.string()
     .max(10000, "İçerik 10000 karakteri geçemez")
     .transform(sanitizeHtml)
     .optional()
     .or(z.literal("")),
-  
+
   slug: z.string()
     .regex(/^[a-z0-9-]+$/, "Slug sadece küçük harf, sayı ve tire içerebilir")
     .optional()
     .or(z.literal("")),
-  
+
   directorId: z.string()
     .optional()
     .or(z.literal("")),
-  
+
+  managerId: z.string()
+    .optional()
+    .or(z.literal("")),
+
   imageUrl: z.string()
     .optional()
     .or(z.literal(""))
     .refine(validateImageUrl, "Geçersiz görsel URL'si"),
-  
+
   services: z.array(z.string().max(100, "Hizmet adı 100 karakteri geçemez"))
     .max(20, "En fazla 20 hizmet eklenebilir"),
   

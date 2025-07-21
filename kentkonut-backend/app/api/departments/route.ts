@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { DepartmentValidationSchema } from '@/utils/corporateValidation';
 import { invalidateCache } from '@/utils/corporateApi';
+import { generateUniqueDepartmentSlug } from '@/lib/seo-utils';
 import { ZodError } from 'zod';
 
 // Server-side error handler
@@ -61,6 +62,7 @@ export async function GET(request: NextRequest) {
       orderBy: { order: 'asc' },
       include: {
         director: true,
+        manager: true,
         chiefs: {
           orderBy: { order: 'asc' }
         },
@@ -83,16 +85,34 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate input
     const validatedData = DepartmentValidationSchema.parse(body);
-    
+
+    // Generate unique slug if not provided or empty
+    let slug = validatedData.slug;
+    if (!slug || slug.trim() === '') {
+      slug = await generateUniqueDepartmentSlug(validatedData.name);
+    }
+
     const department = await db.department.create({
-      data: validatedData
+      data: {
+        ...validatedData,
+        slug
+      },
+      include: {
+        director: true,
+        manager: true,
+        chiefs: {
+          orderBy: { order: 'asc' }
+        }
+      }
     });
 
     // Invalidate cache
-    invalidateCache.departments();    return NextResponse.json(department);
+    invalidateCache.departments();
+
+    return NextResponse.json(department);
   } catch (error) {
     return handleServerError(error, 'Department creation error');
   }

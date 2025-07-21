@@ -141,6 +141,7 @@ model Page {
   seoMetrics      PageSeoMetrics[]
   category        PageCategory?    @relation(fields: [categoryId], references: [id])
   quickAccessLinks QuickAccessLink[] @relation("PageQuickAccess")
+  executives      Executive[]      // Executives linked to this page
 
   @@map("pages")
 }
@@ -180,23 +181,45 @@ model PageSeoMetrics {
 }
 
 model Executive {
-  id        String        @id @default(cuid())
-  name      String
-  title     String
-  position  String
-  slug      String?       @unique
-  biography String?
-  imageUrl  String?
-  email     String?
-  phone     String?
-  linkedIn  String?
-  order     Int           @default(0)
-  isActive  Boolean       @default(true)
-  type      ExecutiveType
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id                  String               @id @default(cuid())
+  name                String
+  title               String
+  position            String
+  slug                String?              @unique
+  biography           String?
+  imageUrl            String?
+  email               String?
+  phone               String?
+  linkedIn            String?
+  quickAccessUrl      String?              // Direct URL for quick access to executive's detail page
+  hasQuickAccessLinks Boolean              @default(false) // Toggle for Quick Access Links functionality
+  order               Int                  @default(0)
+  isActive            Boolean              @default(true)
+  type                ExecutiveType
+  pageId              String?              // Link to a specific page in the Pages module
+  page                Page?                @relation(fields: [pageId], references: [id])
+  quickLinks          ExecutiveQuickLink[]
+  managedDepartments  Department[]         @relation("DepartmentManager") // Departments managed by this executive
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
 
   @@map("executives")
+}
+
+model ExecutiveQuickLink {
+  id          String    @id @default(cuid())
+  title       String
+  url         String
+  description String?
+  icon        String?   @default("link")
+  order       Int       @default(0)
+  isActive    Boolean   @default(true)
+  executiveId String
+  executive   Executive @relation(fields: [executiveId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("executive_quick_links")
 }
 
 model Department {
@@ -207,6 +230,7 @@ model Department {
   imageUrl         String?
   services         String[]
   directorId       String?               @unique
+  managerId        String?               // Executive manager reference (optional)
   order            Int                   @default(0)
   isActive         Boolean               @default(true)
   createdAt        DateTime              @default(now())
@@ -214,6 +238,7 @@ model Department {
   hasQuickAccess   Boolean               @default(false) // Hızlı erişim aktif mi?
   quickLinks       DepartmentQuickLink[]
   director         Personnel?            @relation("DepartmentDirector", fields: [directorId], references: [id])
+  manager          Executive?            @relation("DepartmentManager", fields: [managerId], references: [id])
   chiefs           Personnel[]           @relation("DepartmentChiefs")
   quickAccessLinks QuickAccessLink[]     @relation("DepartmentQuickAccess")
 
@@ -482,6 +507,9 @@ enum ExecutiveType {
   GENERAL_MANAGER
   DIRECTOR
   MANAGER
+  DEPARTMENT        // For organizational sections like "Birimlerimiz"
+  STRATEGY          // For strategy section
+  GOAL              // For goals section
 }
 
 enum CorporateContentType {

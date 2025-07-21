@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Building2, Save, Users, Trash2, ImageIcon } from "lucide-react"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -68,6 +69,7 @@ interface DepartmentFormData {
   slug: string
   imageUrl: string
   services: string[]
+  managerId: string
   isActive: boolean
   order: number
   hasQuickAccess?: boolean // Hızlı erişim aktif mi?
@@ -82,6 +84,8 @@ export default function EditDepartmentPage({ params }: { params: Promise<{ id: s
   const [submitting, setSubmitting] = useState(false)
   const [activeTab, setActiveTab] = useState("general")
   const [servicesText, setServicesText] = useState('')
+  const [executives, setExecutives] = useState<any[]>([])
+  const [executivesLoading, setExecutivesLoading] = useState(false)
   
   const [formData, setFormData] = useState<DepartmentFormData>({
     name: '',
@@ -89,6 +93,7 @@ export default function EditDepartmentPage({ params }: { params: Promise<{ id: s
     slug: '',
     imageUrl: '',
     services: [],
+    managerId: '',
     isActive: true,
     order: 0,
     hasQuickAccess: false // Hızlı erişim aktif mi?
@@ -96,7 +101,24 @@ export default function EditDepartmentPage({ params }: { params: Promise<{ id: s
 
   useEffect(() => {
     fetchDepartment()
+    fetchExecutives()
   }, [])
+
+  const fetchExecutives = async () => {
+    try {
+      setExecutivesLoading(true)
+      const response = await fetch('/api/executives?isActive=true')
+
+      if (response.ok) {
+        const data = await response.json()
+        setExecutives(data.data || data)
+      }
+    } catch (err) {
+      console.error('Error fetching executives:', err)
+    } finally {
+      setExecutivesLoading(false)
+    }
+  }
   const fetchDepartment = async () => {
     try {
       setLoading(true)
@@ -118,6 +140,7 @@ export default function EditDepartmentPage({ params }: { params: Promise<{ id: s
         slug: data.slug || '',
         imageUrl: data.imageUrl || '',
         services: data.services || [],
+        managerId: data.managerId || '',
         isActive: data.isActive,
         order: data.order || 0,
         hasQuickAccess: data.hasQuickAccess || false
@@ -274,6 +297,29 @@ export default function EditDepartmentPage({ params }: { params: Promise<{ id: s
                     />
                   </div>
                 </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="managerId">Birim Yöneticisi (Yönetici)</Label>
+                  <Select
+                    value={formData.managerId}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, managerId: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Birim yöneticisi seçin..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">Yönetici seçilmedi</SelectItem>
+                      {executives.map((executive) => (
+                        <SelectItem key={executive.id} value={executive.id}>
+                          {executive.name} - {executive.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {executivesLoading && (
+                    <p className="text-sm text-gray-500">Yöneticiler yükleniyor...</p>
+                  )}
+                </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="content">İçerik</Label>
@@ -282,7 +328,7 @@ export default function EditDepartmentPage({ params }: { params: Promise<{ id: s
                     onChange={(content) => setFormData(prev => ({ ...prev, content }))}
                     placeholder="Birim içeriğinizi yazın ve biçimlendirin..."
                     minHeight="200px"
-                    mediaFolder="department-images"
+                    mediaFolder="kurumsal"
                   />
                 </div>                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -314,7 +360,8 @@ export default function EditDepartmentPage({ params }: { params: Promise<{ id: s
                         onSelect={(media: GlobalMediaFile) => {
                           setFormData(prev => ({ ...prev, imageUrl: media.url }))
                         }}
-                        defaultCategory="department-images"
+                        defaultCategory="kurumsal"
+                        restrictToCategory="kurumsal"
                         trigger={
                           <Button type="button" variant="outline" className="w-full">
                             <ImageIcon className="w-4 h-4 mr-2" />
