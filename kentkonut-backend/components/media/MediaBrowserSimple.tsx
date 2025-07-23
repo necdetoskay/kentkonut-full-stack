@@ -8,23 +8,28 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useMediaCategories } from "@/app/context/MediaCategoryContext";
-import { 
-  Search, 
-  Grid3X3, 
-  List, 
-  Upload, 
+import {
+  Search,
+  Grid3X3,
+  List,
+  Upload,
   RefreshCw,
   Image,
   Film,
   FileText,
   File,
   Check,
-  X
+  X,
+  Trash2,
+  MoreVertical,
+  CheckSquare,
+  Square
 } from "lucide-react";
 import { toast } from "sonner";
 import { formatFileSize } from "@/lib/media-utils";
 import { GlobalMediaFile } from "./GlobalMediaSelector";
 import { MediaUploader } from "./MediaUploader";
+import { MediaDeletionDialog, useDeletionDialog } from "./MediaDeletionDialog";
 
 interface MediaBrowserSimpleProps {
   isOpen: boolean;
@@ -59,6 +64,19 @@ export function MediaBrowserSimple({
   const [selectedFiles, setSelectedFiles] = useState<GlobalMediaFile[]>([]);
   const [showUploaderModal, setShowUploaderModal] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [recentlyUploadedFiles, setRecentlyUploadedFiles] = useState<GlobalMediaFile[]>([]);
+  const [bulkSelectionMode, setBulkSelectionMode] = useState(false);
+  const [bulkSelectedFiles, setBulkSelectedFiles] = useState<GlobalMediaFile[]>([]);
+
+  // Deletion dialog hook
+  const {
+    isOpen: isDeletionDialogOpen,
+    filesToDelete,
+    isDeleting,
+    openDialog: openDeletionDialog,
+    closeDialog: closeDeletionDialog,
+    handleDeletion
+  } = useDeletionDialog();
 
   // Force refresh function
   const forceRefresh = () => {
@@ -173,14 +191,121 @@ export function MediaBrowserSimple({
 
   // Handle upload complete
   const handleUploadComplete = (uploadedFiles: any[]) => {
-    console.log("🎯 MediaBrowserSimple: Upload complete, refreshing...");
+    console.log("🎯 MediaBrowserSimple: Upload complete, refreshing...", uploadedFiles);
     setShowUploaderModal(false);
-    toast.success(`${uploadedFiles.length} dosya başarıyla yüklendi`);
-    
-    // Force refresh after upload
+    toast.success(`${uploadedFiles.length} dosya başarıyla yüklendi ve seçildi`);
+
+    // Convert uploaded files to GlobalMediaFile format
+    const uploadedGlobalFiles: GlobalMediaFile[] = uploadedFiles.map(file => ({
+      id: file.id,
+      url: file.url,
+      filename: file.filename || file.originalName,
+      originalName: file.originalName || file.filename,
+      alt: file.alt || '',
+      caption: file.caption || '',
+      mimeType: file.mimeType || 'image/jpeg',
+      size: file.size || 0,
+      categoryId: file.categoryId || categoryFilter || 1,
+      createdAt: file.createdAt || new Date().toISOString(),
+      updatedAt: file.updatedAt || new Date().toISOString()
+    }));
+
+    // Store recently uploaded files for auto-selection
+    setRecentlyUploadedFiles(uploadedGlobalFiles);
+
+    // Force refresh after upload and auto-select uploaded files
     setTimeout(() => {
       forceRefresh();
     }, 500);
+  };
+
+  // Handle individual file deletion
+  const handleDeleteFile = async (file: GlobalMediaFile) => {
+    openDeletionDialog([file]);
+  };
+
+  // Handle bulk file deletion
+  const handleBulkDelete = async () => {
+    if (bulkSelectedFiles.length === 0) {
+      toast.error('Silinecek dosya seçilmedi');
+      return;
+    }
+    openDeletionDialog(bulkSelectedFiles);
+  };
+
+  // Perform actual deletion
+  const performDeletion = async (files: GlobalMediaFile[]) => {
+    try {
+      if (files.length === 1) {
+        // Single file deletion
+        const response = await fetch(`/api/media/${files[0].id}`, {
+          method: 'DELETE',
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to delete file');
+        }
+      } else {
+        // Bulk deletion
+        const response = await fetch('/api/media/bulk', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            action: 'delete',
+            mediaIds: files.map(f => f.id),
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to delete files');
+        }
+      }
+
+      // Remove deleted files from current state
+      const deletedIds = files.map(f => f.id);
+      setMediaFiles(prev => prev.filter(f => !deletedIds.includes(f.id)));
+      setSelectedFiles(prev => prev.filter(f => !deletedIds.includes(f.id)));
+      setBulkSelectedFiles(prev => prev.filter(f => !deletedIds.includes(f.id)));
+
+      // Refresh the gallery to ensure consistency
+      setTimeout(() => {
+        forceRefresh();
+      }, 500);
+
+    } catch (error) {
+      console.error('Deletion error', error);
+      throw error;
+    }
+  };
+
+  // Toggle bulk selection mode
+  const toggleBulkSelectionMode = () => {
+    setBulkSelectionMode(!bulkSelectionMode);
+    setBulkSelectedFiles([]);
+  };
+
+  // Handle bulk selection checkbox
+  const handleBulkSelection = (file: GlobalMediaFile, event: React.MouseEvent) => {
+    event.stopPropagation();
+
+    const isSelected = bulkSelectedFiles.some(f => f.id === file.id);
+    if (isSelected) {
+      setBulkSelectedFiles(prev => prev.filter(f => f.id !== file.id));
+    } else {
+      setBulkSelectedFiles(prev => [...prev, file]);
+    }
+  };
+
+  // Select all files in bulk mode
+  const selectAllFiles = () => {
+    setBulkSelectedFiles([...mediaFiles]);
+  };
+
+  // Clear all bulk selections
+  const clearAllSelections = () => {
+    setBulkSelectedFiles([]);
   };
   // Fetch files when dialog opens or refreshKey changes
   useEffect(() => {
@@ -198,6 +323,43 @@ export function MediaBrowserSimple({
       allFiles: mediaFiles
     });
   }, [mediaFiles]);
+
+  // Auto-select recently uploaded files after refresh
+  useEffect(() => {
+    if (recentlyUploadedFiles.length > 0 && mediaFiles.length > 0) {
+      console.log("🎯 Auto-selecting recently uploaded files:", recentlyUploadedFiles);
+
+      // Find uploaded files in the current media files list
+      const uploadedFilesInList = recentlyUploadedFiles
+        .map(uploadedFile =>
+          mediaFiles.find(mediaFile =>
+            mediaFile.id === uploadedFile.id ||
+            mediaFile.url === uploadedFile.url ||
+            mediaFile.filename === uploadedFile.filename
+          )
+        )
+        .filter(Boolean) as GlobalMediaFile[];
+
+      if (uploadedFilesInList.length > 0) {
+        console.log("✅ Found uploaded files in media list, auto-selecting:", uploadedFilesInList);
+
+        if (multiple) {
+          // In multiple mode, add to existing selection or replace if no existing selection
+          const existingIds = selectedFiles.map(f => f.id);
+          const newFiles = uploadedFilesInList.filter(f => !existingIds.includes(f.id));
+          setSelectedFiles(prev => [...prev, ...newFiles]);
+        } else {
+          // In single mode, select the first uploaded file
+          setSelectedFiles([uploadedFilesInList[0]]);
+        }
+
+        // Clear recently uploaded files to prevent re-selection
+        setRecentlyUploadedFiles([]);
+
+        toast.success(`${uploadedFilesInList.length} yüklenen dosya otomatik olarak seçildi`);
+      }
+    }
+  }, [mediaFiles, recentlyUploadedFiles, multiple]);
 
   const getMediaUrl = (url?: string) => {
     if (!url) return '';
@@ -224,41 +386,102 @@ export function MediaBrowserSimple({
         </DialogHeader>
 
         <div className="flex-1 flex flex-col min-h-0">
-          {/* Simple toolbar */}
-          <div className="flex gap-4 mb-4 justify-between">
-            <div className="flex items-center gap-2">
-              {restrictCategorySelection && categoryFilter && (
-                <div className="px-3 py-2 bg-blue-50 border border-blue-200 rounded-md flex items-center gap-2">
-                  <Badge variant="secondary">Kategori</Badge>
-                  <span className="text-sm">
-                    {categories.find(cat => cat.id === categoryFilter)?.name || 'Projeler'}
+          {/* Enhanced toolbar with bulk actions */}
+          <div className="space-y-3 mb-4">
+            {/* Main toolbar */}
+            <div className="flex gap-4 justify-between">
+              <div className="flex items-center gap-2">
+                {restrictCategorySelection && categoryFilter && (
+                  <div className="px-3 py-2 bg-blue-50 border border-blue-200 rounded-md flex items-center gap-2">
+                    <Badge variant="secondary">Kategori</Badge>
+                    <span className="text-sm">
+                      {categories.find(cat => cat.id === categoryFilter)?.name || 'Projeler'}
+                    </span>
+                  </div>
+                )}
+                <p className="text-sm text-gray-600">
+                  {mediaFiles.length} dosya bulundu
+                  {bulkSelectionMode && bulkSelectedFiles.length > 0 && (
+                    <span className="ml-2 text-primary font-medium">
+                      ({bulkSelectedFiles.length} seçili)
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={bulkSelectionMode ? "default" : "outline"}
+                  size="sm"
+                  onClick={toggleBulkSelectionMode}
+                  disabled={isDeleting}
+                >
+                  <CheckSquare className="h-4 w-4 mr-2" />
+                  {bulkSelectionMode ? 'Seçim Modundan Çık' : 'Çoklu Seçim'}
+                </Button>
+                <Button
+                  type="button"
+                  variant="default"
+                  size="sm"
+                  onClick={() => setShowUploaderModal(true)}
+                  disabled={isDeleting}
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  Yükle
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={forceRefresh}
+                  disabled={loading || isDeleting}
+                >
+                  <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                </Button>
+              </div>
+            </div>
+
+            {/* Bulk actions toolbar */}
+            {bulkSelectionMode && (
+              <div className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-md">
+                <div className="flex items-center gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={selectAllFiles}
+                    disabled={mediaFiles.length === 0 || isDeleting}
+                  >
+                    Tümünü Seç
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={clearAllSelections}
+                    disabled={bulkSelectedFiles.length === 0}
+                  >
+                    Seçimi Temizle
+                  </Button>
+                  <span className="text-sm text-gray-600">
+                    {bulkSelectedFiles.length} / {mediaFiles.length} dosya seçili
                   </span>
                 </div>
-              )}
-              <p className="text-sm text-gray-600">
-                {mediaFiles.length} dosya bulundu
-              </p>
-            </div>
-            
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                variant="default"
-                size="sm"
-                onClick={() => setShowUploaderModal(true)}
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                Yükle
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={forceRefresh}
-                disabled={loading}
-              >
-                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-              </Button>
-            </div>
+
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleBulkDelete}
+                    disabled={bulkSelectedFiles.length === 0 || isDeleting}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Seçilenleri Sil ({bulkSelectedFiles.length})
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Media Grid */}
@@ -280,28 +503,78 @@ export function MediaBrowserSimple({
                 {mediaFiles.map((file) => {
                   const FileIcon = getFileTypeIcon(file.mimeType);
                   const isSelected = selectedFiles.some(f => f.id === file.id);
+                  const isBulkSelected = bulkSelectedFiles.some(f => f.id === file.id);
                   const isImage = file.mimeType.startsWith('image/');
+                  const isRecentlyUploaded = recentlyUploadedFiles.some(f =>
+                    f.id === file.id || f.url === file.url || f.filename === file.filename
+                  );
 
                   return (
                     <Card
                       key={file.id}
-                      className={`cursor-pointer transition-all ${isSelected ? 'ring-2 ring-primary' : 'hover:shadow-md'}`}
-                      onClick={() => handleImageClick(file)}
+                      className={`group cursor-pointer transition-all ${
+                        bulkSelectionMode
+                          ? (isBulkSelected ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:shadow-md hover:ring-1 hover:ring-blue-300')
+                          : (isSelected ? 'ring-2 ring-primary' : 'hover:shadow-md')
+                      }`}
+                      onClick={() => bulkSelectionMode ? handleBulkSelection(file, {} as React.MouseEvent) : handleImageClick(file)}
                     >
                       <CardContent className="p-0 relative">
-                        {/* Selection checkbox */}
-                        <div
-                          className="absolute top-2 left-2 z-10 cursor-pointer hover:scale-110 transition-transform"
-                          onClick={(e) => handleCheckboxSelection(file, e)}
-                        >
-                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-                            isSelected
-                              ? 'bg-primary border-primary text-white'
-                              : 'bg-white border-gray-300 hover:border-primary'
-                          }`}>
-                            {isSelected && <Check className="w-3 h-3" />}
+                        {/* Selection checkbox - different behavior for bulk mode */}
+                        {!bulkSelectionMode ? (
+                          <div
+                            className="absolute top-2 left-2 z-10 cursor-pointer hover:scale-110 transition-transform"
+                            onClick={(e) => handleCheckboxSelection(file, e)}
+                          >
+                            <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                              isSelected
+                                ? 'bg-primary border-primary text-white'
+                                : 'bg-white border-gray-300 hover:border-primary'
+                            }`}>
+                              {isSelected && <Check className="w-3 h-3" />}
+                            </div>
                           </div>
-                        </div>                        {/* File preview */}
+                        ) : (
+                          <div
+                            className="absolute top-2 left-2 z-10 cursor-pointer hover:scale-110 transition-transform"
+                            onClick={(e) => handleBulkSelection(file, e)}
+                          >
+                            <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                              isBulkSelected
+                                ? 'bg-blue-500 border-blue-500 text-white'
+                                : 'bg-white border-gray-300 hover:border-blue-500'
+                            }`}>
+                              {isBulkSelected && <Check className="w-3 h-3" />}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Top right corner - NEW badge or delete button */}
+                        <div className="absolute top-2 right-2 z-10">
+                          {isRecentlyUploaded ? (
+                            <div className="bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-sm">
+                              YENİ
+                            </div>
+                          ) : !bulkSelectionMode ? (
+                            <div
+                              className="opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteFile(file);
+                              }}
+                            >
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                className="w-6 h-6 p-0 rounded-full hover:scale-110 transition-transform"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          ) : null}
+                        </div>
+
+                        {/* File preview */}
                         <div className="w-full aspect-square bg-gray-50 flex items-center justify-center overflow-hidden rounded border">
                           {isImage ? (
                             <img
@@ -369,6 +642,15 @@ export function MediaBrowserSimple({
           </Button>
         </DialogFooter>
       </DialogContent>
+
+      {/* Deletion Dialog */}
+      <MediaDeletionDialog
+        isOpen={isDeletionDialogOpen}
+        onClose={closeDeletionDialog}
+        onConfirm={() => handleDeletion(performDeletion)}
+        files={filesToDelete}
+        isDeleting={isDeleting}
+      />
     </Dialog>
   );
 }

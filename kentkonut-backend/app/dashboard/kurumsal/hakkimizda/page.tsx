@@ -120,25 +120,24 @@ export default function HakkimizdaPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 max-w-6xl space-y-6">
-      <Breadcrumb 
-        items={[
-          { label: "Dashboard", href: "/dashboard" },
-          { label: "Kurumsal", href: "/dashboard/corporate" },
-          { label: "Hakkımızda", href: "/dashboard/kurumsal/hakkimizda" }
-        ]} 
+    <div className="p-6">
+      <Breadcrumb
+        segments={[
+          { name: "Dashboard", href: "/dashboard" },
+          { name: "Kurumsal", href: "/dashboard/corporate" },
+          { name: "Hakkımızda", href: "/dashboard/kurumsal/hakkimizda" }
+        ]}
+        className="mb-4"
       />
 
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Hakkımızda</h1>
-          <p className="text-muted-foreground">
-            Şirket hakkında genel bilgileri yönetin
-          </p>
-        </div>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold">Hakkımızda</h1>
+        <p className="text-gray-600 mt-2">
+          Şirket hakkında genel bilgileri yönetin
+        </p>
       </div>
 
-      <div className="w-full">
+      <div className="space-y-6">
         {/* Hakkımızda İçeriği */}
         <Card>
           <CardHeader>

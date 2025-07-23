@@ -87,17 +87,30 @@ export async function POST(request: NextRequest) {
     await writeFile(filePath, buffer);
 
     // URL yolunu oluştur
-    const fileUrl = `/uploads/${fileType}/${fileName}`;    // Medya veritabanına kaydet
+    const fileUrl = `/uploads/${fileType}/${fileName}`;
+
+    // Determine media type based on MIME type
+    let mediaType: 'IMAGE' | 'VIDEO' | 'PDF' | 'WORD' | 'EMBED' = 'IMAGE';
+    if (file.type.startsWith('video/')) {
+      mediaType = 'VIDEO';
+    } else if (file.type === 'application/pdf') {
+      mediaType = 'PDF';
+    } else if (file.type.includes('word') || file.type.includes('document')) {
+      mediaType = 'WORD';
+    }
+
+    // Medya veritabanına kaydet
     const media = await db.media.create({
       data: {
         filename: fileName,
         originalName: file.name,
         path: filePath,
+        url: fileUrl,
         mimeType: file.type,
         size: file.size,
+        type: mediaType,
         alt: `${sanitizedName} görsel`,
         categoryId: contentImagesCategory.id
-        // URL field will be populated by background script if needed
       }
     });
 

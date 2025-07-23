@@ -338,7 +338,9 @@ export function MediaGallerySelector({
         alt: result.alt,
         caption: result.caption,
         mimeType: result.mimeType,
-        categoryId: result.categoryId
+        size: result.size || cropImageData.size,
+        categoryId: result.categoryId,
+        createdAt: result.createdAt || new Date().toISOString()
       };
 
       // Replace the original image with cropped version

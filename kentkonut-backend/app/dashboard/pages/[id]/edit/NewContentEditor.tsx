@@ -431,15 +431,16 @@ export default function NewContentEditor({ page, onContentUpdate }: NewContentEd
                   required
                   className="flex-1"                />                <GlobalMediaSelector
                   onSelect={(media: GlobalMediaFile) => {
-                    updateContentBlock(block.id, { 
-                      config: { 
-                        ...block.config, 
+                    updateContentBlock(block.id, {
+                      config: {
+                        ...block.config,
                         imageUrl: media.url,
                         alt: block.config?.alt || media.alt || media.originalName,
                         caption: block.config?.caption || media.caption
                       }
                     });
                   }}                  defaultCategory="content-images"
+                  customFolder="media/sayfa"
                   trigger={
                     <Button type="button" variant="secondary" className="flex-shrink-0">
                       <ImageIcon className="w-4 h-4 mr-2" />
@@ -902,7 +903,7 @@ export default function NewContentEditor({ page, onContentUpdate }: NewContentEd
                   toast.success(`${newImages.length} görsel seçildi`);
                 }}
                 categoryId={5} // İçerik Resimleri kategorisi
-                customFolder="media/icerik"
+                customFolder="media/sayfa"
                 title="Sayfa Görselleri Seç"
                 buttonText="Sayfa Görselleri Seç"
                 addButtonText="Görsel Ekle"

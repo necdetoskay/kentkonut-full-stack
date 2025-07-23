@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { QuickLinkValidationSchema } from '@/utils/corporateValidation';
+import { ExecutiveQuickLinkValidationSchema } from '@/utils/corporateValidation';
 import { handleApiError } from '@/utils/corporateApi';
 
 export async function GET(
@@ -9,7 +9,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const quickLink = await (db as any).quickLink.findUnique({
+    const quickLink = await db.executiveQuickLink.findUnique({
       where: { id },
     });
 
@@ -38,14 +38,14 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    
+
     // Validate using Zod schema
-    const validationResult = QuickLinkValidationSchema.safeParse(body);
-    
+    const validationResult = ExecutiveQuickLinkValidationSchema.safeParse(body);
+
     if (!validationResult.success) {
       console.log('❌ Quick Links API - Validation failed:', validationResult.error);
       return NextResponse.json(
-        { 
+        {
           error: 'Validation failed',
           details: validationResult.error.errors.map(err => ({
             field: err.path[0],
@@ -58,7 +58,7 @@ export async function PUT(
 
     const validatedData = validationResult.data;
 
-    const quickLink = await (db as any).quickLink.update({
+    const quickLink = await db.executiveQuickLink.update({
       where: { id },
       data: {
         title: validatedData.title,
@@ -67,6 +67,7 @@ export async function PUT(
         icon: validatedData.icon,
         order: validatedData.order,
         isActive: validatedData.isActive,
+        // executiveId is not updated - it's set when the record is created
       },
     });
 
@@ -87,7 +88,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    await (db as any).quickLink.delete({
+    await db.executiveQuickLink.delete({
       where: { id },
     });
 

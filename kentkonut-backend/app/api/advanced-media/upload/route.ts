@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
@@ -76,7 +75,7 @@ async function ensureDirectoryExists(dir: string) {
 export async function POST(request: NextRequest) {
   try {
     // Authentication kontrolü
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
@@ -160,6 +159,16 @@ export async function POST(request: NextRequest) {
       thumbnailUrls = await generateThumbnails(filePath, uniqueFileName, uploadDir);
     }
 
+    // Determine media type
+    let mediaType: 'IMAGE' | 'VIDEO' | 'PDF' | 'WORD' | 'EMBED' = 'IMAGE';
+    if (file.type.startsWith('video/')) {
+      mediaType = 'VIDEO';
+    } else if (file.type === 'application/pdf') {
+      mediaType = 'PDF';
+    } else if (file.type.includes('word') || file.type.includes('document')) {
+      mediaType = 'WORD';
+    }
+
     // Veritabanına kaydet
     const mediaFile = await db.media.create({
       data: {
@@ -169,6 +178,7 @@ export async function POST(request: NextRequest) {
         size: file.size,
         path: filePath.replace(process.cwd(), '').replace(/\\/g, '/'),
         url: fileUrl,
+        type: mediaType,
         alt: alt || null,
         caption: caption || null,
         categoryId: finalCategoryId,
@@ -190,7 +200,8 @@ export async function POST(request: NextRequest) {
       id: mediaFile.id,
       filename: mediaFile.filename,
       url: mediaFile.url,
-      category: mediaFile.category?.name
+      categoryId: mediaFile.categoryId,
+      categoryName: mediaFile.category?.name
     });
 
     const response: UploadApiResponse = {

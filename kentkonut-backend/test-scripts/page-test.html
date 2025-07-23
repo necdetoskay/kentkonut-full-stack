@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Management Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .result { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .error { background: #ffebee; color: #c62828; }
+        .success { background: #e8f5e9; color: #2e7d32; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        textarea { width: 100%; height: 100px; margin: 10px 0; }
+        .content-block { border: 1px solid #ccc; margin: 10px 0; padding: 15px; border-radius: 6px; }
+        .content-type { background: #007bff; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Page Management System Test</h1>
+        
+        <div class="section">
+            <h2>1. API Status Test</h2>
+            <button onclick="testAPIStatus()">Test API Durumu</button>
+            <div id="api-status" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h2>2. Sayfa Listesi</h2>
+            <button onclick="fetchPages()">Sayfaları Getir</button>
+            <div id="pages-list" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h2>3. Sayfa Detayı</h2>
+            <input type="text" id="page-id" placeholder="Page ID girin..." value="cmbwc9s240000inxl961v85qy">
+            <button onclick="fetchPageDetails()">Sayfa Detayını Getir</button>
+            <div id="page-details" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h2>4. İçerik Listesi</h2>
+            <button onclick="fetchContents()">İçerikleri Getir</button>
+            <div id="contents-list" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h2>5. Yeni İçerik Oluştur</h2>
+            <select id="content-type">
+                <option value="TEXT">Metin</option>
+                <option value="IMAGE">Görsel</option>
+                <option value="VIDEO">Video</option>
+                <option value="CTA">Çağrı</option>
+            </select>
+            <input type="text" id="content-title" placeholder="İçerik başlığı...">
+            <textarea id="content-text" placeholder="İçerik metni..."></textarea>
+            <button onclick="createContent()">İçerik Oluştur</button>
+            <div id="create-result" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h2>6. Türkçe Karakter Testi</h2>
+            <button onclick="testTurkishChars()">Türkçe Test</button>
+            <div id="turkish-test" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3002/api';
+        const currentPageId = 'cmbwc9s240000inxl961v85qy'; // Hakkımızda sayfası
+
+        async function testAPIStatus() {
+            const result = document.getElementById('api-status');
+            result.innerHTML = 'Test ediliyor...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/public/pages`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    result.innerHTML = `<div class="success">✅ API çalışıyor - ${data.count} sayfa bulundu</div>`;
+                } else {
+                    result.innerHTML = `<div class="error">❌ API hatası: ${data.error}</div>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">💥 Bağlantı hatası: ${error.message}</div>`;
+            }
+        }
+
+        async function fetchPages() {
+            const result = document.getElementById('pages-list');
+            result.innerHTML = 'Yükleniyor...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/pages`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = '<h3>📄 Sayfalar:</h3>';
+                    data.data.forEach(page => {
+                        html += `
+                            <div class="content-block">
+                                <strong>${page.title}</strong> (${page.slug})
+                                <br>Tip: ${page.pageType}, Aktif: ${page.isActive ? 'Evet' : 'Hayır'}
+                                <br>ID: <code>${page.id}</code>
+                            </div>
+                        `;
+                    });
+                    result.innerHTML = html;
+                } else {
+                    result.innerHTML = `<div class="error">❌ Hata: ${data.error}</div>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">💥 Hata: ${error.message}</div>`;
+            }
+        }
+
+        async function fetchPageDetails() {
+            const pageId = document.getElementById('page-id').value;
+            const result = document.getElementById('page-details');
+            result.innerHTML = 'Yükleniyor...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/pages/${pageId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const page = data.data;
+                    result.innerHTML = `
+                        <h3>📄 ${page.title}</h3>
+                        <p><strong>Slug:</strong> ${page.slug}</p>
+                        <p><strong>Açıklama:</strong> ${page.description || 'Yok'}</p>
+                        <p><strong>Tip:</strong> ${page.pageType}</p>
+                        <p><strong>Görüntülenme:</strong> ${page.viewCount || 0}</p>
+                        <p><strong>İçerik Sayısı:</strong> ${page.contents ? page.contents.length : 0}</p>
+                        <p><strong>Son Güncelleme:</strong> ${new Date(page.updatedAt).toLocaleString('tr-TR')}</p>
+                    `;
+                } else {
+                    result.innerHTML = `<div class="error">❌ Hata: ${data.error}</div>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">💥 Hata: ${error.message}</div>`;
+            }
+        }
+
+        async function fetchContents() {
+            const result = document.getElementById('contents-list');
+            result.innerHTML = 'Yükleniyor...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/page-contents?pageId=${currentPageId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = '<h3>📋 İçerikler:</h3>';
+                    if (data.data.length === 0) {
+                        html += '<p>İçerik bulunamadı.</p>';
+                    } else {
+                        data.data.forEach(content => {
+                            html += `
+                                <div class="content-block">
+                                    <span class="content-type">${content.type}</span>
+                                    <strong>${content.title || 'Başlıksız'}</strong>
+                                    <br>Sıra: ${content.order}, Aktif: ${content.isActive ? 'Evet' : 'Hayır'}
+                                    <br>Tam Genişlik: ${content.fullWidth ? 'Evet' : 'Hayır'}
+                                    ${content.content ? `<br>İçerik: ${content.content.substring(0, 100)}...` : ''}
+                                    <br><small>ID: ${content.id}</small>
+                                </div>
+                            `;
+                        });
+                    }
+                    result.innerHTML = html;
+                } else {
+                    result.innerHTML = `<div class="error">❌ Hata: ${data.error}</div>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">💥 Hata: ${error.message}</div>`;
+            }
+        }
+
+        async function createContent() {
+            const type = document.getElementById('content-type').value;
+            const title = document.getElementById('content-title').value;
+            const content = document.getElementById('content-text').value;
+            const result = document.getElementById('create-result');
+            
+            if (!title) {
+                result.innerHTML = '<div class="error">❌ Başlık gerekli</div>';
+                return;
+            }
+            
+            result.innerHTML = 'Oluşturuluyor...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/page-contents`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        pageId: currentPageId,
+                        type: type,
+                        title: title,
+                        content: content,
+                        order: 99,
+                        isActive: true,
+                        fullWidth: false
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    result.innerHTML = `<div class="success">✅ İçerik oluşturuldu: ${data.data.title}</div>`;
+                    // Form temizle
+                    document.getElementById('content-title').value = '';
+                    document.getElementById('content-text').value = '';
+                } else {
+                    result.innerHTML = `<div class="error">❌ Hata: ${data.error}</div>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">💥 Hata: ${error.message}</div>`;
+            }
+        }
+
+        async function testTurkishChars() {
+            const result = document.getElementById('turkish-test');
+            result.innerHTML = 'Test ediliyor...';
+            
+            const turkishText = 'Türkçe özel karakterler: ğüşıöç ĞÜŞIÖÇ';
+            
+            try {
+                // Test ile temporary sayfa oluştur
+                const response = await fetch(`${API_BASE}/pages`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        slug: 'test-' + Date.now(),
+                        title: turkishText,
+                        description: 'Bu bir Türkçe karakter test sayfasıdır',
+                        pageType: 'CUSTOM',
+                        showInNavigation: false,
+                        order: 999,
+                        isActive: false,
+                        template: 'DEFAULT',
+                        headerType: 'NONE'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Geri oku
+                    const readResponse = await fetch(`${API_BASE}/pages/${data.data.id}`);
+                    const readData = await readResponse.json();
+                    
+                    // Sil
+                    await fetch(`${API_BASE}/pages/${data.data.id}`, { method: 'DELETE' });
+                    
+                    if (readData.success) {
+                        const receivedTitle = readData.data.title;
+                        const isCorrect = receivedTitle === turkishText;
+                        
+                        result.innerHTML = `
+                            <div class="${isCorrect ? 'success' : 'error'}">
+                                ${isCorrect ? '✅' : '❌'} Türkçe karakter testi
+                                <br>Gönderilen: ${turkishText}
+                                <br>Alınan: ${receivedTitle}
+                                <br>Durum: ${isCorrect ? 'BAŞARILI' : 'BAŞARISIZ'}
+                            </div>
+                        `;
+                    }
+                } else {
+                    result.innerHTML = `<div class="error">❌ Test hatası: ${data.error}</div>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">💥 Test hatası: ${error.message}</div>`;
+            }
+        }
+
+        // Sayfa yüklendiğinde otomatik test
+        window.onload = function() {
+            testAPIStatus();
+        };
+    </script>
+</body>
+</html>

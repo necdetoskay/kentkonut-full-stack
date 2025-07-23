@@ -89,10 +89,22 @@ export async function POST(request: NextRequest) {
     // Validate input
     const validatedData = DepartmentValidationSchema.parse(body);
 
-    // Generate unique slug if not provided or empty
+    // Generate or validate unique slug
     let slug = validatedData.slug;
+
     if (!slug || slug.trim() === '') {
+      // Generate unique slug from name
       slug = await generateUniqueDepartmentSlug(validatedData.name);
+    } else {
+      // Validate provided slug is unique
+      const existingDepartment = await db.department.findFirst({
+        where: { slug: slug.trim() }
+      });
+
+      if (existingDepartment) {
+        // If slug exists, generate a unique one
+        slug = await generateUniqueDepartmentSlug(validatedData.name);
+      }
     }
 
     const department = await db.department.create({

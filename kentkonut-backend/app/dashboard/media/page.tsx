@@ -165,6 +165,7 @@ function MediaPageContent() {
             categoryId={selectedCategory === "all" ? undefined : parseInt(selectedCategory.replace("category-", ""))}
             showUploader={true}
             selectionMode={true}
+            useEnhancedUploader={true}
           />
         </TabsContent>
       </Tabs>

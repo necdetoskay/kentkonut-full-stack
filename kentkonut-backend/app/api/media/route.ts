@@ -254,7 +254,7 @@ export async function POST(req: NextRequest) {
 
     // Save to database
     // MediaType belirleme
-    let mediaType = "IMAGE";
+    let mediaType: 'IMAGE' | 'VIDEO' | 'PDF' | 'WORD' | 'EMBED' = "IMAGE";
     let embedUrl = null;
     if (file.type.startsWith("image/")) {
       mediaType = "IMAGE";

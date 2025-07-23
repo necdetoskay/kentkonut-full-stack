@@ -9,7 +9,7 @@ export interface BaseEntity {
   order: number;
 }
 
-export type ExecutiveType = 'PRESIDENT' | 'GENERAL_MANAGER' | 'DIRECTOR' | 'MANAGER';
+export type ExecutiveType = 'PRESIDENT' | 'GENERAL_MANAGER' | 'DIRECTOR' | 'MANAGER' | 'DEPARTMENT' | 'STRATEGY' | 'GOAL';
 
 export interface Executive extends BaseEntity {
   name: string;
@@ -22,6 +22,13 @@ export interface Executive extends BaseEntity {
   phone?: string;
   linkedIn?: string;
   type: ExecutiveType;
+  pageId?: string;
+  page?: {
+    id: string;
+    title: string;
+    slug: string;
+    isActive: boolean;
+  };
 }
 
 export interface QuickLink extends BaseEntity {
@@ -78,6 +85,7 @@ export interface ExecutiveFormData {
   phone?: string;
   linkedIn?: string;
   type: ExecutiveType;
+  pageId?: string;
   order: number;
   isActive: boolean;
 }
@@ -113,6 +121,9 @@ export interface ExecutiveStats {
     generalManager: number;
     director: number;
     manager: number;
+    department: number;
+    strategy: number;
+    goal: number;
   };
 }
 
@@ -214,6 +225,9 @@ export const EXECUTIVE_TYPES: { value: ExecutiveType; label: string }[] = [
   { value: 'GENERAL_MANAGER', label: 'Genel Müdür' },
   { value: 'DIRECTOR', label: 'Direktör' },
   { value: 'MANAGER', label: 'Müdür' },
+  { value: 'DEPARTMENT', label: 'Birimlerimiz' },
+  { value: 'STRATEGY', label: 'Stratejimiz' },
+  { value: 'GOAL', label: 'Hedefimiz' },
 ];
 
 export const QUICK_LINK_ICONS = [

@@ -63,10 +63,10 @@ export async function GET(request: NextRequest) {
       where,
       orderBy: { sortOrder: 'asc' },
       include: {
-        page: moduleType === 'page' ? { select: { id: true, title: true, slug: true } } : false,
-        news: moduleType === 'news' ? { select: { id: true, title: true, slug: true } } : false,
-        project: moduleType === 'project' ? { select: { id: true, title: true, slug: true } } : false,
-        department: moduleType === 'department' ? { select: { id: true, name: true, slug: true } } : false
+        page: queryParams.moduleType === 'page' ? { select: { id: true, title: true, slug: true } } : false,
+        news: queryParams.moduleType === 'news' ? { select: { id: true, title: true, slug: true } } : false,
+        project: queryParams.moduleType === 'project' ? { select: { id: true, title: true, slug: true } } : false,
+        department: queryParams.moduleType === 'department' ? { select: { id: true, name: true, slug: true } } : false
       }
     });
     

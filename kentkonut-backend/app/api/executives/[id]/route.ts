@@ -1,48 +1,46 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { z } from "zod";
+import { ExecutiveValidationSchema } from '@/utils/corporateValidation';
+import { handleApiError } from '@/utils/corporateApi';
 
-const executiveSchema = z.object({
-  name: z.string().min(1, "İsim gerekli"),
-  title: z.string().min(1, "Başlık gerekli"),
-  position: z.string().min(1, "Pozisyon gerekli"),
-  slug: z.string().optional(),
-  biography: z.string().optional(),  imageUrl: z.string().optional().or(z.literal("")).refine((val) => {
-    if (!val || val === "") return true; // Boş string veya null/undefined için geçerli
-    
-    // Relative URLs (/uploads/...) kabul et
-    if (val.startsWith('/')) return true;
-    
-    // Absolute URLs kontrol et
-    try {
-      new URL(val);
-      return true;
-    } catch {
-      return false;
+// Slug generation helper function
+function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/ğ/g, 'g')
+    .replace(/ü/g, 'u')
+    .replace(/ş/g, 's')
+    .replace(/ı/g, 'i')
+    .replace(/ö/g, 'o')
+    .replace(/ç/g, 'c')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+}
+
+// Generate unique slug
+async function generateUniqueSlug(baseName: string, excludeId?: string): Promise<string> {
+  let baseSlug = generateSlug(baseName);
+  let slug = baseSlug;
+  let counter = 1;
+
+  while (true) {
+    const existing = await db.executive.findFirst({
+      where: {
+        slug: slug,
+        ...(excludeId && { id: { not: excludeId } })
+      }
+    });
+
+    if (!existing) {
+      return slug;
     }
-  }, "Geçersiz URL formatı"),
-  email: z.string().optional().or(z.literal("")).refine((val) => {
-    if (!val || val === "") return true; // Boş string için geçerli
-    return z.string().email().safeParse(val).success;
-  }, "Geçersiz email formatı"),
-  phone: z.string().optional(),  linkedIn: z.string().optional().or(z.literal("")).refine((val) => {
-    if (!val || val === "") return true; // Boş string için geçerli
-    
-    // Relative URLs (/uploads/...) kabul et
-    if (val.startsWith('/')) return true;
-    
-    // Absolute URLs kontrol et
-    try {
-      new URL(val);
-      return true;
-    } catch {
-      return false;
-    }
-  }, "Geçersiz LinkedIn URL formatı"),
-  type: z.enum(["PRESIDENT", "GENERAL_MANAGER", "DIRECTOR", "MANAGER"]),
-  order: z.number().default(0),
-  isActive: z.boolean().default(true)
-});
+
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+}
 
 export async function GET(
   request: NextRequest,
@@ -52,8 +50,20 @@ export async function GET(
     const { id } = await params;
     
     const executive = await db.executive.findUnique({
-      where: { id }
-    });    if (!executive) {
+      where: { id },
+      include: {
+        page: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            isActive: true
+          }
+        }
+      }
+    });
+
+    if (!executive) {
       return NextResponse.json({ error: "Executive not found" }, { status: 404 });
     }
 
@@ -72,36 +82,71 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
     
-    // Validate input
-    const validatedData = executiveSchema.parse(body);
-    
-    const executive = await db.executive.update({
-      where: { id },
-      data: {
-        ...validatedData,
-        type: validatedData.type as any
-      }
-    });
+    // Validate using the centralized validation schema
+    const validationResult = ExecutiveValidationSchema.safeParse(body);
 
-    return NextResponse.json(executive);  } catch (error) {
-    if (error instanceof z.ZodError) {
-      console.error('Validation error details:', error.errors);
+    if (!validationResult.success) {
+      console.error('Validation error details:', validationResult.error);
       return NextResponse.json(
-        { 
-          error: "Validation error", 
-          details: error.errors,
-          message: error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')
+        {
+          error: "Validation failed",
+          details: validationResult.error.errors.map(err => ({
+            field: err.path[0],
+            message: err.message
+          }))
         },
         { status: 400 }
       );
     }
-    
+
+    const validatedData = validationResult.data;
+
+    // Generate slug from name if not provided or empty
+    let slug = validatedData.slug;
+    if (!slug || slug.trim() === '') {
+      slug = await generateUniqueSlug(validatedData.name, id);
+    } else {
+      // If slug is provided, ensure it's unique (excluding current record)
+      slug = await generateUniqueSlug(slug, id);
+    }
+
+    const executive = await db.executive.update({
+      where: { id },
+      data: {
+        name: validatedData.name,
+        title: validatedData.title,
+        position: validatedData.position || "",
+        slug: slug,
+        biography: validatedData.biography,
+        imageUrl: validatedData.imageUrl,
+        email: validatedData.email,
+        phone: validatedData.phone,
+        linkedIn: validatedData.linkedIn,
+        quickAccessUrl: validatedData.quickAccessUrl || null,
+        hasQuickAccessLinks: validatedData.hasQuickAccessLinks || false,
+        order: validatedData.order,
+        isActive: validatedData.isActive,
+        type: validatedData.type,
+        pageId: (validatedData.pageId && validatedData.pageId !== "none") ? validatedData.pageId : null
+      } as any,
+      include: {
+        page: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            isActive: true
+          }
+        }
+      }
+    });
+
+    return NextResponse.json(executive);
+  } catch (error) {
     console.error('Executive update error:', error);
+    const errorResponse = handleApiError(error);
     return NextResponse.json(
-      { 
-        error: "Internal server error",
-        details: error instanceof Error ? error.message : 'Unknown error'
-      }, 
+      { error: errorResponse.message },
       { status: 500 }
     );
   }

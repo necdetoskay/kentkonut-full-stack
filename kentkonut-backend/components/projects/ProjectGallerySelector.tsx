@@ -54,13 +54,16 @@ export function ProjectGallerySelector({ selectedItems, onSelectionChange }: Pro
     if (!url) return '';
     let normalizedUrl = url;
     if (normalizedUrl.startsWith('http')) return normalizedUrl;
+
+    // Remove common prefixes
     normalizedUrl = normalizedUrl.replace(/^\/public\//, '/');
-    normalizedUrl = normalizedUrl.replace(/^\/public\/haberler\//, '/haberler/');
-    normalizedUrl = normalizedUrl.replace(/^\/uploads\/haberler\//, '/haberler/');
-    normalizedUrl = normalizedUrl.replace(/^\/uploads\//, '/haberler/');
-    if (!normalizedUrl.startsWith('/haberler/')) {
-      normalizedUrl = '/haberler/' + normalizedUrl.replace(/^\//, '');
+    normalizedUrl = normalizedUrl.replace(/^\/uploads\//, '/');
+
+    // Ensure it starts with /
+    if (!normalizedUrl.startsWith('/')) {
+      normalizedUrl = '/' + normalizedUrl;
     }
+
     return normalizedUrl;
   };
   return (

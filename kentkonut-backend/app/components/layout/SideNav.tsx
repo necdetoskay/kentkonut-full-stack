@@ -116,24 +116,12 @@ const sidebarNavGroups: NavGroup[] = [
   {
     title: "KURUMSAL",
     items: [      {
-        title: "Yöneticiler",
+        title: "Tüm Yöneticiler",
+        href: "/dashboard/kurumsal/yoneticiler",
         icon: UserCheck,
-        children: [          {
-            title: "Tüm Yöneticiler",
-            href: "/dashboard/corporate/executives",
-          },
-          {
-            title: "Başkanlar",
-            href: "/dashboard/corporate/executives?type=PRESIDENT",
-          },
-          {
-            title: "Genel Müdürler",
-            href: "/dashboard/corporate/executives?type=GENERAL_MANAGER",
-          },
-        ],
       },      {
         title: "Birimlerimiz",
-        href: "/dashboard/corporate/departments",        icon: Building2,
+        href: "/dashboard/kurumsal/birimler",        icon: Building2,
       },
       {
         title: "Kurumsal İçerik",
@@ -148,7 +136,7 @@ const sidebarNavGroups: NavGroup[] = [
           },
           {
             title: "Strateji & Hedefler",
-            href: "/dashboard/corporate/content/strategy-goals",
+            href: "/dashboard/kurumsal/icerik/strategy-goals",
           },
         ],
       },

@@ -56,7 +56,7 @@ export default function DashboardLayout({
         </div>
       </div>
       {/* Main Content */}
-      <div className="flex flex-1 flex-col" style={{ marginLeft: '20px' }}>
+      <div className="flex flex-1 flex-col" style={{ marginLeft: '8px' }}>
         <header className="sticky top-0 z-40 border-b bg-background">
           <div className="flex h-16 items-center justify-between py-4 px-6">
             <h1 className="text-xl font-bold md:hidden">Kent Konut</h1>
@@ -66,7 +66,7 @@ export default function DashboardLayout({
             </div>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto" style={{ padding: '24px 24px 24px 0' }}>
+        <main className="flex-1 overflow-y-auto" style={{ padding: '24px 24px 24px 8px' }}>
           {children}
         </main>
         <Toaster />

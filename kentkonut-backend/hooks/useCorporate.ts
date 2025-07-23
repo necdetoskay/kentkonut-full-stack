@@ -146,6 +146,9 @@ export function useExecutives(filters?: ExecutiveFilters) {
         generalManager: executives.filter(exec => exec.type === 'GENERAL_MANAGER').length,
         director: executives.filter(exec => exec.type === 'DIRECTOR').length,
         manager: executives.filter(exec => exec.type === 'MANAGER').length,
+        department: executives.filter(exec => exec.type === 'DEPARTMENT').length,
+        strategy: executives.filter(exec => exec.type === 'STRATEGY').length,
+        goal: executives.filter(exec => exec.type === 'GOAL').length,
       },
     };
   }, [executives]);

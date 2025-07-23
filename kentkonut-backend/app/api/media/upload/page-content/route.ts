@@ -70,9 +70,19 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes);
     await writeFile(filePath, buffer);
 
+    // Determine media type based on MIME type
+    let mediaType: 'IMAGE' | 'VIDEO' | 'PDF' | 'WORD' | 'EMBED' = 'IMAGE';
+    if (file.type.startsWith('video/')) {
+      mediaType = 'VIDEO';
+    } else if (file.type === 'application/pdf') {
+      mediaType = 'PDF';
+    } else if (file.type.includes('word') || file.type.includes('document')) {
+      mediaType = 'WORD';
+    }
+
     // Veritabanına kaydet
     const fileUrl = `/uploads/page-content/${fileName}`;
-      const media = await prisma.media.create({
+    const media = await prisma.media.create({
       data: {
         filename: fileName,
         originalName: file.name,
@@ -80,6 +90,7 @@ export async function POST(request: NextRequest) {
         size: file.size,
         path: filePath,
         url: fileUrl,
+        type: mediaType,
         alt: alt || '',
         categoryId: pageContentCategory.id
       }

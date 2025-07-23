@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MediaItem } from "./MediaItem";
 import { MediaUploader } from "./MediaUploader";
+import { EnhancedMediaUploader } from "./enhanced/EnhancedMediaUploader";
 import { MediaManager } from "./MediaManager";
 import { useMediaCategories } from "@/app/context/MediaCategoryContext";
 import {
@@ -36,6 +37,7 @@ interface MediaGalleryProps {
   onSelectionChange?: (selectedFiles: GlobalMediaFile[]) => void;
   onImageClick?: (file: GlobalMediaFile) => void;
   className?: string;
+  useEnhancedUploader?: boolean; // New prop to enable enhanced uploader
 }
 
 export function MediaGallery({
@@ -44,7 +46,8 @@ export function MediaGallery({
   selectionMode = false,
   onSelectionChange,
   onImageClick,
-  className = ""
+  className = "",
+  useEnhancedUploader = false
 }: MediaGalleryProps) {
   const { categories } = useMediaCategories();
   const [mediaFiles, setMediaFiles] = useState<GlobalMediaFile[]>([]);
@@ -342,18 +345,38 @@ export function MediaGallery({
       {/* Upload Modal */}
       {showUploaderModal && (
         <Dialog open={showUploaderModal} onOpenChange={setShowUploaderModal}>
-          <DialogContent className="max-w-2xl w-full max-h-[90vh] overflow-y-auto" aria-describedby="media-uploader-description">
+          <DialogContent className={`w-full max-h-[90vh] overflow-y-auto ${useEnhancedUploader ? 'max-w-4xl' : 'max-w-2xl'}`} aria-describedby="media-uploader-description">
             <DialogHeader>
-              <DialogTitle>Medya Yükle</DialogTitle>
+              <DialogTitle>
+                {useEnhancedUploader ? 'Gelişmiş Medya Yükleme' : 'Medya Yükle'}
+              </DialogTitle>
               <p className="text-sm text-muted-foreground" id="media-uploader-description">
-                Sistem içerisinde kullanılacak medya dosyalarını buradan yükleyebilirsiniz.
+                {useEnhancedUploader
+                  ? 'Çoklu format desteği ile dosyalarınızı yükleyin veya video URL\'si ekleyin.'
+                  : 'Sistem içerisinde kullanılacak medya dosyalarını buradan yükleyebilirsiniz.'
+                }
               </p>
             </DialogHeader>
             <div className="p-4">
-              <MediaUploader
-                categoryId={selectedCategory !== "all" ? parseInt(selectedCategory) : undefined}
-                onUploadComplete={handleUploadComplete}
-              />
+              {useEnhancedUploader ? (
+                <EnhancedMediaUploader
+                  categoryId={selectedCategory !== "all" ? parseInt(selectedCategory) : undefined}
+                  onUploadComplete={handleUploadComplete}
+                  enableFolderSelection={true}
+                  enableEmbeddedVideo={true}
+                  enableMultiFormat={true}
+                  showFileTypeSelector={true}
+                  enableAdvancedPreview={true}
+                  layout="expanded"
+                  theme="professional"
+                  showHeader={false}
+                />
+              ) : (
+                <MediaUploader
+                  categoryId={selectedCategory !== "all" ? parseInt(selectedCategory) : undefined}
+                  onUploadComplete={handleUploadComplete}
+                />
+              )}
             </div>
           </DialogContent>
         </Dialog>

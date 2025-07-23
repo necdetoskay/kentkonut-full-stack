@@ -305,8 +305,8 @@ export function MediaUploader({
     accept: getAcceptObject(),
     maxSize: 50 * 1024 * 1024, // 50MB (to accommodate video files)
     multiple: true,
-    noClick: true, // Disable click on the root element
-    noKeyboard: true, // Disable keyboard events
+    noClick: true, // Disable click on dropzone area - button will handle clicks
+    noKeyboard: false, // ENABLE keyboard events
   });
 
   // Remove file from list with proper cleanup
@@ -632,21 +632,12 @@ export function MediaUploader({
             type="button"
             variant="outline"
             onClick={() => {
-              // Try dropzone open first
+              // Use dropzone's built-in open function - should work now with noClick: false
               if (typeof open === 'function') {
-                try {
-                  open();
-                  return;
-                } catch (error) {
-                  console.error('Error calling dropzone open function:', error);
-                }
-              }
-
-              // Fallback to manual file input click
-              if (fileInputRef.current) {
-                fileInputRef.current.click();
+                console.log('Opening file picker via dropzone...');
+                open();
               } else {
-                console.error('File input ref not available');
+                console.error('Dropzone open function not available');
               }
             }}
             className="mb-2"

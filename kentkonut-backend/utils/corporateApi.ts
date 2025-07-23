@@ -5,7 +5,7 @@ import { ApiResponse, ApiError } from '@/types/corporate';
 
 // API Configuration
 export const API_CONFIG = {
-  baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
+  baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3010',
   timeout: 10000, // 10 seconds
   retryAttempts: 3,
   retryDelay: 1000, // 1 second

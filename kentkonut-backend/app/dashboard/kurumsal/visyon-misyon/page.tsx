@@ -24,7 +24,8 @@ export default function VizjonMisyonPage() {
   const [missionContent, setMissionContent] = useState<CorporateContent | null>(null)
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [editContent, setEditContent] = useState("")
+  const [visionEditContent, setVisionEditContent] = useState("")
+  const [missionEditContent, setMissionEditContent] = useState("")
 
   useEffect(() => {
     fetchContent()
@@ -56,18 +57,24 @@ export default function VizjonMisyonPage() {
 
   const handleEdit = (content: CorporateContent) => {
     setEditingId(content.id)
-    setEditContent(content.content)
+    if (content.type === 'VISION') {
+      setVisionEditContent(content.content)
+    } else if (content.type === 'MISSION') {
+      setMissionEditContent(content.content)
+    }
   }
 
   const handleSave = async (id: string, type: 'VISION' | 'MISSION') => {
     try {
+      const contentToSave = type === 'VISION' ? visionEditContent : missionEditContent;
+
       const response = await fetch(`/api/corporate/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          content: editContent,
+          content: contentToSave,
         }),
       })
 
@@ -77,23 +84,35 @@ export default function VizjonMisyonPage() {
 
       // Update local state
       if (type === 'VISION' && visionContent) {
-        setVisionContent({ ...visionContent, content: editContent })
+        setVisionContent({ ...visionContent, content: contentToSave })
       } else if (type === 'MISSION' && missionContent) {
-        setMissionContent({ ...missionContent, content: editContent })
+        setMissionContent({ ...missionContent, content: contentToSave })
       }
 
       setEditingId(null)
-      setEditContent("")
-      
+      if (type === 'VISION') {
+        setVisionEditContent("")
+      } else {
+        setMissionEditContent("")
+      }
+
       toast.success(`${type === 'VISION' ? 'Vizyon' : 'Misyon'} başarıyla güncellendi`)
     } catch (err) {
       toast.error("Güncelleme sırasında bir hata oluştu")
     }
   }
 
-  const handleCancel = () => {
+  const handleCancel = (type?: 'VISION' | 'MISSION') => {
     setEditingId(null)
-    setEditContent("")
+    if (type === 'VISION') {
+      setVisionEditContent("")
+    } else if (type === 'MISSION') {
+      setMissionEditContent("")
+    } else {
+      // If no type specified, clear both (fallback)
+      setVisionEditContent("")
+      setMissionEditContent("")
+    }
   }
 
   const createContent = async (type: 'VISION' | 'MISSION', title: string) => {
@@ -190,15 +209,33 @@ export default function VizjonMisyonPage() {
               </div>
             ) : editingId === visionContent.id ? (
               <div className="space-y-4">
-                <div className="p-2 bg-blue-100 text-sm rounded">✅ TipTap Editör aktif - Floating image desteği ile</div>
-                <div className="border rounded">
+                <div className="p-3 bg-green-50 border border-green-200 text-sm rounded-lg">
+                  ✅ <strong>RichTextEditor Aktif</strong> - Gelişmiş floating image desteği ile
+                </div>
+                <div className="border rounded-lg overflow-hidden">
                   <RichTextEditor
-                    content={editContent}
-                    onChange={setEditContent}
-                    placeholder="Vizyon içeriğinizi yazın ve biçimlendirin..."
+                    content={visionEditContent}
+                    onChange={setVisionEditContent}
+                    placeholder="Vizyon içeriğinizi yazın ve floating resimler ekleyin..."
                     minHeight="400px"
                     mediaFolder="corporate-images"
                   />
+                </div>
+
+                {/* Preview Section */}
+                <div className="mt-4">
+                  <h4 className="text-sm font-medium mb-2 text-gray-700">Önizleme</h4>
+                  <div className="border rounded-lg p-3 bg-gray-50 max-h-32 overflow-y-auto">
+                    <div
+                      className="content-display text-sm"
+                      style={{
+                        overflow: 'visible !important',
+                        contain: 'none !important',
+                        lineHeight: '1.5'
+                      }}
+                      dangerouslySetInnerHTML={{ __html: visionEditContent }}
+                    />
+                  </div>
                 </div>
                 <div className="flex space-x-2">
                   <Button
@@ -210,7 +247,7 @@ export default function VizjonMisyonPage() {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={handleCancel}
+                    onClick={() => handleCancel('VISION')}
                     size="sm"
                   >
                     <X className="h-4 w-4 mr-2" />
@@ -264,15 +301,33 @@ export default function VizjonMisyonPage() {
               </div>
             ) : editingId === missionContent.id ? (
               <div className="space-y-4">
-                <div className="p-2 bg-blue-100 text-sm rounded">✅ TipTap Editör aktif - Floating image desteği ile</div>
-                <div className="border rounded">
+                <div className="p-3 bg-green-50 border border-green-200 text-sm rounded-lg">
+                  ✅ <strong>RichTextEditor Aktif</strong> - Gelişmiş floating image desteği ile
+                </div>
+                <div className="border rounded-lg overflow-hidden">
                   <RichTextEditor
-                    content={editContent}
-                    onChange={setEditContent}
-                    placeholder="Misyon içeriğinizi yazın ve biçimlendirin..."
+                    content={missionEditContent}
+                    onChange={setMissionEditContent}
+                    placeholder="Misyon içeriğinizi yazın ve floating resimler ekleyin..."
                     minHeight="400px"
                     mediaFolder="corporate-images"
                   />
+                </div>
+
+                {/* Preview Section */}
+                <div className="mt-4">
+                  <h4 className="text-sm font-medium mb-2 text-gray-700">Önizleme</h4>
+                  <div className="border rounded-lg p-3 bg-gray-50 max-h-32 overflow-y-auto">
+                    <div
+                      className="content-display text-sm"
+                      style={{
+                        overflow: 'visible !important',
+                        contain: 'none !important',
+                        lineHeight: '1.5'
+                      }}
+                      dangerouslySetInnerHTML={{ __html: missionEditContent }}
+                    />
+                  </div>
                 </div>
                 <div className="flex space-x-2">
                   <Button
@@ -284,7 +339,7 @@ export default function VizjonMisyonPage() {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={handleCancel}
+                    onClick={() => handleCancel('MISSION')}
                     size="sm"
                   >
                     <X className="h-4 w-4 mr-2" />

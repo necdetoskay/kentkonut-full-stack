@@ -154,6 +154,16 @@ export async function POST(request: NextRequest) {
           uniqueFilename
         });
 
+        // Determine media type based on MIME type
+        let mediaType: 'IMAGE' | 'VIDEO' | 'PDF' | 'WORD' | 'EMBED' = 'IMAGE';
+        if (file.type.startsWith('video/')) {
+          mediaType = 'VIDEO';
+        } else if (file.type === 'application/pdf') {
+          mediaType = 'PDF';
+        } else if (file.type.includes('word') || file.type.includes('document')) {
+          mediaType = 'WORD';
+        }
+
         // Save to database
         const mediaFile = await db.media.create({
           data: {
@@ -163,6 +173,7 @@ export async function POST(request: NextRequest) {
             size: file.size,
             path: filePath,
             url: fileUrl,
+            type: mediaType,
             categoryId: category.id,
             ...(thumbnailUrls && {
               thumbnailSmall: thumbnailUrls.small,

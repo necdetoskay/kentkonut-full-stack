@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { writeFile, mkdir, unlink } from 'fs/promises';
 import { join } from 'path';
@@ -74,7 +73,7 @@ export async function GET(
 ) {
   try {
     // Authentication kontrolü
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
@@ -182,7 +181,7 @@ export async function DELETE(
 ) {
   try {
     // Authentication kontrolü
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
@@ -190,8 +189,9 @@ export async function DELETE(
     const [action, fileId] = params.params;
     
     if (action === 'delete' && fileId) {
-      const mediaId = parseInt(fileId);
-      
+      // Use fileId directly as string since database uses string IDs
+      const mediaId = fileId;
+
       // Veritabanından dosya bilgisini al
       const mediaFile = await db.media.findUnique({
         where: { id: mediaId }
