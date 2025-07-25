@@ -19,6 +19,30 @@ export function BannerItem({ banner, onDelete, onStatusChange }: BannerItemProps
     return format(new Date(dateString), 'dd MMMM yyyy', { locale: tr });
   };
 
+  // Check if banner is currently active based on date range
+  const isCurrentlyActive = () => {
+    if (!banner.isActive) return false;
+
+    const now = new Date();
+
+    // Check start date
+    if (banner.startDate) {
+      const startDate = new Date(banner.startDate);
+      if (now < startDate) return false;
+    }
+
+    // Check end date
+    if (banner.endDate) {
+      const endDate = new Date(banner.endDate);
+      if (now > endDate) return false;
+    }
+
+    return true;
+  };
+
+  const currentlyActive = isCurrentlyActive();
+  const hasDateRange = banner.startDate || banner.endDate;
+
   return (
     <Card className="overflow-hidden">
       <div className="relative aspect-video bg-muted/50">
@@ -27,10 +51,15 @@ export function BannerItem({ banner, onDelete, onStatusChange }: BannerItemProps
           alt={banner.title}
           className="w-full h-full object-cover"
         />
-        <div className="absolute top-2 right-2">
+        <div className="absolute top-2 right-2 flex flex-col gap-1">
           <Badge variant={banner.isActive ? 'default' : 'secondary'}>
             {banner.isActive ? 'Aktif' : 'Pasif'}
           </Badge>
+          {hasDateRange && (
+            <Badge variant={currentlyActive ? 'default' : 'destructive'} className="text-xs">
+              {currentlyActive ? 'Yayında' : 'Tarih Dışı'}
+            </Badge>
+          )}
         </div>
       </div>
       <CardHeader className="pb-2">
@@ -46,13 +75,27 @@ export function BannerItem({ banner, onDelete, onStatusChange }: BannerItemProps
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div>
             <p className="text-muted-foreground">Başlangıç</p>
-            <p>{formatDate(banner.startDate)}</p>
+            <p className={banner.startDate ? '' : 'text-muted-foreground'}>
+              {formatDate(banner.startDate) || 'Hemen'}
+            </p>
           </div>
           <div>
             <p className="text-muted-foreground">Bitiş</p>
-            <p>{formatDate(banner.endDate) || 'Sınırsız'}</p>
+            <p className={banner.endDate ? '' : 'text-muted-foreground'}>
+              {formatDate(banner.endDate) || 'Sınırsız'}
+            </p>
           </div>
         </div>
+
+        {hasDateRange && (
+          <div className="text-xs text-muted-foreground">
+            {currentlyActive ? (
+              <span className="text-green-600">✓ Şu anda aktif tarih aralığında</span>
+            ) : (
+              <span className="text-red-600">⚠ Aktif tarih aralığı dışında</span>
+            )}
+          </div>
+        )}
         
         {banner.targetUrl && (
           <div className="pt-1">

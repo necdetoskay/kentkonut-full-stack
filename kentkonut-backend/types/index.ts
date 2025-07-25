@@ -51,8 +51,22 @@ export interface Banner {
   isActive: boolean;
   deletable: boolean;
   order: number;
+
+  // Date Range Fields
+  startDate?: Date;
+  endDate?: Date;
+
+  // Basic Statistics (Backward Compatibility)
   viewCount: number;
   clickCount: number;
+
+  // Enhanced Analytics Fields
+  impressionCount: number;
+  uniqueViewCount: number;
+  conversionCount: number;
+  bounceCount: number;
+  avgEngagementTime: number;
+
   imageUrl: string;
   altText?: string;
   bannerGroupId: number;
@@ -68,6 +82,72 @@ export interface MediaCategory {
   isBuiltIn: boolean;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface ServiceCard {
+  id: number;
+  title: string;
+  description?: string;
+  shortDescription?: string;
+  slug: string;
+  imageUrl: string;
+  altText?: string;
+  targetUrl?: string;
+  isExternal: boolean;
+  color: string;
+  backgroundColor?: string;
+  textColor?: string;
+  isActive: boolean;
+  isFeatured: boolean;
+  displayOrder: number;
+  viewCount: number;
+  clickCount: number;
+  metaTitle?: string;
+  metaDescription?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateServiceCardDto {
+  title: string;
+  description?: string;
+  shortDescription?: string;
+  slug?: string; // Auto-generated if not provided
+  imageUrl: string;
+  altText?: string;
+  targetUrl?: string;
+  isExternal?: boolean;
+  color?: string;
+  backgroundColor?: string;
+  textColor?: string;
+  isActive?: boolean;
+  isFeatured?: boolean;
+  displayOrder?: number;
+  metaTitle?: string;
+  metaDescription?: string;
+}
+
+export interface UpdateServiceCardDto extends Partial<CreateServiceCardDto> {
+  id: number;
+}
+
+export interface ServiceCardFormData {
+  title: string;
+  description?: string;
+  shortDescription?: string;
+  slug?: string;
+  imageUrl: string;
+  altText?: string;
+  targetUrl?: string;
+  isExternal?: boolean;
+  color?: string;
+  backgroundColor?: string;
+  textColor?: string;
+  isActive?: boolean;
+  isFeatured?: boolean;
+  displayOrder?: number;
+  metaTitle?: string;
+  metaDescription?: string;
 }
 
 // Use GlobalMediaFile from @/components/media/GlobalMediaSelector instead of this interface
@@ -229,9 +309,73 @@ export interface BannerFormData {
   isActive: boolean;
   deletable: boolean;
   order: number;
+  startDate?: string; // ISO string format for datetime-local input
+  endDate?: string;   // ISO string format for datetime-local input
   imageUrl: string;
   altText?: string;
   bannerGroupId: number;
+}
+
+export interface BannerAnalytics {
+  id: number;
+  bannerId: number;
+  sessionId?: string;
+  userId?: string;
+  ipAddress?: string;
+  userAgent?: string;
+  referrer?: string;
+  deviceType?: string;
+  browserName?: string;
+  osName?: string;
+  country?: string;
+  city?: string;
+  eventType: 'impression' | 'view' | 'click' | 'conversion' | 'bounce';
+  eventData?: any;
+  timestamp: Date;
+  engagementTime?: number;
+  scrollDepth?: number;
+  clickPosition?: { x: number; y: number };
+  conversionValue?: number;
+  createdAt: Date;
+}
+
+export interface BannerPerformanceSummary {
+  id: number;
+  bannerId: number;
+  date: Date;
+  hour?: number;
+  impressions: number;
+  uniqueViews: number;
+  clicks: number;
+  conversions: number;
+  bounces: number;
+  totalEngagementTime: number;
+  avgEngagementTime: number;
+  clickThroughRate: number;
+  conversionRate: number;
+  bounceRate: number;
+  topReferrers?: any;
+  topDevices?: any;
+  topCountries?: any;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface BannerABTest {
+  id: number;
+  name: string;
+  description?: string;
+  bannerGroupId: number;
+  variantA_bannerId: number;
+  variantB_bannerId: number;
+  trafficSplit: number;
+  startDate: Date;
+  endDate?: Date;
+  isActive: boolean;
+  winnerBannerId?: number;
+  confidenceLevel?: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Constants

@@ -100,10 +100,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Process publishedAt if provided
+    // Process publishedAt and categoryId if provided
     const pageData: any = {
       ...validatedData,
-      publishedAt: validatedData.publishedAt ? new Date(validatedData.publishedAt) : null
+      publishedAt: validatedData.publishedAt ? new Date(validatedData.publishedAt) : null,
+      categoryId: validatedData.categoryId && validatedData.categoryId.trim() !== '' ? validatedData.categoryId : null
     };
 
     console.log('🔍 [API] Creating page with data:', JSON.stringify(pageData, null, 2));

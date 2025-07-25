@@ -83,17 +83,18 @@ export function BannerForm({ bannerGroupId, initialData, isEdit = false }: Banne
     try {
       setIsLoading(true);
       
+      // Map frontend field names to backend field names
       const bannerData = {
-        ...data,
-        bannerGroupId,
-        startDate: data.startDate || null,
-        endDate: data.endDate || null,
         title: data.title || '',
         description: data.description ? DOMPurify.sanitize(data.description) : '',
         imageUrl: data.imageUrl || '',
-        targetUrl: data.targetUrl || '',
-        displayOrder: data.displayOrder || 0,
+        link: data.targetUrl || '', // Map targetUrl to link
+        order: data.displayOrder || 0, // Map displayOrder to order
         isActive: typeof data.isActive === 'boolean' ? data.isActive : true,
+        deletable: true, // Default value for new banners
+        startDate: data.startDate || null,
+        endDate: data.endDate || null,
+        bannerGroupId,
       };
       
       if (isEdit && initialData?.id) {
@@ -104,7 +105,7 @@ export function BannerForm({ bannerGroupId, initialData, isEdit = false }: Banne
         toast.success('Banner başarıyla oluşturuldu');
       }
       
-      navigate(`/dashboard/banner-groups/${bannerGroupId}`);
+      navigate(`/dashboard/banner-groups/${bannerGroupId}/banners`);
     } catch (error) {
       console.error('Form gönderilirken hata:', error);
       toast.error(error instanceof Error ? error.message : 'Bir hata oluştu');

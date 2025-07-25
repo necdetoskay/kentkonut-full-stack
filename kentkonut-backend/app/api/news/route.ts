@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { z } from "zod";
+import { withCors, handleCorsPreflightRequest } from "@/lib/cors";
 
 const newsSchema = z.object({
   title: z.string().min(1, "Başlık gereklidir"),
@@ -24,8 +25,13 @@ const newsSchema = z.object({
 // Haber medyaları için özel klasör
 export const NEWS_MEDIA_FOLDER = 'uploads/haberler';
 
-// GET all news
-export async function GET(req: Request) {
+// OPTIONS /api/news - Handle CORS preflight
+export async function OPTIONS(request: NextRequest) {
+  return handleCorsPreflightRequest(request);
+}
+
+// GET all news (CORS enabled)
+export const GET = withCors(async (req: NextRequest) => {
   try {
     // AUTH KALDIRILDI: Haberler public
     // const session = await auth();
@@ -113,10 +119,10 @@ export async function GET(req: Request) {
     console.error("[NEWS_GET]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
-}
+});
 
 // POST create new news
-export async function POST(req: Request) {
+export const POST = withCors(async (req: NextRequest) => {
   try {
     const session = await auth();
 
@@ -221,4 +227,4 @@ export async function POST(req: Request) {
     console.error("[NEWS_POST]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
-}
+});

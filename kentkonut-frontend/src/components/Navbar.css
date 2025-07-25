@@ -1,0 +1,157 @@
+/* Enhanced Navbar Styles for Hierarchical Menus */
+
+/* Desktop Dropdown Menu Enhancements */
+.navbar-dropdown {
+  /* Ensure dropdown appears above other content */
+  z-index: 9999;
+  
+  /* Smooth animations */
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+  transform: translateY(-10px);
+}
+
+.navbar-dropdown.visible {
+  transform: translateY(0);
+}
+
+/* Hover area extension for better UX */
+.navbar-menu-item {
+  position: relative;
+}
+
+.navbar-menu-item::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: transparent;
+  z-index: 1;
+}
+
+/* Desktop dropdown hover improvements */
+.group:hover .navbar-dropdown {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) !important;
+}
+
+/* Mobile menu animations */
+.mobile-submenu-enter {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.mobile-submenu-enter-active {
+  max-height: 500px;
+  opacity: 1;
+}
+
+.mobile-submenu-exit {
+  max-height: 500px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.mobile-submenu-exit-active {
+  max-height: 0;
+  opacity: 0;
+}
+
+/* Chevron rotation animation */
+.chevron-rotate {
+  transition: transform 0.2s ease;
+}
+
+.chevron-rotate.rotated {
+  transform: rotate(180deg);
+}
+
+/* Accessibility improvements */
+.navbar-menu-item:focus-within .navbar-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Better focus indicators */
+.navbar-menu-link:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Submenu item hover effects */
+.submenu-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.submenu-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #3b82f6;
+  transform: scaleY(0);
+  transition: transform 0.2s ease;
+}
+
+.submenu-item:hover::before {
+  transform: scaleY(1);
+}
+
+/* Mobile menu backdrop */
+.mobile-menu-backdrop {
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .navbar-dropdown {
+    position: static !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .navbar-dropdown {
+    border: 2px solid currentColor;
+  }
+  
+  .submenu-item {
+    border-bottom: 1px solid currentColor;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .navbar-dropdown,
+  .chevron-rotate,
+  .mobile-submenu-enter,
+  .mobile-submenu-exit {
+    transition: none !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .navbar-dropdown {
+    position: static !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    box-shadow: none !important;
+  }
+}

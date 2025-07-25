@@ -29,9 +29,9 @@ export default function NewBannerPage() {
           <CardTitle>Yeni Banner Ekle</CardTitle>
         </CardHeader>
         <CardContent>
-          <BannerForm 
-            groupId={Number(id)}
-            onSuccess={() => navigate(`/dashboard/banner-groups/${id}`)}
+          <BannerForm
+            bannerGroupId={Number(id)}
+            isEdit={false}
           />
         </CardContent>
       </Card>

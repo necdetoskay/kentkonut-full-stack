@@ -56,7 +56,18 @@ const Hero = () => {
           const activeBanners = bannerService.filterActiveBanners(heroData.banners || []);
           console.log('🔍 Filtered active banners:', activeBanners);
           setBanners(activeBanners);
-          
+
+          // Record impressions for all loaded banners
+          activeBanners.forEach(async (banner) => {
+            if (banner.id && typeof banner.id === 'number') {
+              try {
+                await bannerService.recordBannerImpression(banner.id);
+              } catch (error) {
+                console.error('Banner impression tracking failed:', error);
+              }
+            }
+          });
+
           console.log('✅ Aktif hero banner sayısı:', activeBanners.length);
         } else {
           setBanners([]);
@@ -115,21 +126,48 @@ const Hero = () => {
       await bannerService.recordBannerView(banner.id);
     }
   };
-  // Banner tıklama istatistiği kaydet
-  const handleBannerClick = async (banner: Banner) => {
-    if (banner.id && typeof banner.id === 'number') {
-      await bannerService.recordBannerClick(banner.id);
+  // Banner tıklama istatistiği kaydet ve yönlendirme
+  const handleBannerClick = async (banner: Banner, event?: React.MouseEvent) => {
+    // Get the target URL from various possible fields
+    const targetUrl = banner.link || banner.linkUrl || banner.ctaLink;
+
+    // Only proceed if there's a valid URL
+    if (!targetUrl || targetUrl.trim() === '') {
+      return;
     }
 
-    // Link varsa yönlendir
-    const url = banner.linkUrl;
-    if (url) {
-      if (url.startsWith('http')) {
-        window.open(url, '_blank');
-      } else {
-        window.location.href = url;
+    // Get click position for analytics
+    const clickPosition = event ? { x: event.clientX, y: event.clientY } : undefined;
+
+    // Record click statistics
+    if (banner.id && typeof banner.id === 'number') {
+      try {
+        await bannerService.recordBannerClick(banner.id, clickPosition);
+      } catch (error) {
+        console.error('Banner click tracking failed:', error);
+        // Continue with navigation even if tracking fails
       }
     }
+
+    // Handle URL navigation with proper security
+    const url = targetUrl.trim();
+
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      // External URL - open in new tab with security attributes
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } else if (url.startsWith('/')) {
+      // Internal relative URL - navigate in same window
+      window.location.href = url;
+    } else {
+      // Assume it's an internal URL without leading slash
+      window.location.href = '/' + url;
+    }
+  };
+
+  // Check if banner has a valid clickable URL
+  const isBannerClickable = (banner: Banner): boolean => {
+    const targetUrl = banner.link || banner.linkUrl || banner.ctaLink;
+    return !!(targetUrl && targetUrl.trim() !== '');
   };
 
   // Image loading optimization
@@ -276,38 +314,55 @@ const Hero = () => {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        style={{
+          position: 'relative',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100vh',
+          zIndex: 1
+        }}
       >
         {/* Slides */}
-        {slidesToUse.map((slide, index) => (
-          <div
-            key={slide.id}
-            className={cn(
-              "carousel-slide",
-              index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
-            )}
-            onClick={() => handleBannerClick(slide)}
-            style={{ cursor: (slide.linkUrl || slide.ctaLink) ? 'pointer' : 'default' }}
-          >
-            {/* Slide Background Image */}
+        {slidesToUse.map((slide, index) => {
+          const isClickable = isBannerClickable(slide);
+
+          return (
             <div
-              className="absolute inset-0 bg-cover bg-center w-full h-full bg-slide"
-              style={{
-                backgroundImage: slide.imageUrl ? `url(${getImageUrl(slide.imageUrl)})` : undefined,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-              }}
-            >
-              {/* Preload next image for better performance */}
-              {index === currentSlide && slidesToUse[currentSlide + 1] && (
-                <link
-                  rel="preload"
-                  as="image"
-                  href={getImageUrl(slidesToUse[currentSlide + 1].imageUrl)}
-                />
+              key={slide.id}
+              className={cn(
+                "carousel-slide transition-all duration-300",
+                index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0',
+                isClickable ? 'cursor-pointer hover:scale-[1.02]' : 'cursor-default'
               )}
+              onClick={(e) => isClickable && handleBannerClick(slide, e)}
+              style={{
+                cursor: isClickable ? 'pointer' : 'default',
+                transition: 'transform 0.3s ease-in-out'
+              }}
+              title={isClickable ? `${slide.title} - Tıklayın` : slide.title}
+            >
+              {/* Slide Background Image */}
+              <div
+                className="absolute inset-0 bg-cover bg-center w-full h-full bg-slide"
+                style={{
+                  backgroundImage: slide.imageUrl ? `url(${getImageUrl(slide.imageUrl)})` : undefined,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
+              >
+                {/* Preload next image for better performance */}
+                {index === currentSlide && slidesToUse[currentSlide + 1] && (
+                  <link
+                    rel="preload"
+                    as="image"
+                    href={getImageUrl(slidesToUse[currentSlide + 1].imageUrl)}
+                  />
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {/* Hızlı Erişim Kutuları - Banner'ın alt kenarına overlay */}
         <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 bottom-0 z-30 w-[90%] max-w-5xl rounded-b-lg overflow-hidden shadow-lg">

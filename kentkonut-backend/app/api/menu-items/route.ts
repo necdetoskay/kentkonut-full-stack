@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { withCors, handleCorsPreflightRequest } from '@/lib/cors';
 
-// GET /api/menu-items - Public endpoint for fetching menu items
-export async function GET(request: NextRequest) {
+// OPTIONS /api/menu-items - Handle CORS preflight
+export async function OPTIONS(request: NextRequest) {
+  return handleCorsPreflightRequest(request);
+}
+
+// GET /api/menu-items - Public endpoint for fetching menu items (CORS enabled)
+export const GET = withCors(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
     const location = searchParams.get('location') || 'main';
@@ -40,7 +46,9 @@ export async function GET(request: NextRequest) {
     }, {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        'Cache-Control': 'public, max-age=300' // 5 minutes cache
+        'Cache-Control': process.env.NODE_ENV === 'development'
+          ? 'no-cache, no-store, must-revalidate' // No cache in development
+          : 'public, max-age=60' // 1 minute cache in production
       }
     });
 
@@ -57,4 +65,4 @@ export async function GET(request: NextRequest) {
       }
     });
   }
-}
+});

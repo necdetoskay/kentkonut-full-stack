@@ -31,15 +31,19 @@ const CompletedProjects = () => {
         } else {
           projectsArray = [];
         }
-        const formattedProjects = projectsArray.map((project: any) => ({
-          id: project.id,
-          name: project.title || project.name,
-          location: [project.province, project.district].filter(Boolean).join(', ') || '-',
-          year: project.publishedAt ? new Date(project.publishedAt).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long' }) : '-',
-          blocks: project.blocks || 0,
-          units: project.units || 0,
-          image: project.media?.url ? (project.media.url.startsWith('http') ? project.media.url : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3010') + project.media.url) : '/projects/default.jpg',
-        }));
+        const formattedProjects = projectsArray.map((project: any) => {
+          const imageUrl = project.media?.url ? (project.media.url.startsWith('http') ? project.media.url : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3010') + project.media.url) : '/images/projelerimiz.png';
+
+          return {
+            id: project.id,
+            name: project.title || project.name,
+            location: [project.province, project.district].filter(Boolean).join(', ') || '-',
+            year: project.publishedAt ? new Date(project.publishedAt).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long' }) : '-',
+            blocks: project.blocks || 0,
+            units: project.units || 0,
+            image: imageUrl,
+          };
+        });
         setProjects(formattedProjects);
         setLoading(false);
       } catch (err) {
@@ -149,11 +153,15 @@ const CompletedProjects = () => {
                 className="inline-block w-64 whitespace-normal overflow-hidden group"
               >
                 <div className="h-40 overflow-hidden relative shadow-md rounded-md">
-                  <img 
-                    src={project.image} 
-                    alt={project.name} 
+                  <img
+                    src={project.image}
+                    alt={project.name}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     loading="lazy"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/images/projelerimiz.png';
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
@@ -188,11 +196,15 @@ const CompletedProjects = () => {
                 className="inline-block w-64 whitespace-normal overflow-hidden group"
               >
                 <div className="h-40 overflow-hidden relative shadow-md rounded-md">
-                  <img 
-                    src={project.image} 
-                    alt={project.name} 
+                  <img
+                    src={project.image}
+                    alt={project.name}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     loading="lazy"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/images/projelerimiz.png';
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>

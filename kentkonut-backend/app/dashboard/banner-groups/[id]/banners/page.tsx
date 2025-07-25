@@ -18,7 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Plus, Edit, Trash2, Eye, EyeOff, Lock, Unlock, ArrowLeft, ExternalLink, Image, GripVertical, Move } from 'lucide-react'
+import { Plus, Edit, Trash2, Eye, EyeOff, Lock, Unlock, ArrowLeft, ExternalLink, Image, GripVertical, Move, FileText, BarChart3 } from 'lucide-react'
 import Link from 'next/link'
 import { BannerGroup, Banner } from '@/types'
 import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DraggableProvided, DraggableStateSnapshot } from '@hello-pangea/dnd'
@@ -432,9 +432,21 @@ export default function BannerGroupDetailPage({ params }: PageProps) {
                                   </div>
                                   <div>
                                     <p className="text-gray-500 text-xs">İstatistikler</p>
-                                    <p className="text-xs">
-                                      👁️ {banner.viewCount} | 🖱️ {banner.clickCount}
-                                    </p>
+                                    <div className="flex items-center gap-3 text-xs">
+                                      <span className="flex items-center gap-1">
+                                        <Eye className="h-3 w-3 text-blue-600" />
+                                        {banner.viewCount.toLocaleString()}
+                                      </span>
+                                      <span className="flex items-center gap-1">
+                                        <BarChart3 className="h-3 w-3 text-green-600" />
+                                        {banner.clickCount.toLocaleString()}
+                                      </span>
+                                      {banner.viewCount > 0 && (
+                                        <span className="text-purple-600 font-medium">
+                                          CTR: {((banner.clickCount / banner.viewCount) * 100).toFixed(1)}%
+                                        </span>
+                                      )}
+                                    </div>
                                   </div>
                                   <div>
                                     <p className="text-gray-500 text-xs">Oluşturulma</p>
@@ -464,9 +476,9 @@ export default function BannerGroupDetailPage({ params }: PageProps) {
                                 {/* Diğer Aksiyonlar */}
                                 <div className="flex items-center gap-2">
                                   {banner.link && (
-                                    <a 
-                                      href={banner.link} 
-                                      target="_blank" 
+                                    <a
+                                      href={banner.link}
+                                      target="_blank"
                                       rel="noopener noreferrer"
                                       className="text-blue-600 hover:text-blue-800 p-1"
                                       title="Linki Aç"
@@ -474,6 +486,12 @@ export default function BannerGroupDetailPage({ params }: PageProps) {
                                       <ExternalLink className="h-4 w-4" />
                                     </a>
                                   )}
+                                  <Link href={`/dashboard/banner-groups/${id}/banners/${banner.id}`}>
+                                    <Button variant="default" size="sm" className="bg-blue-600 hover:bg-blue-700">
+                                      <FileText className="h-4 w-4 mr-1" />
+                                      Detaylar
+                                    </Button>
+                                  </Link>
                                   <Link href={`/dashboard/banner-groups/${id}/banners/${banner.id}/edit`}>
                                     <Button variant="outline" size="sm">
                                       <Edit className="h-4 w-4 mr-1" />
@@ -481,8 +499,8 @@ export default function BannerGroupDetailPage({ params }: PageProps) {
                                     </Button>
                                   </Link>
                                   {banner.deletable && (
-                                    <Button 
-                                      variant="destructive" 
+                                    <Button
+                                      variant="destructive"
                                       size="sm"
                                       onClick={() => handleDeleteClick(banner)}
                                     >

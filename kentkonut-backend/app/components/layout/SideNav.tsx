@@ -25,7 +25,9 @@ import {
   TrendingUp,
   FileStack,
   Images,
-  Menu
+  Menu,
+  BarChart3,
+  Briefcase
 } from "lucide-react"
 
 interface NavItem {
@@ -75,6 +77,16 @@ const sidebarNavGroups: NavGroup[] = [
         title: "Banner Yönetimi",
         href: "/dashboard/banner-groups",
         icon: Image,
+      },
+      {
+        title: "Banner Analytics",
+        href: "/dashboard/analytics",
+        icon: BarChart3,
+      },
+      {
+        title: "Hizmetlerimiz",
+        href: "/dashboard/hizmetlerimiz",
+        icon: Briefcase,
       },
       {
         title: "Medya",

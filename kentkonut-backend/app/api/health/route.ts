@@ -1,7 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { withCors, handleCorsPreflightRequest } from "@/lib/cors";
 
-// Health check endpoint - backend'in çalışıp çalışmadığını kontrol eder
-export async function GET() {
+// OPTIONS /api/health - Handle CORS preflight
+export async function OPTIONS(request: NextRequest) {
+  return handleCorsPreflightRequest(request);
+}
+
+// Health check endpoint - backend'in çalışıp çalışmadığını kontrol eder (CORS enabled v2)
+export const GET = withCors(async () => {
   try {
     return NextResponse.json({
       status: "OK",
@@ -12,4 +18,4 @@ export async function GET() {
   } catch (error) {
     return new NextResponse("Health check failed", { status: 500 });
   }
-}
+});

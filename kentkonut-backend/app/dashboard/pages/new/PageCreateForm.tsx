@@ -20,7 +20,6 @@ interface PageFormData {
   slug: string;
   content: string; // Required field in database
   excerpt: string;
-  imageUrl: string;
   order: number;
   isActive: boolean;
   metaTitle: string;
@@ -36,7 +35,6 @@ interface FormErrors {
   slug?: string;
   content?: string;
   excerpt?: string;
-  imageUrl?: string;
   order?: string;
   metaTitle?: string;
   metaDescription?: string;
@@ -46,7 +44,15 @@ interface FormErrors {
   general?: string;
 }
 
-export default function PageCreateForm() {
+interface PageCreateFormProps {
+  onModeSwitch?: () => void;
+  showModeSwitch?: boolean;
+}
+
+export default function PageCreateForm({
+  onModeSwitch,
+  showModeSwitch = false
+}: PageCreateFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -55,7 +61,6 @@ export default function PageCreateForm() {
     slug: '',
     content: '', // Required field
     excerpt: '',
-    imageUrl: '',
     order: 0,
     isActive: true,
     metaTitle: '',
@@ -185,7 +190,9 @@ export default function PageCreateForm() {
       const data = await response.json();
 
       if (data.success) {
-        toast.success('Sayfa başarıyla oluşturuldu!');
+        toast.success('Sayfa başarıyla oluşturuldu! İçerik düzenleme arayüzüne yönlendiriliyorsunuz...');
+        // Redirect directly to the edit page, which defaults to the content editing tab
+        // This provides a streamlined workflow: Create → Edit Content immediately
         router.push(`/dashboard/pages/${data.data.id}/edit`);
       } else {
         // Handle API validation errors
@@ -240,17 +247,31 @@ export default function PageCreateForm() {
         <Breadcrumb segments={breadcrumbSegments} homeHref="/dashboard" />
       </div>
       
-      <div className="flex items-center gap-4 mb-8">
-        <Link href="/dashboard/pages">
-          <Button variant="outline" size="sm">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Geri
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Yeni Sayfa Oluştur</h1>
-          <p className="text-gray-600 mt-2">Yeni bir web sayfası oluşturun ve içeriklerini yönetin</p>
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-4">
+          <Link href="/dashboard/pages">
+            <Button variant="outline" size="sm">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Geri
+            </Button>
+          </Link>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Yeni Sayfa Oluştur</h1>
+            <p className="text-gray-600 mt-2">
+              Sayfa bilgilerini girin ve doğrudan içerik düzenleme arayüzüne geçin
+            </p>
+          </div>
         </div>
+
+        {showModeSwitch && (
+          <Button
+            variant="outline"
+            onClick={onModeSwitch}
+            className="text-sm"
+          >
+            Gelişmiş Moda Geç
+          </Button>
+        )}
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -332,64 +353,33 @@ export default function PageCreateForm() {
                   <ErrorMessage error={errors.excerpt} />
                 </div>
 
+
+
                 <div>
-                  <Label htmlFor="imageUrl">Görsel URL</Label>
+                  <Label htmlFor="order">Sıra</Label>
                   <Input
-                    id="imageUrl"
-                    value={formData.imageUrl}
-                    onChange={(e) => handleInputChange('imageUrl', e.target.value)}
-                    placeholder="https://example.com/image.jpg"
-                    className={errors.imageUrl ? 'border-red-500 focus:border-red-500' : ''}
+                    id="order"
+                    type="number"
+                    value={formData.order}
+                    onChange={(e) => setFormData(prev => ({ ...prev, order: parseInt(e.target.value) || 0 }))}
+                    placeholder="0"
+                    className="max-w-xs"
                   />
-                  <ErrorMessage error={errors.imageUrl} />
+                  <p className="text-sm text-gray-500 mt-1">
+                    Sayfaların sıralanması için kullanılır (0 = en üstte)
+                  </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="pageType">Sayfa Tipi</Label>
-                    <Select value={formData.pageType} onValueChange={(value: any) => setFormData(prev => ({ ...prev, pageType: value }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sayfa tipini seçin" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="CUSTOM">Özel Sayfa</SelectItem>
-                        <SelectItem value="ABOUT">Hakkımızda</SelectItem>
-                        <SelectItem value="SERVICES">Hizmetler</SelectItem>
-                        <SelectItem value="CONTACT">İletişim</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="order">Sıra</Label>
-                    <Input
-                      id="order"
-                      type="number"
-                      value={formData.order}
-                      onChange={(e) => setFormData(prev => ({ ...prev, order: parseInt(e.target.value) || 0 }))}
-                      placeholder="0"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="showInNavigation"
-                      checked={formData.showInNavigation}
-                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showInNavigation: checked }))}
-                    />
-                    <Label htmlFor="showInNavigation">Menüde Göster</Label>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="isActive"
-                      checked={formData.isActive}
-                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isActive: checked }))}
-                    />
-                    <Label htmlFor="isActive">Aktif</Label>
-                  </div>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="isActive"
+                    checked={formData.isActive}
+                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isActive: checked }))}
+                  />
+                  <Label htmlFor="isActive">Sayfa Aktif</Label>
+                  <p className="text-sm text-gray-500 ml-2">
+                    Aktif olmayan sayfalar yayınlanmaz
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -505,7 +495,7 @@ export default function PageCreateForm() {
               Önizle
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? 'Kaydediliyor...' : 'Kaydet ve İçerik Ekle'}
+              {loading ? 'Kaydediliyor...' : 'Sayfa Oluştur ve İçerik Ekle'}
             </Button>
           </div>
         </div>

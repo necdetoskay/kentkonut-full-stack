@@ -111,6 +111,18 @@ export async function POST(request: NextRequest) {
 
     const newOrder = (maxOrder?.order || 0) + 1;
 
+    // Date validation
+    if (body.startDate && body.endDate) {
+      const startDate = new Date(body.startDate);
+      const endDate = new Date(body.endDate);
+      if (endDate <= startDate) {
+        return NextResponse.json(
+          { success: false, error: 'Bitiş tarihi başlangıç tarihinden sonra olmalıdır' },
+          { status: 400 }
+        );
+      }
+    }
+
     // Bannerı oluştur
     const banner = await prisma.banner.create({
       data: {
@@ -120,6 +132,8 @@ export async function POST(request: NextRequest) {
         isActive: body.isActive ?? true,
         deletable: body.deletable ?? true,
         order: newOrder,
+        startDate: body.startDate ? new Date(body.startDate) : null,
+        endDate: body.endDate ? new Date(body.endDate) : null,
         imageUrl: body.imageUrl.trim(),
         altText: body.altText?.trim(),
         bannerGroupId: body.bannerGroupId

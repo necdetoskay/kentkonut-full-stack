@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Save } from 'lucide-react';
 import RichTextEditor from '@/components/ui/rich-text-editor-tiptap';
-import { GlobalMediaSelector, GlobalMediaFile } from '@/components/media/GlobalMediaSelector';
+
 
 interface PageFormData {
   title: string;
@@ -21,7 +21,6 @@ interface PageFormData {
   metaDescription: string;
   order: number;
   excerpt: string;
-  imageUrl: string;
 }
 
 export default function NewSimplePage() {
@@ -36,7 +35,6 @@ export default function NewSimplePage() {
       isActive: true,
       metaTitle: '',
       metaDescription: '',
-      imageUrl: '',
       order: 0,
       excerpt: ''
     }
@@ -164,52 +162,7 @@ export default function NewSimplePage() {
           </CardContent>
         </Card>
 
-        {/* Görsel İçerik */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Sayfa Görseli</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Öne Çıkan Görsel</Label>
-              
-              {/* Seçili görsel önizlemesi */}
-              {watch('imageUrl') && (
-                <div className="relative inline-block">
-                  <img 
-                    src={watch('imageUrl')} 
-                    alt="Seçili görsel" 
-                    className="max-w-xs h-32 object-cover rounded border"
-                  />
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => setValue('imageUrl', '')}
-                    className="absolute top-2 right-2"
-                  >
-                    ×
-                  </Button>
-                </div>
-              )}              <GlobalMediaSelector
-                onSelect={(media: GlobalMediaFile) => {
-                  console.log("GlobalMediaSelector onSelect:", media)
-                  setValue('imageUrl', media?.url || '')
-                }}
-                defaultCategory="content-images"
-                trigger={
-                  <Button type="button" variant="outline" className="w-full">
-                    {watch('imageUrl') ? "Görseli Değiştir" : "Görsel Seç"}
-                  </Button>
-                }
-              />
-              
-              <p className="text-sm text-gray-500">
-                Bu görsel sayfa önizlemelerinde ve SEO için kullanılacaktır.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+
 
         {/* SEO Bilgileri */}
         <Card>

@@ -59,7 +59,7 @@ export async function PUT(
   try {
     const { id: idParam } = await params;
     const id = parseInt(idParam);
-    
+
     if (isNaN(id)) {
       return NextResponse.json(
         { success: false, error: 'Geçersiz ID' },
@@ -96,19 +96,48 @@ export async function PUT(
       );
     }
 
+    // Date validation
+    if (body.startDate && body.endDate) {
+      const startDate = new Date(body.startDate);
+      const endDate = new Date(body.endDate);
+      if (endDate <= startDate) {
+        return NextResponse.json(
+          { success: false, error: 'Bitiş tarihi başlangıç tarihinden sonra olmalıdır' },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Prepare update data (exclude bannerGroupId from updates)
+    const updateData: any = {
+      title: body.title.trim(),
+      description: body.description?.trim() || null,
+      link: body.link?.trim() || null,
+      isActive: body.isActive,
+      deletable: body.deletable,
+      order: body.order,
+      imageUrl: body.imageUrl.trim(),
+      altText: body.altText?.trim() || null,
+      updatedAt: new Date()
+    };
+
+    // Handle date fields properly
+    if (body.startDate) {
+      updateData.startDate = new Date(body.startDate);
+    } else {
+      updateData.startDate = null;
+    }
+
+    if (body.endDate) {
+      updateData.endDate = new Date(body.endDate);
+    } else {
+      updateData.endDate = null;
+    }
+
     // Bannerı güncelle
     const updatedBanner = await prisma.banner.update({
       where: { id },
-      data: {
-        title: body.title.trim(),
-        description: body.description?.trim(),
-        link: body.link?.trim(),
-        isActive: body.isActive,
-        deletable: body.deletable,
-        order: body.order,
-        imageUrl: body.imageUrl.trim(),
-        altText: body.altText?.trim()
-      },
+      data: updateData,
       include: {
         bannerGroup: {
           select: {
@@ -127,8 +156,33 @@ export async function PUT(
 
   } catch (error) {
     console.error('Banner güncellenirken hata:', error);
+    console.error('Request body:', body);
+    console.error('Banner ID:', id);
+
+    // More specific error handling
+    if (error instanceof Error) {
+      if (error.message.includes('Unique constraint')) {
+        return NextResponse.json(
+          { success: false, error: 'Bu banner bilgileri zaten kullanımda' },
+          { status: 409 }
+        );
+      }
+      if (error.message.includes('Foreign key constraint')) {
+        return NextResponse.json(
+          { success: false, error: 'Geçersiz banner grubu referansı' },
+          { status: 400 }
+        );
+      }
+      if (error.message.includes('Invalid date')) {
+        return NextResponse.json(
+          { success: false, error: 'Geçersiz tarih formatı' },
+          { status: 400 }
+        );
+      }
+    }
+
     return NextResponse.json(
-      { success: false, error: 'Banner güncellenirken bir hata oluştu' },
+      { success: false, error: 'Banner güncellenirken bir hata oluştu', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

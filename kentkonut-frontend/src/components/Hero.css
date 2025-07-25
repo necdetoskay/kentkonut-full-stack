@@ -2,10 +2,13 @@
 .carousel-container {
   position: relative;
   width: 100%;
-  height: calc(100vh - 50px); /* Ekran yüksekliğine göre ayarlanıyor */
+  height: 100vh; /* Full viewport height - banner extends behind navbar */
   min-height: 700px; /* Minimum yükseklik garantisi */
   overflow: hidden;
   background-color: #b3b3b3; /* Gri arkaplan */
+  top: 0;
+  left: 0;
+  z-index: 1; /* Behind navbar but above other content */
 }
 
 .carousel-slide {
@@ -183,14 +186,14 @@
 /* Responsive düzenlemeler */
 @media (max-height: 800px) {
   .carousel-container {
-    height: 90vh;
+    height: 100vh; /* Keep full height even on shorter screens */
     min-height: 600px;
   }
 }
 
 @media (max-height: 600px) {
   .carousel-container {
-    height: 95vh;
+    height: 100vh; /* Keep full height even on very short screens */
     min-height: 500px;
   }
 }
@@ -206,16 +209,14 @@
     display: block;
   }
   .carousel-container {
-    height: 150px !important;
-    min-height: 140px !important;
-    max-height: 180px !important;
+    height: 100vh !important; /* Full height on mobile too */
+    min-height: 100vh !important;
     position: relative;
     overflow: hidden !important;
   }
   .carousel-slide {
-    height: 150px !important;
-    min-height: 140px !important;
-    max-height: 180px !important;
+    height: 100vh !important; /* Full height slides on mobile */
+    min-height: 100vh !important;
   }
   .bg-slide {
     background-size: cover !important;

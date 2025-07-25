@@ -13,6 +13,8 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const Hakkimizda = lazy(() => import("./pages/Hakkimizda"));
 const BannerTest = lazy(() => import("./pages/BannerTest"));
 const BannerAPITest = lazy(() => import("./debug/BannerAPITest").then(mod => ({ default: mod.BannerAPITest })));
+const ServiceCardAPITest = lazy(() => import("./debug/ServiceCardAPITest"));
+const ServiceCardCenteringDemo = lazy(() => import("./debug/ServiceCardCenteringDemo"));
 const Haberler = lazy(() => import("./pages/haberler"));
 const HaberDetay = lazy(() => import("./pages/haberler/[slug]"));
 const AdminLayout = lazy(() => import("./components/admin/AdminLayout").then(mod => ({ default: mod.AdminLayout })));
@@ -28,6 +30,8 @@ const EditBannerPage = lazy(() => import("./modules/banner-groups/pages/banners/
 if ((import.meta as any).env?.DEV) {
   import('./utils/connectionTest');
   import('./utils/debugApiTest');
+  import('./utils/verifyIntegration');
+  import('./utils/testServiceCardCentering');
 }
 
 const queryClient = new QueryClient({
@@ -72,6 +76,8 @@ const AppRoutesWithNavbar = () => {
             <Route path="/hakkimizda" element={<Hakkimizda />} />
             <Route path="/banner-test" element={<BannerTest />} />
             <Route path="/banner-api-test" element={<BannerAPITest />} />
+            <Route path="/service-card-api-test" element={<ServiceCardAPITest />} />
+            <Route path="/service-card-centering-demo" element={<ServiceCardCenteringDemo />} />
             <Route path="/haberler" element={<Haberler />} />
             <Route path="/haberler/:slug" element={<HaberDetay />} />
             {/* Admin routes */}

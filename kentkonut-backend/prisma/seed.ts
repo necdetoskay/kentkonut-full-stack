@@ -2,6 +2,8 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { ProjectStatus } from '../types';
 import { seedMenuItems } from './seeds/menu-items';
+import { seedNews } from './seeds/news';
+import { seedCompletedProjects } from './seeds/completed-projects';
 
 // Create a new PrismaClient instance for the seed script
 const prisma = new PrismaClient();
@@ -178,6 +180,12 @@ async function main() {
 
   // Quick Access Links seed
   await seedQuickAccessLinks();
+
+  // News module seed
+  await seedNews();
+
+  // Completed projects seed
+  await seedCompletedProjects();
 
   console.log('🎉 Database seed completed successfully!')
 }

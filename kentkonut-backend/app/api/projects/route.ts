@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { z } from "zod";
+import { withCors, handleCorsPreflightRequest } from "@/lib/cors";
 
 const projectSchema = z.object({
   title: z.string().min(1, "Başlık gereklidir"),
@@ -24,8 +25,13 @@ const projectSchema = z.object({
   hasQuickAccess: z.boolean().default(false), // Hızlı erişim aktif mi?
 });
 
-// GET all projects
-export async function GET(req: Request) {
+// OPTIONS /api/projects - Handle CORS preflight
+export async function OPTIONS(request: NextRequest) {
+  return handleCorsPreflightRequest(request);
+}
+
+// GET all projects (CORS enabled)
+export const GET = withCors(async (req: NextRequest) => {
   try {
     // AUTH KALDIRILDI: Proje listesi public
     // const session = await auth();
@@ -116,10 +122,10 @@ export async function GET(req: Request) {
     console.error("[PROJECTS_GET]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
-}
+});
 
 // POST create new project
-export async function POST(req: Request) {
+export const POST = withCors(async (req: NextRequest) => {
   try {
     const session = await auth();
 
@@ -226,4 +232,4 @@ export async function POST(req: Request) {
     }
     return new NextResponse("Internal error", { status: 500 });
   }
-}
+});

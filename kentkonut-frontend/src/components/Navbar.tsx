@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
+import { menuService } from '../services/menuService';
+import { MenuItem } from '../types/menu';
+import './Navbar.css';
 
 interface NavbarProps {
   className?: string;
@@ -8,6 +11,60 @@ interface NavbarProps {
 const Navbar = ({ className }: NavbarProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [menuLoading, setMenuLoading] = useState(true);
+  const [menuError, setMenuError] = useState<string | null>(null);
+  const [expandedMobileMenus, setExpandedMobileMenus] = useState<Set<string>>(new Set());
+
+  // Load menu items from backend
+  const loadMenuItems = async (bustCache: boolean = false) => {
+    try {
+      setMenuLoading(true);
+      setMenuError(null);
+      console.log('🔍 Loading dynamic menu items...');
+
+      const items = await menuService.getMainMenuItems(bustCache);
+      const activeItems = menuService.filterActiveMenuItems(items);
+
+      setMenuItems(activeItems);
+      console.log('✅ Dynamic menu items loaded:', activeItems.length);
+
+      // Debug hierarchical menu structure
+      activeItems.forEach(item => {
+        if (item.children && item.children.length > 0) {
+          console.log(`📁 Parent menu "${item.title}" has ${item.children.length} children:`,
+            item.children.map(child => child.title));
+        }
+      });
+    } catch (error) {
+      console.error('❌ Error loading menu items:', error);
+      setMenuError('Menü yüklenirken hata oluştu');
+
+      // Fallback to static menu items
+      const fallbackItems: MenuItem[] = [
+        { id: '1', title: 'ANASAYFA', url: '/', isActive: true, isExternal: false, target: '_self', orderIndex: 1, menuLocation: 'main', createdAt: '', updatedAt: '' },
+        { id: '2', title: 'HAKKIMIZDA', url: '/hakkimizda', isActive: true, isExternal: false, target: '_self', orderIndex: 2, menuLocation: 'main', createdAt: '', updatedAt: '' },
+        { id: '3', title: 'KURUMSAL', url: '/kurumsal', isActive: true, isExternal: false, target: '_self', orderIndex: 3, menuLocation: 'main', createdAt: '', updatedAt: '' },
+        { id: '4', title: 'PROJELERİMİZ', url: '/projeler', isActive: true, isExternal: false, target: '_self', orderIndex: 4, menuLocation: 'main', createdAt: '', updatedAt: '' },
+        { id: '5', title: 'HAFRİYAT', url: '/hafriyat', isActive: true, isExternal: false, target: '_self', orderIndex: 5, menuLocation: 'main', createdAt: '', updatedAt: '' },
+        { id: '6', title: 'BİZE ULAŞIN', url: '/bize-ulasin', isActive: true, isExternal: false, target: '_self', orderIndex: 6, menuLocation: 'main', createdAt: '', updatedAt: '' },
+      ];
+      setMenuItems(fallbackItems);
+      console.log('⚠️ Using fallback menu items');
+    } finally {
+      setMenuLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadMenuItems();
+  }, []);
+
+  // Manual refresh function for development
+  const refreshMenu = () => {
+    console.log('🔄 Manual menu refresh triggered');
+    loadMenuItems(true);
+  };
 
   // Mobile detection
   useEffect(() => {
@@ -52,16 +109,46 @@ const Navbar = ({ className }: NavbarProps) => {
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
+    setExpandedMobileMenus(new Set()); // Reset expanded menus when closing
   };
 
-  const menuItems = [
-    { href: '/', label: 'ANASAYFA' },
-    { href: '/hakkimizda', label: 'HAKKIMIZDA' },
-    { href: '/kurumsal', label: 'KURUMSAL' },
-    { href: '/projeler', label: 'PROJELERİMİZ' },
-    { href: '/hafriyat', label: 'HAFRİYAT' },
-    { href: '/bize-ulasin', label: 'BİZE ULAŞIN' },
-  ];
+  const toggleMobileSubmenu = (menuId: string, hasChildren: boolean, event: React.MouseEvent) => {
+    if (hasChildren) {
+      event.preventDefault(); // Prevent navigation for parent items with children
+      setExpandedMobileMenus(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(menuId)) {
+          newSet.delete(menuId);
+        } else {
+          newSet.add(menuId);
+        }
+        return newSet;
+      });
+    }
+  };
+
+  const handleDesktopMenuClick = (item: MenuItem, event: React.MouseEvent) => {
+    if (item.children && item.children.length > 0) {
+      event.preventDefault(); // Prevent navigation for parent items with children
+    }
+  };
+
+  const handleKeyDown = (item: MenuItem, event: React.KeyboardEvent) => {
+    if (item.children && item.children.length > 0) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        // Focus on first child item
+        const dropdown = event.currentTarget.parentElement?.querySelector('.navbar-dropdown a') as HTMLElement;
+        dropdown?.focus();
+      } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        const dropdown = event.currentTarget.parentElement?.querySelector('.navbar-dropdown a') as HTMLElement;
+        dropdown?.focus();
+      }
+    }
+  };
+
+  // Dynamic menu items are loaded via useEffect above
 
   const socialLinks = [
     { href: 'https://youtube.com', icon: 'fab fa-youtube' },
@@ -78,13 +165,10 @@ const Navbar = ({ className }: NavbarProps) => {
         top: 0,
         left: 0,
         right: 0,
-        backgroundImage: "url('/images/proje_header_02032021191233.jpg')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
       }}
     >
-      {/* Hafif koyu gradient overlay - menü öğelerinin daha okunabilir olmasını sağlar */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-transparent h-[120px]"></div>
+      {/* Enhanced gradient overlay for better readability over banner images */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-transparent h-[140px]"></div>
       
       <div className="flex relative">
         {/* Logo Kolonu - Responsive boyutlar */}
@@ -106,19 +190,71 @@ const Navbar = ({ className }: NavbarProps) => {
                 {/* Menü öğeleri */}
                 <nav className="flex">
                   <ul className="flex gap-x-7">
-                    {menuItems.map((item) => (
-                      <li key={item.href} className="list-none relative">
-                        <a 
-                          href={item.href} 
-                          className="text-white text-xl font-medium uppercase hover:opacity-80 drop-shadow-md transition-all"
-                        >
-                          {item.label}
-                        </a>
+                    {menuLoading ? (
+                      <li className="text-white text-xl font-medium uppercase">
+                        Yükleniyor...
                       </li>
-                    ))}
+                    ) : menuError ? (
+                      <li className="text-white text-xl font-medium uppercase">
+                        Menü Hatası
+                      </li>
+                    ) : (
+                      menuItems.map((item) => (
+                        <li key={item.id} className="list-none relative group navbar-menu-item">
+                          <a
+                            href={menuService.getMenuItemUrl(item)}
+                            target={menuService.getMenuItemTarget(item)}
+                            onClick={(e) => handleDesktopMenuClick(item, e)}
+                            onKeyDown={(e) => handleKeyDown(item, e)}
+                            className={`navbar-menu-link text-white text-xl font-medium uppercase hover:opacity-80 drop-shadow-md transition-all flex items-center ${item.cssClass || ''}`}
+                            title={item.description || item.title}
+                            aria-haspopup={item.children && item.children.length > 0 ? "true" : "false"}
+                            aria-expanded="false"
+                            tabIndex={0}
+                          >
+                            {item.icon && <i className={`${item.icon} mr-2`}></i>}
+                            {item.title}
+                            {/* Visual indicator for parent items */}
+                            {item.children && item.children.length > 0 && (
+                              <i className="fas fa-chevron-down ml-2 text-sm chevron-rotate"></i>
+                            )}
+                          </a>
+                          {/* Render children if any */}
+                          {item.children && item.children.length > 0 && (
+                            <ul className="navbar-dropdown absolute top-full left-0 bg-white shadow-xl rounded-lg py-3 min-w-56 opacity-0 invisible transition-all duration-300 border border-gray-200">
+                              {item.children.map((child) => (
+                                <li key={child.id} className="submenu-item">
+                                  <a
+                                    href={menuService.getMenuItemUrl(child)}
+                                    target={menuService.getMenuItemTarget(child)}
+                                    className="block px-5 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-600 transition-colors border-b border-gray-100 last:border-b-0"
+                                    title={child.description || child.title}
+                                  >
+                                    {child.icon && <i className={`${child.icon} mr-3 text-blue-500`}></i>}
+                                    <span className="font-medium">{child.title}</span>
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </li>
+                      ))
+                    )}
                   </ul>
                 </nav>
                 
+                {/* Development menu refresh button */}
+                {process.env.NODE_ENV === 'development' && (
+                  <button
+                    onClick={refreshMenu}
+                    className="text-white hover:opacity-80 w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-all mr-3"
+                    title="Refresh Menu (Dev)"
+                    aria-label="Refresh Menu"
+                  >
+                    <i className="fas fa-sync-alt text-sm"></i>
+                  </button>
+                )}
+
                 {/* Sosyal medya ve telefon numarası */}
                 <div className="flex items-center pr-6">
                   <div className="border-l border-white pl-4 flex items-center mr-4">
@@ -203,17 +339,73 @@ const Navbar = ({ className }: NavbarProps) => {
             {/* Mobile Menu Items */}
             <nav className="p-4">
               <ul className="space-y-2">
-                {menuItems.map((item) => (
-                  <li key={item.href}>
-                    <a 
-                      href={item.href} 
-                      onClick={closeMobileMenu}
-                      className="block py-3 px-4 text-gray-800 hover:bg-gray-100 hover:text-[#0b244c] rounded-md transition-colors font-medium"
-                    >
-                      {item.label}
-                    </a>
+                {menuLoading ? (
+                  <li className="py-3 px-4 text-gray-600">
+                    Menü yükleniyor...
                   </li>
-                ))}
+                ) : menuError ? (
+                  <li className="py-3 px-4 text-red-600">
+                    Menü yüklenirken hata oluştu
+                  </li>
+                ) : (
+                  menuItems.map((item) => (
+                    <li key={item.id}>
+                      <div className="relative">
+                        <a
+                          href={menuService.getMenuItemUrl(item)}
+                          target={menuService.getMenuItemTarget(item)}
+                          onClick={(e) => {
+                            const hasChildren = item.children && item.children.length > 0;
+                            if (hasChildren) {
+                              toggleMobileSubmenu(item.id, hasChildren, e);
+                            } else {
+                              closeMobileMenu();
+                            }
+                          }}
+                          className={`flex items-center justify-between py-3 px-4 text-gray-800 hover:bg-gray-100 hover:text-[#0b244c] rounded-md transition-colors font-medium ${item.cssClass || ''}`}
+                          title={item.description || item.title}
+                          aria-haspopup={item.children && item.children.length > 0 ? "true" : "false"}
+                          aria-expanded={expandedMobileMenus.has(item.id) ? "true" : "false"}
+                        >
+                          <span className="flex items-center">
+                            {item.icon && <i className={`${item.icon} mr-3`}></i>}
+                            {item.title}
+                          </span>
+                          {/* Visual indicator for parent items */}
+                          {item.children && item.children.length > 0 && (
+                            <i className={`fas fa-chevron-down text-sm transition-transform duration-200 ${
+                              expandedMobileMenus.has(item.id) ? 'rotate-180' : ''
+                            }`}></i>
+                          )}
+                        </a>
+
+                        {/* Render mobile children if any */}
+                        {item.children && item.children.length > 0 && (
+                          <div className={`overflow-hidden transition-all duration-300 ${
+                            expandedMobileMenus.has(item.id) ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                          }`}>
+                            <ul className="ml-6 mt-2 space-y-1 border-l-2 border-gray-200 pl-4">
+                              {item.children.map((child) => (
+                                <li key={child.id}>
+                                  <a
+                                    href={menuService.getMenuItemUrl(child)}
+                                    target={menuService.getMenuItemTarget(child)}
+                                    onClick={closeMobileMenu}
+                                    className="block py-2 px-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 rounded-md transition-colors text-sm font-medium"
+                                    title={child.description || child.title}
+                                  >
+                                    {child.icon && <i className={`${child.icon} mr-2 text-blue-500`}></i>}
+                                    {child.title}
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    </li>
+                  ))
+                )}
               </ul>
             </nav>
 

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft } from 'lucide-react';
-import { BannerForm } from '../../components/BannerForm';
+import { BannerEditForm } from '../../components/BannerEditForm';
 
 export default function EditBannerPage() {
   const { id, bannerId } = useParams<{ id: string; bannerId: string }>();
@@ -29,11 +29,10 @@ export default function EditBannerPage() {
           <CardTitle>Banner'ı Düzenle</CardTitle>
         </CardHeader>
         <CardContent>
-          <BannerForm 
-            id={Number(bannerId)}
-            groupId={Number(id)}
+          <BannerEditForm
+            bannerId={Number(bannerId)}
+            bannerGroupId={Number(id)}
             onSuccess={() => navigate(`/dashboard/banner-groups/${id}`)}
-            isEditing={true}
           />
         </CardContent>
       </Card>

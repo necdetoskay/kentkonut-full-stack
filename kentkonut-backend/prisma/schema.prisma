@@ -7,15 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Banner Animasyon Tipleri
-enum BannerAnimasyonTipi {
-  SOLUKLESTIR    // Fade
-  KAYDIR         // Slide
-  YAKINLESTIR    // Zoom
-  CEVIR          // Flip
-  ZIPLA          // Bounce
-}
-
 model User {
   id            String    @id
   name          String?
@@ -100,8 +91,8 @@ model Media {
   isActive              Boolean              @default(true)
   uploadedBy            String?
   url                   String?
-  type                  MediaType            // Dosya tipi: IMAGE, VIDEO, PDF, WORD, EMBED
-  embedUrl              String?              // Video için embed/link desteği
+  embedUrl              String?
+  type                  MediaType
   category              MediaCategory?       @relation(fields: [categoryId], references: [id])
   user                  User?                @relation(fields: [uploadedBy], references: [id])
   news                  News[]
@@ -113,35 +104,27 @@ model Media {
   @@map("media")
 }
 
-enum MediaType {
-  IMAGE
-  VIDEO
-  PDF
-  WORD
-  EMBED
-}
-
 model Page {
-  id              String           @id @default(cuid())
-  slug            String           @unique
-  title           String
-  metaTitle       String?
-  metaDescription String?
-  isActive        Boolean          @default(true)
-  order           Int              @default(0)
-  publishedAt     DateTime?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  categoryId      String?
-  content         String
-  excerpt         String?
-  imageUrl        String?
-  metaKeywords    String[]
-  hasQuickAccess  Boolean          @default(false) // Hızlı erişim aktif mi?
-  seoMetrics      PageSeoMetrics[]
-  category        PageCategory?    @relation(fields: [categoryId], references: [id])
+  id               String            @id @default(cuid())
+  slug             String            @unique
+  title            String
+  metaTitle        String?
+  metaDescription  String?
+  isActive         Boolean           @default(true)
+  order            Int               @default(0)
+  publishedAt      DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  categoryId       String?
+  content          String
+  excerpt          String?
+  imageUrl         String?
+  metaKeywords     String[]
+  hasQuickAccess   Boolean           @default(false)
+  executives       Executive[]
+  seoMetrics       PageSeoMetrics[]
+  category         PageCategory?     @relation(fields: [categoryId], references: [id])
   quickAccessLinks QuickAccessLink[] @relation("PageQuickAccess")
-  executives      Executive[]      // Executives linked to this page
 
   @@map("pages")
 }
@@ -185,23 +168,23 @@ model Executive {
   name                String
   title               String
   position            String
-  slug                String?              @unique
   biography           String?
   imageUrl            String?
   email               String?
   phone               String?
   linkedIn            String?
-  quickAccessUrl      String?              // Direct URL for quick access to executive's detail page
-  hasQuickAccessLinks Boolean              @default(false) // Toggle for Quick Access Links functionality
   order               Int                  @default(0)
   isActive            Boolean              @default(true)
   type                ExecutiveType
-  pageId              String?              // Link to a specific page in the Pages module
-  page                Page?                @relation(fields: [pageId], references: [id])
-  quickLinks          ExecutiveQuickLink[]
-  managedDepartments  Department[]         @relation("DepartmentManager") // Departments managed by this executive
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
+  slug                String?              @unique
+  pageId              String?
+  quickAccessUrl      String?
+  hasQuickAccessLinks Boolean              @default(false)
+  managedDepartments  Department[]         @relation("DepartmentManager")
+  quickLinks          ExecutiveQuickLink[]
+  page                Page?                @relation(fields: [pageId], references: [id])
 
   @@map("executives")
 }
@@ -215,9 +198,9 @@ model ExecutiveQuickLink {
   order       Int       @default(0)
   isActive    Boolean   @default(true)
   executiveId String
-  executive   Executive @relation(fields: [executiveId], references: [id], onDelete: Cascade)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  executive   Executive @relation(fields: [executiveId], references: [id], onDelete: Cascade)
 
   @@map("executive_quick_links")
 }
@@ -225,22 +208,22 @@ model ExecutiveQuickLink {
 model Department {
   id               String                @id @default(cuid())
   name             String
-  content          String                @default("")
-  slug             String?               @unique
   imageUrl         String?
   services         String[]
-  directorId       String?               @unique
-  managerId        String?               // Executive manager reference (optional)
   order            Int                   @default(0)
   isActive         Boolean               @default(true)
   createdAt        DateTime              @default(now())
   updatedAt        DateTime              @updatedAt
-  hasQuickAccess   Boolean               @default(false) // Hızlı erişim aktif mi?
+  content          String                @default("")
+  directorId       String?               @unique
+  slug             String?               @unique
+  hasQuickAccess   Boolean               @default(false)
+  managerId        String?
   quickLinks       DepartmentQuickLink[]
   director         Personnel?            @relation("DepartmentDirector", fields: [directorId], references: [id])
   manager          Executive?            @relation("DepartmentManager", fields: [managerId], references: [id])
-  chiefs           Personnel[]           @relation("DepartmentChiefs")
   quickAccessLinks QuickAccessLink[]     @relation("DepartmentQuickAccess")
+  chiefs           Personnel[]           @relation("DepartmentChiefs")
 
   @@map("departments")
 }
@@ -260,8 +243,8 @@ model Personnel {
   createdAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
   directedDept Department?        @relation("DepartmentDirector")
-  chiefInDepts Department[]       @relation("DepartmentChiefs")
   galleryItems PersonnelGallery[]
+  chiefInDepts Department[]       @relation("DepartmentChiefs")
 
   @@map("personnel")
 }
@@ -276,8 +259,8 @@ model PersonnelGallery {
   description String?
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
-  personnel   Personnel       @relation(fields: [personnelId], references: [id], onDelete: Cascade)
   media       Media           @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  personnel   Personnel       @relation(fields: [personnelId], references: [id], onDelete: Cascade)
 
   @@map("personnel_gallery")
 }
@@ -294,18 +277,6 @@ model DepartmentQuickLink {
   department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
 
   @@map("department_quick_links")
-}
-
-enum PersonnelType {
-  DIRECTOR
-  CHIEF
-}
-
-enum GalleryItemType {
-  IMAGE
-  DOCUMENT
-  PDF
-  WORD
 }
 
 model CorporateContent {
@@ -339,32 +310,32 @@ model NewsCategory {
 }
 
 model News {
-  id            Int               @id @default(autoincrement())
-  title         String
-  slug          String            @unique
-  summary       String?
-  content       String
-  mediaId       String?
-  viewCount     Int               @default(0)
-  shareCount    Int               @default(0) // Paylaşım istatistiği
-  downloadCount Int               @default(0) // İndirme istatistiği
-  likeCount     Int               @default(0) // Beğeni istatistiği
-  readingTime   Int               @default(3)
-  published     Boolean           @default(false)
-  publishedAt   DateTime?
-  categoryId    Int
-  authorId      String
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @default(now())
-  hasQuickAccess Boolean          @default(false) // Hızlı erişim aktif mi?
-  comments      Comment[]
-  author        User              @relation(fields: [authorId], references: [id])
-  category      NewsCategory      @relation(fields: [categoryId], references: [id])
-  media         Media?            @relation(fields: [mediaId], references: [id])
-  galleryItems  NewsGalleryItem[]
-  relatedNews   NewsRelation[]    @relation("NewsToRelated")
-  relatedToNews NewsRelation[]    @relation("RelatedToNews")
-  tags          NewsTag[]
+  id               Int               @id @default(autoincrement())
+  title            String
+  slug             String            @unique
+  summary          String?
+  content          String
+  mediaId          String?
+  viewCount        Int               @default(0)
+  readingTime      Int               @default(3)
+  published        Boolean           @default(false)
+  publishedAt      DateTime?
+  categoryId       Int
+  authorId         String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @default(now())
+  downloadCount    Int               @default(0)
+  likeCount        Int               @default(0)
+  shareCount       Int               @default(0)
+  hasQuickAccess   Boolean           @default(false)
+  comments         Comment[]
+  author           User              @relation(fields: [authorId], references: [id])
+  category         NewsCategory      @relation(fields: [categoryId], references: [id])
+  media            Media?            @relation(fields: [mediaId], references: [id])
+  galleryItems     NewsGalleryItem[]
+  relatedNews      NewsRelation[]    @relation("NewsToRelated")
+  relatedToNews    NewsRelation[]    @relation("RelatedToNews")
+  tags             NewsTag[]
   quickAccessLinks QuickAccessLink[] @relation("NewsQuickAccess")
 
   @@map("news")
@@ -454,7 +425,7 @@ model Project {
   authorId          String
   createdAt         DateTime             @default(now())
   updatedAt         DateTime             @updatedAt
-  hasQuickAccess    Boolean              @default(false) // Hızlı erişim aktif mi?
+  hasQuickAccess    Boolean              @default(false)
   comments          Comment[]
   galleryItems      ProjectGalleryItem[]
   relatedProjects   ProjectRelation[]    @relation("ProjectToRelated")
@@ -502,14 +473,458 @@ model ProjectRelation {
   @@map("project_relations")
 }
 
+model HafriyatBolge {
+  id                String         @id @default(cuid())
+  ad                String         @unique
+  aciklama          String?
+  yetkiliKisi       String
+  yetkiliTelefon    String
+  aktif             Boolean        @default(true)
+  olusturulmaTarihi DateTime       @default(now())
+  guncellemeTarihi  DateTime       @updatedAt
+  sahalar           HafriyatSaha[]
+
+  @@map("hafriyat_bolgeler")
+}
+
+model HafriyatSaha {
+  id                 String            @id @default(cuid())
+  ad                 String
+  konumAdi           String
+  enlem              Float
+  boylam             Float
+  durum              HafriyatSahaDurum @default(DEVAM_EDIYOR)
+  ilerlemeyuzdesi    Int               @default(0)
+  tonBasiUcret       Decimal
+  kdvOrani           Int               @default(20)
+  bolgeId            String
+  aktif              Boolean           @default(true)
+  olusturulmaTarihi  DateTime          @default(now())
+  guncellemeTarihi   DateTime          @updatedAt
+  aciklama           String?
+  baslangicTarihi    DateTime?
+  tahminibitisTarihi DateTime?
+  tamamlananTon      Decimal?
+  toplamTon          Decimal?
+  seoCanonicalUrl    String?
+  seoDescription     String?
+  seoKeywords        String?
+  seoLink            String?
+  seoTitle           String?
+  belgeler           HafriyatBelge[]
+  resimler           HafriyatResim[]
+  bolge              HafriyatBolge     @relation(fields: [bolgeId], references: [id])
+
+  @@unique([ad, bolgeId])
+  @@map("hafriyat_sahalar")
+}
+
+model HafriyatBelgeKategori {
+  id                Int             @id @default(autoincrement())
+  ad                String          @unique
+  ikon              String          @default("document")
+  sira              Int             @default(0)
+  olusturulmaTarihi DateTime        @default(now())
+  guncellemeTarihi  DateTime        @updatedAt
+  belgeler          HafriyatBelge[]
+
+  @@map("hafriyat_belge_kategorileri")
+}
+
+model HafriyatBelge {
+  id                String                @id @default(cuid())
+  baslik            String
+  dosyaAdi          String
+  orjinalAd         String
+  dosyaTipi         String
+  boyut             Int
+  dosyaYolu         String
+  sahaId            String
+  kategoriId        Int
+  olusturulmaTarihi DateTime              @default(now())
+  guncellemeTarihi  DateTime              @updatedAt
+  kategori          HafriyatBelgeKategori @relation(fields: [kategoriId], references: [id])
+  saha              HafriyatSaha          @relation(fields: [sahaId], references: [id], onDelete: Cascade)
+
+  @@map("hafriyat_belgeler")
+}
+
+model HafriyatResim {
+  id                String       @id @default(cuid())
+  baslik            String?
+  dosyaAdi          String
+  orjinalAd         String?
+  dosyaYolu         String
+  altMetin          String?
+  aciklama          String?
+  sahaId            String
+  sira              Int          @default(0)
+  olusturulmaTarihi DateTime     @default(now())
+  guncellemeTarihi  DateTime     @updatedAt
+  saha              HafriyatSaha @relation(fields: [sahaId], references: [id], onDelete: Cascade)
+
+  @@map("hafriyat_resimler")
+}
+
+model BannerPosition {
+  id              Int          @id @default(autoincrement())
+  positionUUID    String       @unique @db.VarChar(36)
+  name            String
+  description     String?
+  bannerGroupId   Int?
+  fallbackGroupId Int?
+  isActive        Boolean      @default(true)
+  priority        Int          @default(1)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  bannerGroup     BannerGroup? @relation("PrimaryBannerGroup", fields: [bannerGroupId], references: [id])
+  fallbackGroup   BannerGroup? @relation("FallbackBannerGroup", fields: [fallbackGroupId], references: [id])
+
+  @@index([positionUUID])
+  @@index([isActive])
+  @@map("banner_positions")
+}
+
+model BannerGroup {
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  description        String?
+  deletable          Boolean             @default(true)
+  transitionDuration Float               @default(0.5)
+  width              Int                 @default(1200)
+  height             Int                 @default(400)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  displayDuration    Int                 @default(5000)
+  isActive           Boolean             @default(true)
+  mobileHeight       Int                 @default(200)
+  mobileWidth        Int                 @default(400)
+  tabletHeight       Int                 @default(300)
+  tabletWidth        Int                 @default(800)
+  animationType      BannerAnimasyonTipi @default(SOLUKLESTIR)
+  usageType          String?
+  abTests            BannerABTest[]
+  primaryPositions   BannerPosition[]    @relation("PrimaryBannerGroup")
+  fallbackPositions  BannerPosition[]    @relation("FallbackBannerGroup")
+  banners            Banner[]
+
+  @@index([isActive])
+  @@index([usageType])
+  @@index([createdAt])
+  @@map("banner_groups")
+}
+
+model Banner {
+  id                   Int                          @id @default(autoincrement())
+  title                String
+  description          String?
+  link                 String?
+  isActive             Boolean                      @default(true)
+  deletable            Boolean                      @default(true)
+  order                Int                          @default(0)
+  viewCount            Int                          @default(0)
+  clickCount           Int                          @default(0)
+  imageUrl             String
+  altText              String?
+  bannerGroupId        Int
+  createdAt            DateTime                     @default(now())
+  updatedAt            DateTime                     @updatedAt
+  avgEngagementTime    Int                          @default(0)
+  bounceCount          Int                          @default(0)
+  conversionCount      Int                          @default(0)
+  endDate              DateTime?
+  impressionCount      Int                          @default(0)
+  startDate            DateTime?
+  uniqueViewCount      Int                          @default(0)
+  abTestsAsVariantA    BannerABTest[]               @relation("VariantA")
+  abTestsAsVariantB    BannerABTest[]               @relation("VariantB")
+  abTestsAsWinner      BannerABTest[]               @relation("Winner")
+  analyticsEvents      BannerAnalyticsEvents[]
+  performanceSummaries BannerPerformanceSummaries[]
+  statistics           BannerStatistics[]
+  bannerGroup          BannerGroup                  @relation(fields: [bannerGroupId], references: [id], onDelete: Cascade)
+
+  @@index([bannerGroupId])
+  @@index([isActive])
+  @@index([order])
+  @@index([createdAt])
+  @@index([startDate])
+  @@index([endDate])
+  @@map("banners")
+}
+
+model BannerStatistics {
+  id        Int      @id @default(autoincrement())
+  bannerId  Int
+  type      String
+  ipAddress String?
+  userAgent String?
+  referrer  String?
+  createdAt DateTime @default(now())
+  banner    Banner   @relation(fields: [bannerId], references: [id], onDelete: Cascade)
+
+  @@index([bannerId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("banner_statistics")
+}
+
+model BannerAnalyticsEvents {
+  id                    BigInt    @id @default(autoincrement())
+  bannerId              Int
+  sessionId             String    @db.VarChar(64)
+  visitorId             String    @db.VarChar(64)
+  userId                String?   @db.VarChar(64)
+  eventType             String    @db.VarChar(20)
+  eventTimestamp        DateTime  @default(now())
+  ipAddressHash         String?   @db.VarChar(64)
+  userAgentHash         String?   @db.VarChar(64)
+  referrerDomain        String?
+  pageUrl               String
+  deviceType            String?   @db.VarChar(20)
+  browserName           String?   @db.VarChar(50)
+  browserVersion        String?   @db.VarChar(20)
+  osName                String?   @db.VarChar(50)
+  osVersion             String?   @db.VarChar(20)
+  screenResolution      String?   @db.VarChar(20)
+  viewportSize          String?   @db.VarChar(20)
+  countryCode           String?   @db.Char(2)
+  countryName           String?   @db.VarChar(100)
+  region                String?   @db.VarChar(100)
+  timezone              String?   @db.VarChar(50)
+  engagementDuration    Int       @default(0)
+  scrollDepth           Int       @default(0)
+  clickPosition         Json?
+  viewportPosition      Json?
+  conversionType        String?   @db.VarChar(50)
+  conversionValue       Decimal?  @db.Decimal(10, 2)
+  conversionCurrency    String?   @default("TRY") @db.Char(3)
+  consentGiven          Boolean   @default(false)
+  dataProcessingConsent Boolean   @default(false)
+  campaignId            String?   @db.VarChar(100)
+  utmSource             String?   @db.VarChar(100)
+  utmMedium             String?   @db.VarChar(100)
+  utmCampaign           String?   @db.VarChar(100)
+  utmContent            String?   @db.VarChar(100)
+  utmTerm               String?   @db.VarChar(100)
+  createdAt             DateTime  @default(now())
+  processedAt           DateTime?
+  banner                Banner    @relation(fields: [bannerId], references: [id], onDelete: Cascade)
+
+  @@index([bannerId, eventTimestamp(sort: Desc)])
+  @@index([sessionId, eventTimestamp])
+  @@index([eventType, eventTimestamp(sort: Desc)])
+  @@index([countryCode, eventTimestamp(sort: Desc)])
+  @@index([deviceType, browserName, eventTimestamp(sort: Desc)])
+  @@index([consentGiven, createdAt])
+  @@map("banner_analytics_events")
+}
+
+model BannerPerformanceSummaries {
+  id                   BigInt   @id @default(autoincrement())
+  bannerId             Int
+  date                 DateTime @db.Date
+  hour                 Int?
+  weekOfYear           Int?
+  month                Int?
+  quarter              Int?
+  year                 Int?
+  impressions          BigInt   @default(0)
+  uniqueImpressions    BigInt   @default(0)
+  views                BigInt   @default(0)
+  uniqueViews          BigInt   @default(0)
+  clicks               BigInt   @default(0)
+  uniqueClicks         BigInt   @default(0)
+  conversions          BigInt   @default(0)
+  bounces              BigInt   @default(0)
+  clickThroughRate     Decimal  @default(0) @db.Decimal(8, 4)
+  conversionRate       Decimal  @default(0) @db.Decimal(8, 4)
+  bounceRate           Decimal  @default(0) @db.Decimal(8, 4)
+  viewRate             Decimal  @default(0) @db.Decimal(8, 4)
+  totalEngagementTime  BigInt   @default(0)
+  avgEngagementTime    Decimal  @default(0) @db.Decimal(10, 2)
+  maxEngagementTime    Int      @default(0)
+  avgScrollDepth       Decimal  @default(0) @db.Decimal(5, 2)
+  totalConversionValue Decimal  @default(0) @db.Decimal(12, 2)
+  avgConversionValue   Decimal  @default(0) @db.Decimal(10, 2)
+  revenuePerImpression Decimal  @default(0) @db.Decimal(10, 4)
+  revenuePerClick      Decimal  @default(0) @db.Decimal(10, 2)
+  deviceBreakdown      Json?
+  browserBreakdown     Json?
+  countryBreakdown     Json?
+  referrerBreakdown    Json?
+  hourBreakdown        Json?
+  dataQualityScore     Decimal  @default(1.0) @db.Decimal(3, 2)
+  sampleSize           Int      @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @default(now()) @updatedAt
+  banner               Banner   @relation(fields: [bannerId], references: [id], onDelete: Cascade)
+
+  @@unique([bannerId, date, hour])
+  @@index([bannerId, date(sort: Desc), hour])
+  @@index([date, hour])
+  @@map("banner_performance_summaries")
+}
+
+model BannerUserSessions {
+  id                 BigInt    @id @default(autoincrement())
+  sessionId          String    @unique @db.VarChar(64)
+  visitorId          String    @db.VarChar(64)
+  firstSeen          DateTime  @default(now())
+  lastSeen           DateTime  @default(now())
+  sessionDuration    Int       @default(0)
+  pageViews          Int       @default(0)
+  bannerInteractions Int       @default(0)
+  ipAddressHash      String?   @db.VarChar(64)
+  userAgentHash      String?   @db.VarChar(64)
+  deviceFingerprint  String?   @db.VarChar(64)
+  countryCode        String?   @db.Char(2)
+  regionCode         String?   @db.VarChar(10)
+  consentTimestamp   DateTime?
+  consentVersion     String?   @db.VarChar(10)
+  dataRetentionUntil DateTime? @db.Date
+  isBot              Boolean   @default(false)
+  qualityScore       Decimal   @default(1.0) @db.Decimal(3, 2)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @default(now()) @updatedAt
+
+  @@index([visitorId, firstSeen])
+  @@index([sessionId])
+  @@map("banner_user_sessions")
+}
+
+model BannerABTest {
+  id                Int         @id @default(autoincrement())
+  name              String
+  description       String?
+  bannerGroupId     Int
+  variantA_bannerId Int
+  variantB_bannerId Int
+  trafficSplit      Int         @default(50)
+  startDate         DateTime
+  endDate           DateTime?
+  isActive          Boolean     @default(true)
+  winnerBannerId    Int?
+  confidenceLevel   Decimal?    @db.Decimal(5, 2)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @default(now()) @updatedAt
+  bannerGroup       BannerGroup @relation(fields: [bannerGroupId], references: [id], onDelete: Cascade)
+  variantA          Banner      @relation("VariantA", fields: [variantA_bannerId], references: [id], onDelete: Cascade)
+  variantB          Banner      @relation("VariantB", fields: [variantB_bannerId], references: [id], onDelete: Cascade)
+  winner            Banner?     @relation("Winner", fields: [winnerBannerId], references: [id])
+
+  @@index([bannerGroupId])
+  @@index([isActive])
+  @@index([startDate])
+  @@index([endDate])
+  @@map("banner_ab_tests")
+}
+
+model MenuItem {
+  id           String           @id @default(cuid())
+  title        String
+  slug         String?          @unique
+  url          String?
+  icon         String?
+  description  String?
+  isActive     Boolean          @default(true)
+  isExternal   Boolean          @default(false)
+  target       String           @default("_self")
+  cssClass     String?
+  orderIndex   Int              @default(0)
+  menuLocation String           @default("main")
+  parentId     String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  parent       MenuItem?        @relation("MenuHierarchy", fields: [parentId], references: [id])
+  children     MenuItem[]       @relation("MenuHierarchy")
+  permissions  MenuPermission[]
+
+  @@index([menuLocation])
+  @@index([orderIndex])
+  @@index([parentId])
+  @@index([isActive])
+  @@map("menu_items")
+}
+
+model MenuPermission {
+  id         String   @id @default(cuid())
+  menuItemId String
+  role       String
+  permission String
+  createdAt  DateTime @default(now())
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+
+  @@index([menuItemId])
+  @@index([role])
+  @@map("menu_permissions")
+}
+
+model QuickAccessLink {
+  id           String      @id @default(cuid())
+  title        String
+  url          String
+  icon         String?     @default("link")
+  sortOrder    Int         @default(0)
+  isActive     Boolean     @default(true)
+  moduleType   String
+  pageId       String?
+  newsId       Int?
+  projectId    Int?
+  departmentId String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  department   Department? @relation("DepartmentQuickAccess", fields: [departmentId], references: [id], onDelete: Cascade)
+  news         News?       @relation("NewsQuickAccess", fields: [newsId], references: [id], onDelete: Cascade)
+  page         Page?       @relation("PageQuickAccess", fields: [pageId], references: [id], onDelete: Cascade)
+  project      Project?    @relation("ProjectQuickAccess", fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([moduleType])
+  @@index([pageId])
+  @@index([newsId])
+  @@index([projectId])
+  @@index([departmentId])
+  @@index([sortOrder])
+  @@index([isActive])
+  @@map("quick_access_links")
+}
+
+enum BannerAnimasyonTipi {
+  SOLUKLESTIR
+  KAYDIR
+  YAKINLESTIR
+  CEVIR
+  ZIPLA
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  PDF
+  WORD
+  EMBED
+}
+
+enum PersonnelType {
+  DIRECTOR
+  CHIEF
+}
+
+enum GalleryItemType {
+  IMAGE
+  DOCUMENT
+  PDF
+  WORD
+}
+
 enum ExecutiveType {
   PRESIDENT
   GENERAL_MANAGER
   DIRECTOR
   MANAGER
-  DEPARTMENT        // For organizational sections like "Birimlerimiz"
-  STRATEGY          // For strategy section
-  GOAL              // For goals section
+  DEPARTMENT
+  STRATEGY
+  GOAL
 }
 
 enum CorporateContentType {
@@ -525,326 +940,40 @@ enum ProjectStatus {
   COMPLETED
 }
 
-// HAFRİYAT MODÜLÜ - Maden ve Kullanılmayan Alanların Rehabilitasyonu
-model HafriyatBolge {
-  id       String  @id @default(cuid())
-  ad       String  @unique // "Gebze Bölgesi", "İzmit Bölgesi", "Körfez Bölgesi"
-  aciklama String?
+model ServiceCard {
+  id               Int      @id @default(autoincrement())
+  title            String
+  description      String?
+  shortDescription String?
+  slug             String   @unique
+  imageUrl         String
+  altText          String?
+  targetUrl        String?
+  isExternal       Boolean  @default(false)
+  color            String   @default("#4F772D")
+  backgroundColor  String?
+  textColor        String?
+  isActive         Boolean  @default(true)
+  isFeatured       Boolean  @default(false)
+  displayOrder     Int      @default(0)
+  viewCount        Int      @default(0)
+  clickCount       Int      @default(0)
+  metaTitle        String?
+  metaDescription  String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  // Yetkili Kişi Bilgileri
-  yetkiliKisi    String // Ad Soyad
-  yetkiliTelefon String // Telefon
-
-  aktif             Boolean  @default(true)
-  olusturulmaTarihi DateTime @default(now())
-  guncellemeTarihi  DateTime @updatedAt
-
-  // İlişkiler
-  sahalar HafriyatSaha[]
-
-  @@map("hafriyat_bolgeler")
-}
-
-model HafriyatSaha {
-  id String @id @default(cuid())
-  ad String // "Körfez Taşocağı", "Sepetçiler 3. Etap"
-
-  // Konum Bilgileri
-  konumAdi String // "Gebze İlçesi Tavşanlı Mevkii civarı"
-  enlem    Float // GPS koordinat (latitude)
-  boylam   Float // GPS koordinat (longitude)
-
-  // Durum ve İlerleme
-  durum           HafriyatSahaDurum @default(DEVAM_EDIYOR)
-  ilerlemeyuzdesi Int               @default(0) // 0-100 arası yüzde
-
-  // Miktar Bilgileri
-  toplamTon     Decimal? // Toplam ton (opsiyonel)
-  tamamlananTon Decimal? // Tamamlanan ton (opsiyonel)
-
-  // Tarih Bilgileri
-  baslangicTarihi    DateTime? // Proje başlangıç tarihi (opsiyonel)
-  tahminibitisTarihi DateTime? // Proje bitiş tarihi (opsiyonel)
-
-  // Ücret Bilgileri (Dinamik)
-  tonBasiUcret Decimal // TL/TON (KDV Hariç)
-  kdvOrani     Int     @default(20) // KDV oranı %
-
-  // Açıklama
-  aciklama String? // Proje açıklaması (opsiyonel)
-
-  // SEO Alanları
-  seoTitle        String? // SEO başlığı
-  seoDescription  String? // SEO açıklaması  
-  seoKeywords     String? // SEO anahtar kelimeleri
-  seoLink         String? // SEO dostu URL slug
-  seoCanonicalUrl String? // Canonical URL
-
-  // Bölge İlişkisi
-  bolgeId String
-  bolge   HafriyatBolge @relation(fields: [bolgeId], references: [id])
-
-  // Medya ve Belgeler
-  belgeler HafriyatBelge[]
-  resimler HafriyatResim[]
-
-  aktif             Boolean  @default(true)
-  olusturulmaTarihi DateTime @default(now())
-  guncellemeTarihi  DateTime @updatedAt
-
-  @@unique([ad, bolgeId])
-  @@map("hafriyat_sahalar")
+  @@index([isActive])
+  @@index([displayOrder])
+  @@index([isFeatured])
+  @@index([slug])
+  @@index([createdAt])
+  @@map("service_cards")
 }
 
 enum HafriyatSahaDurum {
-  DEVAM_EDIYOR // Devam Ediyor
-  TAMAMLANDI // Tamamlandı
+  DEVAM_EDIYOR
+  TAMAMLANDI
 
   @@map("hafriyat_saha_durum")
-}
-
-model HafriyatBelgeKategori {
-  id                Int      @id @default(autoincrement())
-  ad                String   @unique // "İzin Belgeleri", "Teknik Raporlar", "Mali Belgeler"
-  ikon              String   @default("document")
-  sira              Int      @default(0)
-  olusturulmaTarihi DateTime @default(now())
-  guncellemeTarihi  DateTime @updatedAt
-
-  belgeler HafriyatBelge[]
-
-  @@map("hafriyat_belge_kategorileri")
-}
-
-model HafriyatBelge {
-  id        String @id @default(cuid())
-  baslik    String
-  dosyaAdi  String
-  orjinalAd String
-  dosyaTipi String
-  boyut     Int
-  dosyaYolu String
-
-  sahaId     String
-  kategoriId Int
-
-  saha     HafriyatSaha          @relation(fields: [sahaId], references: [id], onDelete: Cascade)
-  kategori HafriyatBelgeKategori @relation(fields: [kategoriId], references: [id])
-
-  olusturulmaTarihi DateTime @default(now())
-  guncellemeTarihi  DateTime @updatedAt
-
-  @@map("hafriyat_belgeler")
-}
-
-model HafriyatResim {
-  id        String  @id @default(cuid())
-  baslik    String?
-  dosyaAdi  String
-  orjinalAd String?
-  dosyaYolu String
-  altMetin  String?
-  aciklama  String?
-
-  sahaId String
-
-  saha HafriyatSaha @relation(fields: [sahaId], references: [id], onDelete: Cascade)
-
-  sira              Int      @default(0)
-  olusturulmaTarihi DateTime @default(now())
-  guncellemeTarihi  DateTime @updatedAt
-
-  @@map("hafriyat_resimler")
-}
-
-model BannerPosition {
-  id                Int      @id @default(autoincrement())
-  positionUUID      String   @unique @db.VarChar(36) // UUID format
-  name              String   // 'Ana Sayfa Üst Banner'
-  description       String?
-  bannerGroupId     Int?
-  fallbackGroupId   Int?
-  isActive          Boolean  @default(true)
-  priority          Int      @default(1)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  // İlişkiler
-  bannerGroup       BannerGroup? @relation("PrimaryBannerGroup", fields: [bannerGroupId], references: [id])
-  fallbackGroup     BannerGroup? @relation("FallbackBannerGroup", fields: [fallbackGroupId], references: [id])
-
-  @@index([positionUUID])
-  @@index([isActive])
-  @@map("banner_positions")
-}
-
-model BannerGroup {
-  id                 Int               @id @default(autoincrement())
-  name               String            // Grup adı
-  description        String?           // Grup açıklaması
-  usageType          String?           // Kullanım amacı: 'HERO', 'SIDEBAR', 'FOOTER', 'CUSTOM'
-  isActive           Boolean           @default(true)
-  deletable          Boolean           @default(true)
-  
-  // Boyutlar
-  width              Int               @default(1200)
-  height             Int               @default(400)
-  mobileWidth        Int               @default(400)
-  mobileHeight       Int               @default(200)
-  tabletWidth        Int               @default(800)
-  tabletHeight       Int               @default(300)
-  
-  // Animasyon ayarları
-  displayDuration    Int               @default(5000)  // ms
-  transitionDuration Float             @default(0.5)   // saniye
-  animationType      BannerAnimasyonTipi @default(SOLUKLESTIR)
-  
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
-
-  // İlişkiler - Mevcut veriyi koruyarak eklenen
-  primaryPositions   BannerPosition[] @relation("PrimaryBannerGroup")
-  fallbackPositions  BannerPosition[] @relation("FallbackBannerGroup")
-  banners            Banner[]
-
-  @@index([isActive])
-  @@index([usageType])
-  @@index([createdAt])
-  @@map("banner_groups")
-}
-
-model Banner {
-  id          Int      @id @default(autoincrement())
-  title       String   // Banner başlığı
-  description String?  // Banner açıklaması
-  link        String?  // Tıklanabilir link
-  isActive    Boolean  @default(true)
-  deletable   Boolean  @default(true)
-  
-  // Sıralama
-  order       Int      @default(0)
-  
-  // İstatistikler
-  viewCount   Int      @default(0)     // Görüntülenme sayısı
-  clickCount  Int      @default(0)     // Tıklanma sayısı
-  
-  // Medya
-  imageUrl    String   // Banner görseli URL'i
-  altText     String?  // Alt text
-  
-  // Banner grubu ilişkisi
-  bannerGroupId Int
-  bannerGroup   BannerGroup @relation(fields: [bannerGroupId], references: [id], onDelete: Cascade)
-  
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  // İstatistik ilişkisi
-  statistics  BannerStatistics[]
-
-  @@index([bannerGroupId])
-  @@index([isActive])
-  @@index([order])
-  @@index([createdAt])
-  @@map("banners")
-}
-
-model BannerStatistics {
-  id        Int      @id @default(autoincrement())
-  bannerId  Int
-  type      String   // 'view' veya 'click'
-  ipAddress String?  // IP adresi (opsiyonel)
-  userAgent String?  // User agent (opsiyonel)
-  referrer  String?  // Referrer URL (opsiyonel)
-  createdAt DateTime @default(now())
-
-  // Banner ilişkisi
-  banner Banner @relation(fields: [bannerId], references: [id], onDelete: Cascade)
-
-  @@index([bannerId])
-  @@index([type])
-  @@index([createdAt])
-  @@map("banner_statistics")
-}
-
-// Menu Management Models
-model MenuItem {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String?  @unique
-  url         String?
-  icon        String?
-  description String?
-  isActive    Boolean  @default(true)
-  isExternal  Boolean  @default(false)
-  target      String   @default("_self")
-  cssClass    String?
-  orderIndex  Int      @default(0)
-  menuLocation String  @default("main") // main, footer, sidebar
-
-  // Self-referencing relationship for hierarchy
-  parentId    String?
-  parent      MenuItem? @relation("MenuHierarchy", fields: [parentId], references: [id])
-  children    MenuItem[] @relation("MenuHierarchy")
-
-  // Permissions (future use)
-  permissions MenuPermission[]
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@index([menuLocation])
-  @@index([orderIndex])
-  @@index([parentId])
-  @@index([isActive])
-  @@map("menu_items")
-}
-
-model MenuPermission {
-  id         String   @id @default(cuid())
-  menuItemId String
-  menuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
-  role       String
-  permission String
-  createdAt  DateTime @default(now())
-
-  @@index([menuItemId])
-  @@index([role])
-  @@map("menu_permissions")
-}
-
-// Quick Access Links Model - Hızlı Erişim Sistemi
-model QuickAccessLink {
-  id         String   @id @default(cuid())
-  title      String   // Link başlığı
-  url        String   // Hedef URL
-  icon       String?  @default("link") // İkon (opsiyonel)
-  sortOrder  Int      @default(0) // Sıralama
-  isActive   Boolean  @default(true) // Aktif/pasif
-
-  // Modül bilgileri - her modül türü için ayrı field (farklı ID tipleri için)
-  moduleType   String  // 'page', 'news', 'project', 'department'
-  pageId       String? // Page ID (String)
-  newsId       Int?    // News ID (Int)
-  projectId    Int?    // Project ID (Int)
-  departmentId String? // Department ID (String)
-
-  // Tarih bilgileri
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  // İlişkiler - her modül türü için ayrı relation
-  page       Page?       @relation("PageQuickAccess", fields: [pageId], references: [id], onDelete: Cascade)
-  news       News?       @relation("NewsQuickAccess", fields: [newsId], references: [id], onDelete: Cascade)
-  project    Project?    @relation("ProjectQuickAccess", fields: [projectId], references: [id], onDelete: Cascade)
-  department Department? @relation("DepartmentQuickAccess", fields: [departmentId], references: [id], onDelete: Cascade)
-
-  @@index([moduleType])
-  @@index([pageId])
-  @@index([newsId])
-  @@index([projectId])
-  @@index([departmentId])
-  @@index([sortOrder])
-  @@index([isActive])
-  @@map("quick_access_links")
 }

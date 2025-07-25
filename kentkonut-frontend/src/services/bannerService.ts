@@ -1,5 +1,6 @@
 // Banner API servisi - Backend ile iletişim için
 import { apiClient } from './apiClient';
+import { ConsentManager } from '../utils/consent';
 
 // Banner pozisyon UUID'leri
 export const BANNER_POSITION_UUIDS = {
@@ -145,10 +146,55 @@ class BannerService {
     return response.success;
   }
 
+  // Generate unique visitor and session IDs
+  private getVisitorId(): string {
+    let visitorId = localStorage.getItem('visitor_id');
+    if (!visitorId) {
+      visitorId = 'visitor_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('visitor_id', visitorId);
+    }
+    return visitorId;
+  }
+
+  private getSessionId(): string {
+    let sessionId = sessionStorage.getItem('session_id');
+    if (!sessionId) {
+      sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      sessionStorage.setItem('session_id', sessionId);
+    }
+    return sessionId;
+  }
+
+  // Get user consent status using the ConsentManager
+  private getUserConsent(): { consentGiven: boolean; dataProcessingConsent: boolean } {
+    const consent = ConsentManager.getConsent();
+    return {
+      consentGiven: consent.consentGiven,
+      dataProcessingConsent: consent.dataProcessingConsent
+    };
+  }
+
   // Banner görüntülenme istatistiği kaydet
-  async recordBannerView(bannerId: number): Promise<void> {
+  async recordBannerView(bannerId: number, engagementDuration?: number, scrollDepth?: number): Promise<void> {
     try {
-      await apiClient.post('/api/public/statistics', { bannerId, type: 'view' });
+      const consent = this.getUserConsent();
+
+      const trackingData = {
+        bannerId,
+        eventType: 'view' as const,
+        sessionId: this.getSessionId(),
+        visitorId: this.getVisitorId(),
+        timestamp: new Date().toISOString(),
+        pageUrl: window.location.href,
+        referrer: document.referrer,
+        userAgent: navigator.userAgent,
+        engagementDuration,
+        scrollDepth,
+        consentGiven: consent.consentGiven,
+        dataProcessingConsent: consent.dataProcessingConsent
+      };
+
+      await apiClient.post('/api/analytics/track', trackingData);
     } catch (error) {
       console.error('Banner view kaydedilirken hata:', error);
       // Sessizce devam et, kullanıcı deneyimini bozma
@@ -156,11 +202,52 @@ class BannerService {
   }
 
   // Banner tıklama istatistiği kaydet
-  async recordBannerClick(bannerId: number): Promise<void> {
+  async recordBannerClick(bannerId: number, clickPosition?: { x: number; y: number }): Promise<void> {
     try {
-      await apiClient.post('/api/public/statistics', { bannerId, type: 'click' });
+      const consent = this.getUserConsent();
+
+      const trackingData = {
+        bannerId,
+        eventType: 'click' as const,
+        sessionId: this.getSessionId(),
+        visitorId: this.getVisitorId(),
+        timestamp: new Date().toISOString(),
+        pageUrl: window.location.href,
+        referrer: document.referrer,
+        userAgent: navigator.userAgent,
+        clickPosition,
+        consentGiven: consent.consentGiven,
+        dataProcessingConsent: consent.dataProcessingConsent
+      };
+
+      await apiClient.post('/api/analytics/track', trackingData);
     } catch (error) {
       console.error('Banner click kaydedilirken hata:', error);
+      // Sessizce devam et
+    }
+  }
+
+  // Banner impression istatistiği kaydet (banner yüklendiğinde)
+  async recordBannerImpression(bannerId: number): Promise<void> {
+    try {
+      const consent = this.getUserConsent();
+
+      const trackingData = {
+        bannerId,
+        eventType: 'impression' as const,
+        sessionId: this.getSessionId(),
+        visitorId: this.getVisitorId(),
+        timestamp: new Date().toISOString(),
+        pageUrl: window.location.href,
+        referrer: document.referrer,
+        userAgent: navigator.userAgent,
+        consentGiven: consent.consentGiven,
+        dataProcessingConsent: consent.dataProcessingConsent
+      };
+
+      await apiClient.post('/api/analytics/track', trackingData);
+    } catch (error) {
+      console.error('Banner impression kaydedilirken hata:', error);
       // Sessizce devam et
     }
   }
