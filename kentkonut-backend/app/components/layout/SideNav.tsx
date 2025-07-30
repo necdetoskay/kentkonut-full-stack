@@ -44,58 +44,75 @@ interface NavGroup {
 
 const sidebarNavGroups: NavGroup[] = [
   {
-    title: "GENEL",
+    title: "GENEL BAKIŞ",
     items: [
       {
         title: "Dashboard",
         href: "/dashboard",
         icon: LayoutDashboard,
       },
-    ],  },  {
-    title: "İÇERİK YÖNETİMİ",
+      {
+        title: "Analytics",
+        href: "/dashboard/analytics",
+        icon: BarChart3,
+      },
+    ],
+  },
+  {
+    title: "KURUMSAL YÖNETİM",
     items: [
       {
-        title: "Sayfa Yönetimi",
-        href: "/dashboard/pages",
-        icon: FileText,
+        title: "Kurumsal Kartlar",
+        href: "/dashboard/kurumsal",
+        icon: Building2,
       },
       {
-        title: "Haber Yönetimi",
-        icon: Newspaper,
+        title: "Yönetim Kadrosu",
+        href: "/dashboard/kurumsal/yoneticiler",
+        icon: UserCheck,
+      },
+      {
+        title: "Birimlerimiz",
+        href: "/dashboard/kurumsal/birimler",
+        icon: FolderOpen,
+      },
+      {
+        title: "Kurumsal Yapı",
+        href: "/dashboard/kurumsal/kurumsal-yapi",
+        icon: Building2,
+      },
+      {
+        title: "Kurumsal İçerik",
+        icon: Target,
         children: [
           {
-            title: "Haberler",
-            href: "/dashboard/news",
+            title: "Hakkımızda",
+            href: "/dashboard/kurumsal/hakkimizda",
           },
           {
-            title: "Kategoriler",
-            href: "/dashboard/news/categories",
+            title: "Vizyon & Misyon",
+            href: "/dashboard/kurumsal/visyon-misyon",
+          },
+          {
+            title: "Strateji & Hedefler",
+            href: "/dashboard/kurumsal/icerik/strategy-goals",
           },
         ],
       },
+    ],
+  },
+  {
+    title: "PROJE & HİZMETLER",
+    items: [
       {
-        title: "Banner Yönetimi",
-        href: "/dashboard/banner-groups",
-        icon: Image,
-      },
-      {
-        title: "Banner Analytics",
-        href: "/dashboard/analytics",
-        icon: BarChart3,
+        title: "Projeler",
+        href: "/dashboard/projects",
+        icon: Building2,
       },
       {
         title: "Hizmetlerimiz",
         href: "/dashboard/hizmetlerimiz",
         icon: Briefcase,
-      },
-      {
-        title: "Medya",
-        href: "/dashboard/media",
-        icon: FileImage,
-      },      {
-        title: "Projeler",
-        href: "/dashboard/projects",
-        icon: Building2,
       },
       {
         title: "Hafriyat Yönetimi",
@@ -126,36 +143,41 @@ const sidebarNavGroups: NavGroup[] = [
     ],
   },
   {
-    title: "KURUMSAL",
-    items: [      {
-        title: "Tüm Yöneticiler",
-        href: "/dashboard/kurumsal/yoneticiler",
-        icon: UserCheck,
-      },      {
-        title: "Birimlerimiz",
-        href: "/dashboard/kurumsal/birimler",        icon: Building2,
+    title: "İÇERİK & MEDYA",
+    items: [
+      {
+        title: "Sayfa Yönetimi",
+        href: "/dashboard/pages",
+        icon: FileText,
       },
       {
-        title: "Kurumsal İçerik",
-        icon: Target,
-        children: [          {
-            title: "Hakkımızda",
-            href: "/dashboard/kurumsal/hakkimizda",
+        title: "Haber Yönetimi",
+        icon: Newspaper,
+        children: [
+          {
+            title: "Haberler",
+            href: "/dashboard/news",
           },
           {
-            title: "Vizyon & Misyon",
-            href: "/dashboard/kurumsal/visyon-misyon",
-          },
-          {
-            title: "Strateji & Hedefler",
-            href: "/dashboard/kurumsal/icerik/strategy-goals",
+            title: "Kategoriler",
+            href: "/dashboard/news/categories",
           },
         ],
+      },
+      {
+        title: "Banner Yönetimi",
+        href: "/dashboard/banner-groups",
+        icon: Image,
+      },
+      {
+        title: "Medya Kütüphanesi",
+        href: "/dashboard/media",
+        icon: Images,
       },
     ],
   },
   {
-    title: "SİSTEM",
+    title: "SİSTEM YÖNETİMİ",
     items: [
       {
         title: "Menu Yönetimi",
@@ -163,12 +185,12 @@ const sidebarNavGroups: NavGroup[] = [
         icon: Menu,
       },
       {
-        title: "Kullanıcılar",
+        title: "Kullanıcı Yönetimi",
         href: "/dashboard/users",
         icon: Users,
       },
       {
-        title: "Ayarlar",
+        title: "Sistem Ayarları",
         href: "/dashboard/settings",
         icon: Settings,
       },
