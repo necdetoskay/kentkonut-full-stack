@@ -43,6 +43,8 @@ export default function CorporatePage() {
       ] : [],
       features: ["Yönetici profilleri", "Hiyerarşi yönetimi", "İletişim bilgileri", "Biyografi editörü"]
     },
+    // Quick Links temporarily disabled
+    /*
     {
       title: "Hızlı Erişim Linkleri",
       description: "Frontend'de gösterilecek hızlı erişim linklerini düzenleyin",
@@ -50,11 +52,13 @@ export default function CorporatePage() {
       href: "/dashboard/kurumsal/hizli-baglanti",
       color: "bg-green-500",
       stats: statistics ? [
-        { label: "Toplam", value: statistics.quickLinks.total },
-        { label: "Aktif", value: statistics.quickLinks.active }
+        { label: "Toplam", value: statistics.quickLinks?.total || 0 },
+        { label: "Aktif", value: statistics.quickLinks?.active || 0 }
       ] : [],
       features: ["Link yönetimi", "İkon seçimi", "Sıralama", "Durum kontrolü"]
-    },    // Gelecekte eklenecek modüller
+    },
+    */
+    // Gelecekte eklenecek modüller
     {
       title: "Birimlerimiz",
       description: "Şirket departmanlarını ve birimlerini yönetin",
@@ -169,18 +173,21 @@ export default function CorporatePage() {
               </CardContent>
             </Card>
             
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Hızlı Linkler</CardTitle>
-                <Link className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{statistics.quickLinks.total}</div>
-                <p className="text-xs text-muted-foreground">
-                  {statistics.quickLinks.active} aktif
-                </p>
-              </CardContent>
-            </Card>
+            {/* Quick Links Card - Temporarily Disabled */}
+            {statistics?.quickLinks && (
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Hızlı Linkler</CardTitle>
+                  <Link className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{statistics.quickLinks?.total || 0}</div>
+                  <p className="text-xs text-muted-foreground">
+                    {statistics.quickLinks?.active || 0} aktif
+                  </p>
+                </CardContent>
+              </Card>
+            )}
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

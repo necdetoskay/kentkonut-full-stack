@@ -107,8 +107,12 @@ export const CorporateAPI = {
       return corporateApiFetch<any[]>(`/api/executives${query ? `?${query}` : ''}`);
     },
     
-    getById: (id: string) =>
-      corporateApiFetch<any>(`/api/executives/${id}`),
+    getById: (id: string) => {
+      if (!id || id.trim() === '') {
+        throw new CorporateApiError('Executive ID is required', 400);
+      }
+      return corporateApiFetch<any>(`/api/executives/${id}`);
+    },
     
     create: (data: any) =>
       corporateApiFetch<any>('/api/executives', {

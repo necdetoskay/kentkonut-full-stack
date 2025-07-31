@@ -48,7 +48,11 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    
+
+    if (!id || id.trim() === '') {
+      return NextResponse.json({ error: "Executive ID is required" }, { status: 400 });
+    }
+
     const executive = await db.executive.findUnique({
       where: { id },
       include: {
@@ -80,6 +84,11 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
+
+    if (!id || id.trim() === '') {
+      return NextResponse.json({ error: "Executive ID is required" }, { status: 400 });
+    }
+
     const body = await request.json();
     
     // Validate using the centralized validation schema
@@ -158,7 +167,11 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    
+
+    if (!id || id.trim() === '') {
+      return NextResponse.json({ error: "Executive ID is required" }, { status: 400 });
+    }
+
     await db.executive.delete({
       where: { id }
     });

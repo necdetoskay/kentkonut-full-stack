@@ -59,11 +59,11 @@ export function useExecutives(filters?: ExecutiveFilters) {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const data = await CorporateAPI.executives.getAll({
         type: filters?.type
       });
-      
+
       setExecutives(data);
     } catch (err) {
       const { message } = handleApiError(err);
@@ -490,14 +490,14 @@ export function useDepartments(filters?: DepartmentFilters) {
 // Combined Corporate Statistics Hook
 export function useCorporateStatistics() {
   const { statistics: executiveStats, isLoading: executivesLoading } = useExecutives();
-  const { statistics: quickLinkStats, isLoading: quickLinksLoading } = useQuickLinks();
+  // const { statistics: quickLinkStats, isLoading: quickLinksLoading } = useQuickLinks(); // Temporarily disabled
   const { statistics: departmentStats, isLoading: departmentsLoading } = useDepartments();
 
-  const isLoading = executivesLoading || quickLinksLoading || departmentsLoading;
+  const isLoading = executivesLoading || departmentsLoading; // || quickLinksLoading;
 
   const statistics = {
     executives: executiveStats,
-    quickLinks: quickLinkStats,
+    // quickLinks: quickLinkStats, // Temporarily disabled
     departments: departmentStats,
   };
 
