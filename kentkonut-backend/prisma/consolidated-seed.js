@@ -923,6 +923,7 @@ async function main() {
     await seedDepartmentsData();
     await seedExecutivesData();
     await seedPersonnelData();
+    await seedMenuItemsData();
 
     // Get final database status
     console.log('\n🎯 Seed operations completed!');
