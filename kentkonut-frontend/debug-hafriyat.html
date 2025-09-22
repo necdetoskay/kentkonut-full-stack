@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hafriyat API Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        .error { color: red; }
+        .success { color: green; }
+        .section { margin: 20px 0; border: 1px solid #ddd; padding: 15px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Hafriyat API Debug</h1>
+    
+    <div class="section">
+        <h2>1. Direct API Test</h2>
+        <div id="api-result"></div>
+    </div>
+    
+    <div class="section">
+        <h2>2. Frontend Service Test</h2>
+        <div id="service-result"></div>
+    </div>
+    
+    <script>
+        // Test direct API call
+        async function testDirectAPI() {
+            try {
+                console.log('Testing direct hafriyat API call...');
+                const response = await fetch('http://localhost:3021/api/hafriyat-sahalar/saha-1-gebze-tascioglu', {
+                    method: 'GET',
+                    headers: {
+                        'Origin': 'http://localhost:3020',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
+                const data = await response.json();
+                
+                console.log('Direct API response:', data);
+                console.log('Response keys:', Object.keys(data));
+                console.log('Response.data:', data.data);
+                console.log('Response.data keys:', data.data ? Object.keys(data.data) : 'data is null/undefined');
+                
+                document.getElementById('api-result').innerHTML = `
+                    <div class="success">✓ Hafriyat API Call Successful</div>
+                    <h3>Response Status: ${response.status}</h3>
+                    <h3>Response:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                    <h3>Data Object:</h3>
+                    <pre>${JSON.stringify(data.data, null, 2)}</pre>
+                `;
+                
+                return data;
+            } catch (error) {
+                console.error('Direct API error:', error);
+                document.getElementById('api-result').innerHTML = `
+                    <div class="error">✗ Hafriyat API Call Failed</div>
+                    <pre>${error.message}</pre>
+                `;
+                return null;
+            }
+        }
+        
+        // Test frontend service simulation
+        async function testFrontendService() {
+            try {
+                console.log('Testing frontend service simulation...');
+                
+                // Simulate the frontend API client call
+                const baseUrl = 'http://localhost:3021';
+                const endpoint = '/api/pages/cmev8379a0000jvlvdj8yuyza/content';
+                const fullUrl = baseUrl + endpoint;
+                
+                console.log('Frontend would call:', fullUrl);
+                
+                const response = await fetch(fullUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Frontend service response:', data);
+                
+                // Simulate the content processing
+                if (data.success && data.data) {
+                    const pageData = data.data;
+                    console.log('Page data:', pageData);
+                    
+                    let parsedContent = '';
+                    try {
+                        const contentObj = JSON.parse(pageData.content);
+                        if (contentObj.blocks && contentObj.blocks.length > 0) {
+                            parsedContent = contentObj.blocks[0].content || '';
+                        }
+                    } catch (parseError) {
+                        console.warn('Content parse error:', parseError);
+                        parsedContent = pageData.content;
+                    }
+                    
+                    const result = {
+                        title: pageData.title,
+                        content: parsedContent,
+                        rawContent: pageData.content
+                    };
+                    
+                    document.getElementById('service-result').innerHTML = `
+                        <div class="success">✓ Frontend Service Simulation Successful</div>
+                        <h3>Processed Result:</h3>
+                        <pre>${JSON.stringify(result, null, 2)}</pre>
+                    `;
+                } else {
+                    document.getElementById('service-result').innerHTML = `
+                        <div class="error">✗ Frontend Service Failed - API returned unsuccessful response</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Frontend service error:', error);
+                document.getElementById('service-result').innerHTML = `
+                    <div class="error">✗ Frontend Service Failed</div>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        }
+        
+        // Run tests
+        async function runTests() {
+            await testDirectAPI();
+            await testFrontendService();
+        }
+        
+        runTests();
+    </script>
+</body>
+</html>

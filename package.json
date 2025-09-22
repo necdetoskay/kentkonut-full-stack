@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "dotenv": "^17.2.2",
+    "inquirer": "^8.2.4"
+  },
+  "dependencies": {
+    "node-fetch": "^2.7.0",
+    "puppeteer": "^24.20.0",
+    "yet-another-react-lightbox": "^3.25.0"
+  }
+}

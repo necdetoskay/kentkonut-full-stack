@@ -1,0 +1,393 @@
+/* Ortak CSS Dosyası - Backend ve Frontend için */
+/* Bu dosya hem backend hem frontend tarafından kullanılabilir */
+
+/* Design Tokens - Tek Kaynak */
+:root {
+  /* Typography Scale */
+  --typography-font-size-base: 16px;
+  --typography-line-height-base: 1.6;
+  --typography-font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Computed Values for Consistency */
+  --typography-computed-line-height: calc(var(--typography-font-size-base) * var(--typography-line-height-base));
+
+  /* Spacing Scale */
+  --spacing-paragraph: 1em;
+  --spacing-margin-bottom: 16px;
+  --spacing-section: 2rem;
+
+  /* Colors - Kent Konut Brand Colors */
+  --color-text-primary: #374151;
+  --color-text-secondary: #6b7280;
+  --color-background: #ffffff;
+  --color-kentblue: #1e40af;
+  --color-kentgold: #d4af37;
+  --color-border: #e5e7eb;
+  --color-hover: #f3f4f6;
+
+  /* Turkish Language Optimizations */
+  --font-feature-settings: "liga" 1, "kern" 1;
+  --text-rendering: optimizeLegibility;
+}
+
+/* Base Typography Styles */
+.shared-typography {
+  font-size: var(--typography-font-size-base);
+  line-height: var(--typography-line-height-base);
+  font-family: var(--typography-font-family-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+  
+  /* Cross-Browser Consistency */
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: var(--text-rendering);
+  font-feature-settings: var(--font-feature-settings);
+}
+
+/* Heading Styles */
+.shared-h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--color-kentblue);
+  margin: 2rem 0 1.5rem 0;
+  line-height: 1.2;
+}
+
+.shared-h2 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--color-kentblue);
+  margin: 1.5rem 0 1rem 0;
+  line-height: 1.3;
+}
+
+.shared-h3 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 1.25rem 0 0.75rem 0;
+  line-height: 1.4;
+}
+
+.shared-h4 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 1rem 0 0.5rem 0;
+  line-height: 1.4;
+}
+
+/* Paragraph Styles */
+.shared-paragraph {
+  margin: 0 0 var(--spacing-margin-bottom) 0;
+  text-align: justify;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+/* List Styles */
+.shared-list {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.shared-list-item {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+/* Button Styles */
+.shared-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+}
+
+.shared-button-primary {
+  background-color: var(--color-kentblue);
+  color: white;
+}
+
+.shared-button-primary:hover {
+  background-color: #1e3a8a;
+  transform: translateY(-1px);
+}
+
+.shared-button-secondary {
+  background-color: var(--color-kentgold);
+  color: white;
+}
+
+.shared-button-secondary:hover {
+  background-color: #b8941f;
+  transform: translateY(-1px);
+}
+
+/* Card Styles */
+.shared-card {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease-in-out;
+}
+
+.shared-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+/* Container Styles */
+.shared-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.shared-section {
+  padding: var(--spacing-section) 0;
+}
+
+/* Content Display Styles */
+.shared-content {
+  line-height: 1.7;
+  color: var(--color-text-primary);
+}
+
+.shared-content p {
+  margin-bottom: 1rem;
+  text-align: justify;
+}
+
+.shared-content h1,
+.shared-content h2,
+.shared-content h3,
+.shared-content h4,
+.shared-content h5,
+.shared-content h6 {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.shared-content ul,
+.shared-content ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.shared-content li {
+  margin: 0.5rem 0;
+}
+
+/* Floating Image Styles */
+.shared-float-left {
+  float: left !important;
+  margin: 0 1rem 1rem 0 !important;
+  max-width: 50% !important;
+  clear: none !important;
+  display: block !important;
+}
+
+.shared-float-right {
+  float: right !important;
+  margin: 0 0 1rem 1rem !important;
+  max-width: 50% !important;
+  clear: none !important;
+  display: block !important;
+}
+
+.shared-float-center {
+  float: none !important;
+  margin: 1rem auto !important;
+  max-width: 80% !important;
+  clear: both;
+  display: block !important;
+  text-align: center;
+}
+
+/* Clearfix */
+.shared-clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .shared-h1 {
+    font-size: 2.25rem;
+  }
+  
+  .shared-h2 {
+    font-size: 1.875rem;
+  }
+  
+  .shared-h3 {
+    font-size: 1.5rem;
+  }
+  
+  .shared-h4 {
+    font-size: 1.25rem;
+  }
+  
+  .shared-container {
+    padding: 0 0.75rem;
+  }
+  
+  .shared-content p {
+    text-align: left;
+  }
+  
+  .shared-float-left,
+  .shared-float-right {
+    float: none !important;
+    margin: 1rem auto !important;
+    max-width: 100% !important;
+    display: block !important;
+  }
+}
+
+/* Utility Classes */
+.shared-text-center {
+  text-align: center;
+}
+
+.shared-text-left {
+  text-align: left;
+}
+
+.shared-text-right {
+  text-align: right;
+}
+
+.shared-text-justify {
+  text-align: justify;
+}
+
+.shared-mb-1 {
+  margin-bottom: 0.25rem;
+}
+
+.shared-mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.shared-mb-3 {
+  margin-bottom: 0.75rem;
+}
+
+.shared-mb-4 {
+  margin-bottom: 1rem;
+}
+
+.shared-mt-1 {
+  margin-top: 0.25rem;
+}
+
+.shared-mt-2 {
+  margin-top: 0.5rem;
+}
+
+.shared-mt-3 {
+  margin-top: 0.75rem;
+}
+
+.shared-mt-4 {
+  margin-top: 1rem;
+}
+
+.shared-p-1 {
+  padding: 0.25rem;
+}
+
+.shared-p-2 {
+  padding: 0.5rem;
+}
+
+.shared-p-3 {
+  padding: 0.75rem;
+}
+
+.shared-p-4 {
+  padding: 1rem;
+}
+
+/* Hide scrollbars utility */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Animation Classes */
+.shared-fade-in {
+  animation: sharedFadeIn 0.3s ease-in-out;
+}
+
+@keyframes sharedFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.shared-slide-up {
+  animation: sharedSlideUp 0.4s ease-out;
+}
+
+@keyframes sharedSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* TipTap Rich Text Editor Styles */
+.ProseMirror {
+  outline: none;
+  padding: 1rem;
+  min-height: 200px;
+  line-height: 1.6;
+}
+
+/* TipTap inline styles support */
+.ProseMirror span[style*="font-size"] {
+  display: inline !important;
+}
+
+.ProseMirror span[style*="font-family"] {
+  display: inline !important;
+}
+
+/* Preserve inline styles - DO NOT override them */
+.ProseMirror [style*="font-size"] {
+  /* Let the inline style take precedence */
+}
+
+.ProseMirror [style*="font-family"] {
+  /* Let the inline style take precedence */
+}

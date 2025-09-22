@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kent Konut - Ultra Modern Homepage Design</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #fff, #f0f9ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 20px rgba(255,255,255,0.3);
+        }
+        
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .design-showcase {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+        
+        .wireframe-container {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .wireframe-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+            pointer-events: none;
+        }
+        
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #6366f1, transparent);
+            margin: 30px 0;
+            border-radius: 1px;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .feature-card:hover::before {
+            left: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .feature-card h3 {
+            color: #f0f9ff;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+        
+        .modern-wireframe {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .design-showcase {
+                padding: 25px;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Kent Konut</h1>
+            <p>Ultra Modern Homepage Design & Interactive Experience</p>
+        </div>
+        
+        <div class="design-showcase">
+            <div class="wireframe-container">
+                <svg class="modern-wireframe" viewBox="0 0 1400 4000" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#764ba2;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
+                        </linearGradient>
+                        
+                        <linearGradient id="cardGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#1e293b;stop-opacity:0.9" />
+                            <stop offset="100%" style="stop-color:#334155;stop-opacity:0.9" />
+                        </linearGradient>
+                        
+                        <linearGradient id="glassGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.1" />
+                            <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.05" />
+                        </linearGradient>
+                        
+                        <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur in="SourceGraphic" stdDeviation="10"/>
+                        </filter>
+                        
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge> 
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/> 
+                            </feMerge>
+                        </filter>
+                        
+                        <style>
+                            .title-text { font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 700; fill: #f0f9ff; }
+                            .section-title { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 600; fill: #e2e8f0; }
+                            .body-text { font-family: 'Inter', sans-serif; font-size: 12px; fill: #cbd5e1; }
+                            .accent-text { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; fill: #60a5fa; }
+                            .glass-card { fill: url(#glassGradient); stroke: rgba(255,255,255,0.2); stroke-width: 1; }
+                            .hero-section { fill: url(#heroGradient); }
+                            .dark-card { fill: url(#cardGradient); stroke: rgba(255,255,255,0.1); stroke-width: 1; }
+                            .interactive-element { fill: #6366f1; stroke: #8b5cf6; stroke-width: 2; filter: url(#glow); }
+                            .accent-element { fill: #f59e0b; stroke: #f97316; stroke-width: 1; }
+                            .success-element { fill: #10b981; stroke: #059669; stroke-width: 1; }
+                        </style>
+                    </defs>
+                    
+                    <!-- Background Elements -->
+                    <rect width="1400" height="4000" fill="#0f172a"/>
+                    
+                    <!-- Floating Background Shapes -->
+                    <circle cx="200" cy="300" r="100" fill="#6366f1" opacity="0.1" filter="url(#blur)"/>
+                    <circle cx="1200" cy="800" r="150" fill="#8b5cf6" opacity="0.1" filter="url(#blur)"/>
+                    <circle cx="300" cy="1500" r="80" fill="#f59e0b" opacity="0.1" filter="url(#blur)"/>
+                    <circle cx="1100" cy="2200" r="120" fill="#10b981" opacity="0.1" filter="url(#blur)"/>
+                    
+                    <!-- Main Title -->
+                    <text x="700" y="50" text-anchor="middle" class="title-text" font-size="24">KENT KONUT - ULTRA MODERN HOMEPAGE</text>
+                    
+                    <!-- Navigation Section -->
+                    <g id="navigation">
+                        <rect x="50" y="80" width="1300" height="100" class="glass-card" rx="20"/>
+                        <text x="70" y="110" class="section-title">🚀 MODERN NAVIGATION</text>
+                        
+                        <!-- Logo with Glow Effect -->
+                        <rect x="80" y="125" width="180" height="45" class="interactive-element" rx="12"/>
+                        <text x="170" y="152" text-anchor="middle" class="body-text" fill="white">KENT KONUT LOGO</text>
+                        
+                        <!-- Dynamic Menu with Hover Effects -->
+                        <rect x="300" y="125" width="600" height="45" class="dark-card" rx="12"/>
+                        <text x="600" y="152" text-anchor="middle" class="body-text">DYNAMIC MENU • HOVER ANIMATIONS • MEGA DROPDOWNS</text>
+                        
+                        <!-- Search & User Area -->
+                        <rect x="930" y="125" width="150" height="45" class="accent-element" rx="12"/>
+                        <text x="1005" y="152" text-anchor="middle" class="body-text" fill="white">SEARCH + USER</text>
+                        
+                        <!-- Social & Contact -->
+                        <rect x="1110" y="125" width="160" height="45" class="success-element" rx="12"/>
+                        <text x="1190" y="152" text-anchor="middle" class="body-text" fill="white">SOCIAL + CONTACT</text>
+                    </g>
+                    
+                    <!-- Hero Section - Ultra Modern -->
+                    <g id="hero">
+                        <rect x="50" y="200" width="1300" height="600" class="hero-section" rx="24"/>
+                        <text x="70" y="235" class="section-title" fill="white">🎨 IMMERSIVE HERO EXPERIENCE</text>
+                        
+                        <!-- Main Hero Content -->
+                        <rect x="80" y="260" width="1240" height="400" class="glass-card" rx="16"/>
+                        <text x="700" y="290" text-anchor="middle" class="accent-text" fill="white" font-size="16">PARALLAX BACKGROUND • VIDEO OVERLAY • PARTICLE EFFECTS</text>
+                        
+                        <!-- Hero Content Layers -->
+                        <rect x="100" y="320" width="500" height="200" class="dark-card" rx="12" opacity="0.8"/>
+                        <text x="350" y="345" text-anchor="middle" class="section-title" fill="white">HERO CONTENT</text>
+                        <text x="120" y="370" class="body-text" fill="#cbd5e1">• Dynamic Typography Animations</text>
+                        <text x="120" y="390" class="body-text" fill="#cbd5e1">• Floating Call-to-Action Buttons</text>
+                        <text x="120" y="410" class="body-text" fill="#cbd5e1">• Real-time Statistics Counter</text>
+                        <text x="120" y="430" class="body-text" fill="#cbd5e1">• Interactive 3D Elements</text>
+                        <text x="120" y="450" class="body-text" fill="#cbd5e1">• Smooth Scroll Indicators</text>
+                        
+                        <!-- Interactive Elements -->
+                        <rect x="650" y="320" width="200" height="80" class="interactive-element" rx="16"/>
+                        <text x="750" y="345" text-anchor="middle" class="body-text" fill="white">SANAL POS</text>
+                        <text x="750" y="365" text-anchor="middle" class="body-text" fill="white" font-size="10">Glassmorphism Design</text>
+                        
+                        <rect x="870" y="320" width="200" height="80" class="interactive-element" rx="16"/>
+                        <text x="970" y="345" text-anchor="middle" class="body-text" fill="white">PROJELERİMİZ</text>
+                        <text x="970" y="365" text-anchor="middle" class="body-text" fill="white" font-size="10">Hover Animations</text>
+                        
+                        <rect x="1090" y="320" width="200" height="80" class="interactive-element" rx="16"/>
+                        <text x="1190" y="345" text-anchor="middle" class="body-text" fill="white">SAĞLIK KENT</text>
+                        <text x="1190" y="365" text-anchor="middle" class="body-text" fill="white" font-size="10">Micro Interactions</text>
+                        
+                        <!-- Modern Carousel Controls -->
+                        <circle cx="650" cy="630" r="12" class="interactive-element"/>
+                        <circle cx="680" cy="630" r="8" class="glass-card"/>
+                        <circle cx="710" cy="630" r="8" class="glass-card"/>
+                        <circle cx="740" cy="630" r="8" class="glass-card"/>
+                        
+                        <!-- Floating Navigation -->
+                        <rect x="80" y="450" width="60" height="60" class="glass-card" rx="30"/>
+                        <text x="110" y="485" text-anchor="middle" class="accent-text" font-size="20">‹</text>
+                        
+                        <rect x="1260" y="450" width="60" height="60" class="glass-card" rx="30"/>
+                        <text x="1290" y="485" text-anchor="middle" class="accent-text" font-size="20">›</text>
+                        
+                        <!-- Statistics with Animation -->
+                        <rect x="100" y="540" width="1200" height="100" class="dark-card" rx="16" opacity="0.9"/>
+                        <text x="700" y="565" text-anchor="middle" class="section-title" fill="white">ANIMATED STATISTICS COUNTER</text>
+                        
+                        <rect x="150" y="580" width="150" height="50" class="accent-element" rx="8"/>
+                        <text x="225" y="595" text-anchor="middle" class="body-text" fill="white">25+</text>
+                        <text x="225" y="610" text-anchor="middle" class="body-text" fill="white" font-size="10">YIL DENEYİM</text>
+                        
+                        <rect x="350" y="580" width="150" height="50" class="success-element" rx="8"/>
+                        <text x="425" y="595" text-anchor="middle" class="body-text" fill="white">10,608</text>
+                        <text x="425" y="610" text-anchor="middle" class="body-text" fill="white" font-size="10">KONUT</text>
+                        
+                        <rect x="550" y="580" width="150" height="50" class="interactive-element" rx="8"/>
+                        <text x="625" y="595" text-anchor="middle" class="body-text" fill="white">120</text>
+                        <text x="625" y="610" text-anchor="middle" class="body-text" fill="white" font-size="10">İŞYERİ</text>
+                        
+                        <rect x="750" y="580" width="150" height="50" class="accent-element" rx="8"/>
+                        <text x="825" y="595" text-anchor="middle" class="body-text" fill="white">50+</text>
+                        <text x="825" y="610" text-anchor="middle" class="body-text" fill="white" font-size="10">PROJE</text>
+                        
+                        <rect x="950" y="580" width="150" height="50" class="success-element" rx="8"/>
+                        <text x="1025" y="595" text-anchor="middle" class="body-text" fill="white">10K+</text>
+                        <text x="1025" y="610" text-anchor="middle" class="body-text" fill="white" font-size="10">MÜŞTERİ</text>
+                    </g>
+                    
+                    <!-- Projects Section - Card Grid -->
+                    <g id="projects">
+                        <rect x="50" y="820" width="1300" height="500" class="glass-card" rx="20"/>
+                        <text x="70" y="855" class="section-title">🏗️ FEATURED PROJECTS - MASONRY LAYOUT</text>
+                        
+                        <!-- Modern Tab Navigation -->
+                        <rect x="500" y="880" width="400" height="60" class="dark-card" rx="30"/>
+                        <rect x="520" y="895" width="180" height="30" class="interactive-element" rx="15"/>
+                        <text x="610" y="915" text-anchor="middle" class="body-text" fill="white">DEVAM EDEN</text>
+                        <rect x="720" y="895" width="160" height="30" class="glass-card" rx="15"/>
+                        <text x="800" y="915" text-anchor="middle" class="body-text">TAMAMLANAN</text>
+                        
+                        <!-- Project Cards with Different Heights -->
+                        <rect x="80" y="960" width="380" height="320" class="dark-card" rx="16"/>
+                        <rect x="100" y="980" width="340" height="180" class="accent-element" rx="12" opacity="0.8"/>
+                        <text x="270" y="1000" text-anchor="middle" class="body-text" fill="white">PROJECT IMAGE</text>
+                        <text x="270" y="1020" text-anchor="middle" class="body-text" fill="white">Hover Zoom Effect</text>
+                        <text x="100" y="1190" class="section-title" fill="white">Sağlık Kent Konutları</text>
+                        <text x="100" y="1210" class="body-text">📍 İzmit, Kocaeli</text>
+                        <text x="100" y="1230" class="body-text">🏠 Modern yaşam alanları</text>
+                        <text x="100" y="1250" class="body-text">📅 Teslim: 2024</text>
+                        
+                        <rect x="480" y="960" width="380" height="280" class="dark-card" rx="16"/>
+                        <rect x="500" y="980" width="340" height="160" class="success-element" rx="12" opacity="0.8"/>
+                        <text x="670" y="1000" text-anchor="middle" class="body-text" fill="white">PROJECT IMAGE</text>
+                        <text x="670" y="1020" text-anchor="middle" class="body-text" fill="white">Parallax Effect</text>
+                        <text x="500" y="1170" class="section-title" fill="white">Kentsel Dönüşüm Projesi</text>
+                        <text x="500" y="1190" class="body-text">📍 Gebze, Kocaeli</text>
+                        <text x="500" y="1210" class="body-text">🏢 Ticari + Konut</text>
+                        
+                        <rect x="880" y="960" width="380" height="360" class="dark-card" rx="16"/>
+                        <rect x="900" y="980" width="340" height="200" class="interactive-element" rx="12" opacity="0.8"/>
+                        <text x="1070" y="1000" text-anchor="middle" class="body-text" fill="white">PROJECT IMAGE</text>
+                        <text x="1070" y="1020" text-anchor="middle" class="body-text" fill="white">3D Preview</text>
+                        <text x="900" y="1210" class="section-title" fill="white">Lüks Rezidans Projesi</text>
+                        <text x="900" y="1230" class="body-text">📍 Başiskele, Kocaeli</text>
+                        <text x="900" y="1250" class="body-text">🌟 Premium yaşam</text>
+                        <text x="900" y="1270" class="body-text">🎯 Yatırım fırsatı</text>
+                        
+                        <!-- Load More Button -->
+                        <rect x="580" y="1280" width="240" height="50" class="interactive-element" rx="25"/>
+                        <text x="700" y="1310" text-anchor="middle" class="body-text" fill="white">TÜM PROJELERİ GÖR</text>
+                    </g>
+                    
+                    <!-- About Section - Split Layout -->
+                    <g id="about">
+                        <rect x="50" y="1340" width="1300" height="400" class="glass-card" rx="20"/>
+                        <text x="70" y="1375" class="section-title">🏢 ABOUT SECTION - INTERACTIVE STORYTELLING</text>
+                        
+                        <!-- Image Side with Overlay -->
+                        <rect x="80" y="1400" width="600" height="320" class="dark-card" rx="16"/>
+                        <rect x="100" y="1420" width="560" height="200" class="accent-element" rx="12" opacity="0.7"/>
+                        <text x="380" y="1440" text-anchor="middle" class="body-text" fill="white">COMPANY IMAGE</text>
+                        <text x="380" y="1460" text-anchor="middle" class="body-text" fill="white">Parallax Scroll Effect</text>
+                        <text x="380" y="1480" text-anchor="middle" class="body-text" fill="white">Floating Elements</text>
+                        
+                        <!-- Floating Stats -->
+                        <rect x="120" y="1640" width="120" height="60" class="interactive-element" rx="12" opacity="0.9"/>
+                        <text x="180" y="1660" text-anchor="middle" class="body-text" fill="white">25+</text>
+                        <text x="180" y="1680" text-anchor="middle" class="body-text" fill="white" font-size="10">YIL</text>
+                        
+                        <rect x="260" y="1640" width="120" height="60" class="success-element" rx="12" opacity="0.9"/>
+                        <text x="320" y="1660" text-anchor="middle" class="body-text" fill="white">10K+</text>
+                        <text x="320" y="1680" text-anchor="middle" class="body-text" fill="white" font-size="10">MÜŞTERİ</text>
+                        
+                        <rect x="400" y="1640" width="120" height="60" class="accent-element" rx="12" opacity="0.9"/>
+                        <text x="460" y="1660" text-anchor="middle" class="body-text" fill="white">50+</text>
+                        <text x="460" y="1680" text-anchor="middle" class="body-text" fill="white" font-size="10">PROJE</text>
+                        
+                        <!-- Content Side -->
+                        <rect x="700" y="1400" width="580" height="320" class="dark-card" rx="16"/>
+                        <text x="720" y="1430" class="section-title" fill="white">HAKKIMIZDA</text>
+                        <text x="720" y="1455" class="body-text">🎯 Modern yaşam alanları tasarlıyoruz</text>
+                        <text x="720" y="1475" class="body-text">🏗️ 25+ yıllık sektör deneyimi</text>
+                        <text x="720" y="1495" class="body-text">🌟 10,000+ mutlu müşteri</text>
+                        <text x="720" y="1515" class="body-text">🎨 Sürdürülebilir mimari çözümler</text>
+                        <text x="720" y="1535" class="body-text">🔧 Akıllı ev teknolojileri</text>
+                        <text x="720" y="1555" class="body-text">📈 Yatırım değeri odaklı projeler</text>
+                        
+                        <!-- CTA Button -->
+                        <rect x="720" y="1580" width="200" height="50" class="interactive-element" rx="25"/>
+                        <text x="820" y="1610" text-anchor="middle" class="body-text" fill="white">ŞİRKETİMİZİ TANIYIN</text>
+                        
+                        <!-- Trust Indicators -->
+                        <rect x="720" y="1650" width="560" height="60" class="glass-card" rx="12"/>
+                        <text x="1000" y="1675" text-anchor="middle" class="accent-text">GÜVENİLİRLİK GÖSTERGELERİ</text>
+                        <text x="740" y="1695" class="body-text">🏆 ISO 9001 Kalite Belgesi • 🌱 LEED Sertifikası • 🛡️ TSE Güvence</text>
+                    </g>
+                    
+                    <!-- Services Section - Modern Grid -->
+                    <g id="services">
+                        <rect x="50" y="1760" width="1300" height="450" class="glass-card" rx="20"/>
+                        <text x="70" y="1795" class="section-title">⚡ SERVICES - INTERACTIVE GRID</text>
+                        
+                        <!-- Section Header -->
+                        <text x="700" y="1830" text-anchor="middle" class="title-text">HİZMETLERİMİZ</text>
+                        <rect x="600" y="1840" width="200" height="4" class="interactive-element" rx="2"/>
+                        
+                        <!-- Service Cards with Hover Effects -->
+                        <rect x="80" y="1870" width="300" height="320" class="dark-card" rx="16"/>
+                        <rect x="100" y="1890" width="260" height="160" class="accent-element" rx="12" opacity="0.8"/>
+                        <text x="230" y="1910" text-anchor="middle" class="body-text" fill="white">SERVICE ICON</text>
+                        <text x="230" y="1930" text-anchor="middle" class="body-text" fill="white">Animated Icon</text>
+                        <text x="100" y="2080" class="section-title" fill="white">Konut Hizmetleri</text>
+                        <text x="100" y="2105" class="body-text">🏠 Modern konut projeleri</text>
+                        <text x="100" y="2125" class="body-text">🎨 İç mimari tasarım</text>
+                        <text x="100" y="2145" class="body-text">🔧 Akıllı ev sistemleri</text>
+                        
+                        <rect x="400" y="1870" width="300" height="320" class="dark-card" rx="16"/>
+                        <rect x="420" y="1890" width="260" height="160" class="success-element" rx="12" opacity="0.8"/>
+                        <text x="550" y="1910" text-anchor="middle" class="body-text" fill="white">SERVICE ICON</text>
+                        <text x="550" y="1930" text-anchor="middle" class="body-text" fill="white">Hover Animation</text>
+                        <text x="420" y="2080" class="section-title" fill="white">Hafriyat Hizmetleri</text>
+                        <text x="420" y="2105" class="body-text">🚛 Hafriyat taşıma</text>
+                        <text x="420" y="2125" class="body-text">📊 Dijital takip sistemi</text>
+                        <text x="420" y="2145" class="body-text">💰 Online ödeme</text>
+                        
+                        <rect x="720" y="1870" width="300" height="320" class="dark-card" rx="16"/>
+                        <rect x="740" y="1890" width="260" height="160" class="interactive-element" rx="12" opacity="0.8"/>
+                        <text x="870" y="1910" text-anchor="middle" class="body-text" fill="white">SERVICE ICON</text>
+                        <text x="870" y="1930" text-anchor="middle" class="body-text" fill="white">3D Preview</text>
+                        <text x="740" y="2080" class="section-title" fill="white">Mimari Projelendirme</text>
+                        <text x="740" y="2105" class="body-text">📐 3D modelleme</text>
+                        <text x="740" y="2125" class="body-text">🎯 VR görselleştirme</text>
+                        <text x="740" y="2145" class="body-text">📋 Proje yönetimi</text>
+                        
+                        <rect x="1040" y="1870" width="300" height="320" class="dark-card" rx="16"/>
+                        <rect x="1060" y="1890" width="260" height="160" class="accent-element" rx="12" opacity="0.8"/>
+                        <text x="1190" y="1910" text-anchor="middle" class="body-text" fill="white">SERVICE ICON</text>
+                        <text x="1190" y="1930" text-anchor="middle" class="body-text" fill="white">Interactive Map</text>
+                        <text x="1060" y="2080" class="section-title" fill="white">Kentsel Dönüşüm</text>
+                        <text x="1060" y="2105" class="body-text">🏙️ Şehir planlaması</text>
+                        <text x="1060" y="2125" class="body-text">🌱 Sürdürülebilir tasarım</text>
+                        <text x="1060" y="2145" class="body-text">📈 Değer artışı analizi</text>
+                    </g>
+                    
+                    <!-- News Section - Modern Cards -->
+                    <g id="news">
+                        <rect x="50" y="2230" width="1300" height="400" class="glass-card" rx="20"/>
+                        <text x="70" y="2265" class="section-title">📰 NEWS - DYNAMIC CONTENT FEED</text>
+                        
+                        <!-- Section Header -->
+                        <text x="700" y="2300" text-anchor="middle" class="title-text">BİZDEN HABERLER</text>
+                        <text x="700" y="2325" text-anchor="middle" class="body-text">Kent Konut'tan en güncel gelişmeler ve projeler</text>
+                        
+                        <!-- News Cards with Modern Layout -->
+                        <rect x="80" y="2350" width="380" height="260" class="dark-card" rx="16"/>
+                        <rect x="100" y="2370" width="340" height="140" class="interactive-element" rx="12" opacity="0.8"/>
+                        <text x="270" y="2390" text-anchor="middle" class="body-text" fill="white">NEWS IMAGE</text>
+                        <text x="270" y="2410" text-anchor="middle" class="body-text" fill="white">Lazy Loading</text>
+                        <text x="100" y="2540" class="section-title" fill="white">Yeni Proje Lansmanı</text>
+                        <text x="100" y="2560" class="body-text">📅 15 Ocak 2024</text>
+                        <text x="100" y="2580" class="body-text">Sağlık Kent Konutları 2. Etap...</text>
+                        
+                        <rect x="480" y="2350" width="380" height="260" class="dark-card" rx="16"/>
+                        <rect x="500" y="2370" width="340" height="140" class="success-element" rx="12" opacity="0.8"/>
+                        <text x="670" y="2390" text-anchor="middle" class="body-text" fill="white">NEWS IMAGE</text>
+                        <text x="670" y="2410" text-anchor="middle" class="body-text" fill="white">Auto Play Video</text>
+                        <text x="500" y="2540" class="section-title" fill="white">Sürdürülebilir Mimari</text>
+                        <text x="500" y="2560" class="body-text">📅 12 Ocak 2024</text>
+                        <text x="500" y="2580" class="body-text">Çevre dostu yapı malzemeleri...</text>
+                        
+                        <rect x="880" y="2350" width="380" height="260" class="dark-card" rx="16"/>
+                        <rect x="900" y="2370" width="340" height="140" class="accent-element" rx="12" opacity="0.8"/>
+                        <text x="1070" y="2390" text-anchor="middle" class="body-text" fill="white">NEWS IMAGE</text>
+                        <text x="1070" y="2410" text-anchor="middle" class="body-text" fill="white">Interactive Gallery</text>
+                        <text x="900" y="2540" class="section-title" fill="white">Ödül Töreni</text>
+                        <text x="900" y="2560" class="body-text">📅 10 Ocak 2024</text>
+                        <text x="900" y="2580" class="body-text">En İyi Konut Projesi ödülü...</text>
+                    </g>
+                    
+                    <!-- Footer Section - Modern Design -->
+                    <g id="footer">
+                        <rect x="50" y="2650" width="1300" height="350" class="dark-card" rx="20"/>
+                        <text x="70" y="2685" class="section-title">🔗 FOOTER - COMPREHENSIVE LINKS</text>
+                        
+                        <!-- Footer Content Grid -->
+                        <rect x="80" y="2710" width="250" height="280" class="glass-card" rx="12"/>
+                        <text x="205" y="2735" text-anchor="middle" class="section-title" fill="white">KURUMSAL</text>
+                        <text x="100" y="2760" class="body-text">• Hakkımızda</text>
+                        <text x="100" y="2780" class="body-text">• Misyon & Vizyon</text>
+                        <text x="100" y="2800" class="body-text">• Yönetim Kurulu</text>
+                        <text x="100" y="2820" class="body-text">• Kalite Politikası</text>
+                        <text x="100" y="2840" class="body-text">• Sürdürülebilirlik</text>
+                        <text x="100" y="2860" class="body-text">• Kariyer</text>
+                        
+                        <rect x="350" y="2710" width="250" height="280" class="glass-card" rx="12"/>
+                        <text x="475" y="2735" text-anchor="middle" class="section-title" fill="white">HİZMETLER</text>
+                        <text x="370" y="2760" class="body-text">• Konut Projeleri</text>
+                        <text x="370" y="2780" class="body-text">• Hafriyat Hizmetleri</text>
+                        <text x="370" y="2800" class="body-text">• Mimari Tasarım</text>
+                        <text x="370" y="2820" class="body-text">• Kentsel Dönüşüm</text>
+                        <text x="370" y="2840" class="body-text">• Proje Yönetimi</text>
+                        <text x="370" y="2860" class="body-text">• Danışmanlık</text>
+                        
+                        <rect x="620" y="2710" width="200" height="280" class="interactive-element" rx="12" opacity="0.8"/>
+                        <text x="720" y="2735" text-anchor="middle" class="section-title" fill="white">LOGO</text>
+                        <rect x="650" y="2750" width="140" height="80" class="glass-card" rx="8"/>
+                        <text x="720" y="2795" text-anchor="middle" class="body-text" fill="white">KENT KONUT</text>
+                        <text x="720" y="2850" text-anchor="middle" class="body-text" fill="white">Kocaeli Büyükşehir</text>
+                        <text x="720" y="2870" text-anchor="middle" class="body-text" fill="white">Belediyesi İştiraki</text>
+                        
+                        <rect x="840" y="2710" width="460" height="280" class="glass-card" rx="12"/>
+                        <text x="1070" y="2735" text-anchor="middle" class="section-title" fill="white">İLETİŞİM</text>
+                        <text x="860" y="2760" class="body-text">📍 Körfez Mah. Hafız Binbaşı Cad. No:3</text>
+                        <text x="860" y="2780" class="body-text">    İzmit / Kocaeli</text>
+                        <text x="860" y="2810" class="body-text">📧 halklailiskiler@kentkonut.com.tr</text>
+                        <text x="860" y="2840" class="body-text">📞 0 262 331 0703</text>
+                        <text x="860" y="2870" class="body-text">🌐 www.kentkonut.com.tr</text>
+                        
+                        <!-- Social Media Icons -->
+                        <rect x="860" y="2900" width="40" height="40" class="interactive-element" rx="8"/>
+                        <text x="880" y="2925" text-anchor="middle" class="body-text" fill="white">f</text>
+                        
+                        <rect x="920" y="2900" width="40" height="40" class="interactive-element" rx="8"/>
+                        <text x="940" y="2925" text-anchor="middle" class="body-text" fill="white">t</text>
+                        
+                        <rect x="980" y="2900" width="40" height="40" class="interactive-element" rx="8"/>
+                        <text x="1000" y="2925" text-anchor="middle" class="body-text" fill="white">in</text>
+                        
+                        <rect x="1040" y="2900" width="40" height="40" class="interactive-element" rx="8"/>
+                        <text x="1060" y="2925" text-anchor="middle" class="body-text" fill="white">ig</text>
+                        
+                        <rect x="1100" y="2900" width="40" height="40" class="interactive-element" rx="8"/>
+                        <text x="1120" y="2925" text-anchor="middle" class="body-text" fill="white">yt</text>
+                    </g>
+                    
+                    <!-- Footer Bottom -->
+                    <rect x="50" y="3020" width="1300" height="80" class="dark-card" rx="16"/>
+                    <text x="700" y="3045" text-anchor="middle" class="body-text">© 2024 KENT KONUT İNŞAAT SAN. VE TİC. A.Ş. - KOCAELİ BÜYÜKŞEHİR BELEDİYESİ İŞTİRAKİDİR</text>
+                    <text x="700" y="3070" text-anchor="middle" class="body-text">Site Kullanımı • KVKK • Gizlilik Politikası • Çerez Politikası • Web Mail • RSS</text>
+                    
+                    <!-- Modern Design Elements -->
+                    <text x="700" y="3130" text-anchor="middle" class="accent-text" font-size="16">✨ MODERN DESIGN FEATURES ✨</text>
+                    <text x="700" y="3160" text-anchor="middle" class="body-text">Glassmorphism • Parallax Scrolling • Micro Interactions • 3D Elements</text>
+                    <text x="700" y="3180" text-anchor="middle" class="body-text">Smooth Animations • Hover Effects • Dynamic Content • Responsive Grid</text>
+                    <text x="700" y="3200" text-anchor="middle" class="body-text">Dark Mode Support • Accessibility Features • Performance Optimized</text>
+                </svg>
+            </div>
+        </div>
+        
+        <div class="section-divider"></div>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>🎨 Glassmorphism Design</h3>
+                <p>Modern cam efekti ile şeffaf katmanlar, blur efektleri ve gradient geçişleri kullanarak premium bir görünüm.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>⚡ Micro Interactions</h3>
+                <p>Hover animasyonları, button feedback'leri ve smooth transitions ile kullanıcı deneyimini artıran detaylar.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🌊 Parallax Scrolling</h3>
+                <p>Katmanlı scroll efektleri ile derinlik hissi yaratan, immersive bir browsing deneyimi.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>📱 Mobile-First Responsive</h3>
+                <p>Tüm cihazlarda mükemmel görünüm için optimize edilmiş, touch-friendly arayüz tasarımı.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🎯 Dynamic Content</h3>
+                <p>Backend entegrasyonu ile real-time veri güncellemeleri ve dinamik içerik yönetimi.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>♿ Accessibility First</h3>
+                <p>WCAG 2.1 standartlarına uygun, screen reader desteği ve keyboard navigation ile erişilebilir tasarım.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🚀 Performance Optimized</h3>
+                <p>Lazy loading, image optimization ve code splitting ile hızlı yükleme süreleri.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🌙 Dark Mode Support</h3>
+                <p>Kullanıcı tercihine göre otomatik tema değişimi ve göz yorgunluğunu azaltan tasarım.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

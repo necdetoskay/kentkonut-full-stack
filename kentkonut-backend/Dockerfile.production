@@ -1,0 +1,104 @@
+# Multi-stage Docker build for production
+# This ensures Linux-compatible binaries for sharp and other native modules
+
+# Stage 1: Dependencies
+FROM node:18-slim AS deps
+RUN apt-get update && apt-get install -y \
+    openssl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+
+# Copy package files first for better caching
+COPY package.json package-lock.json* ./
+
+# Install dependencies including optional ones (sharp will be Linux-compatible)
+RUN npm ci --include=optional
+
+# Stage 2: Builder
+FROM node:18-slim AS builder
+RUN apt-get update && apt-get install -y \
+    openssl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+
+# Copy dependencies from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+
+# Copy config files first for better caching
+COPY package.json package-lock.json* ./
+COPY tailwind.config.ts ./
+COPY postcss.config.js ./
+COPY next.config.js ./
+COPY tsconfig.json ./
+COPY prisma ./prisma
+
+# Copy source code
+COPY . .
+
+# Set environment variables for build
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+ENV DATABASE_URL="postgresql://placeholder:placeholder@placeholder:5432/placeholder"
+
+# Generate Prisma client
+RUN npx prisma generate
+
+# Build the application
+RUN npm run build
+
+# Stage 3: Runner
+FROM node:18-slim AS runner
+RUN apt-get update && apt-get install -y \
+    openssl \
+    ca-certificates \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+
+# Set environment
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy built application
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+# Copy package files for runtime dependencies
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/package-lock.json ./package-lock.json
+
+# Copy Prisma files for runtime
+COPY --from=builder /app/prisma ./prisma
+
+# Install only production dependencies (including optional sharp for Linux)
+RUN npm ci --omit=dev --include=optional && npm cache clean --force
+
+# Create startup script
+RUN echo '#!/bin/bash\n\
+echo "🚀 Starting KentKonut Backend..."\n\
+echo "📊 Running database migrations..."\n\
+npx prisma migrate deploy\n\
+echo "👤 Creating admin user..."\n\
+node prisma/admin-user-seed.js\n\
+echo "✅ Database setup completed!"\n\
+echo "🎯 Starting application..."\n\
+exec node server.js' > /app/start.sh && chmod +x /app/start.sh
+
+# Set correct permissions
+USER nextjs
+
+# Set environment variable for port
+ENV PORT=3021
+
+# Expose port
+EXPOSE 3021
+
+# Start the application with seed
+CMD ["/app/start.sh"]

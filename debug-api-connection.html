@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KentKonut API Connection Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .warning { background-color: #fff3cd; border-color: #ffeaa7; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background-color: #0056b3; }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .endpoint-test {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 4px solid #007bff;
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 KentKonut API Connection Debug Tool</h1>
+        <p>This tool helps diagnose API connection issues between frontend and backend.</p>
+        
+        <div class="test-section info">
+            <h3>📋 Configuration</h3>
+            <p><strong>Expected Frontend URL:</strong> http://172.41.42.51:3020</p>
+            <p><strong>Expected Backend URL:</strong> http://172.41.42.51:3021</p>
+            <p><strong>Current Page URL:</strong> <span id="currentUrl"></span></p>
+        </div>
+
+        <div class="test-section">
+            <h3>🧪 API Connection Tests</h3>
+            <button onclick="runAllTests()">Run All Tests</button>
+            <button onclick="clearResults()">Clear Results</button>
+            <div id="testResults"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔍 Individual Endpoint Tests</h3>
+            <div class="endpoint-test">
+                <strong>Health Check:</strong>
+                <button onclick="testEndpoint('/api/health', 'GET')">Test Health</button>
+                <div id="health-result"></div>
+            </div>
+            
+            <div class="endpoint-test">
+                <strong>Banners:</strong>
+                <button onclick="testEndpoint('/api/public/banners/position/1', 'GET')">Test Banners</button>
+                <div id="banners-result"></div>
+            </div>
+            
+            <div class="endpoint-test">
+                <strong>Projects:</strong>
+                <button onclick="testEndpoint('/api/projects?status=ONGOING&limit=6', 'GET')">Test Projects</button>
+                <div id="projects-result"></div>
+            </div>
+            
+            <div class="endpoint-test">
+                <strong>Services:</strong>
+                <button onclick="testEndpoint('/api/public/hizmetlerimiz?limit=4', 'GET')">Test Services</button>
+                <div id="services-result"></div>
+            </div>
+            
+            <div class="endpoint-test">
+                <strong>News:</strong>
+                <button onclick="testEndpoint('/api/news?limit=3', 'GET')">Test News</button>
+                <div id="news-result"></div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🌐 Network Diagnostics</h3>
+            <button onclick="checkNetworkInfo()">Check Network Info</button>
+            <div id="networkInfo"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const BACKEND_URLS = [
+            'http://172.41.42.51:3021',
+            'http://localhost:3021',
+            'http://localhost:3010' // Legacy fallback
+        ];
+
+        // Update current URL
+        document.getElementById('currentUrl').textContent = window.location.href;
+
+        async function testEndpoint(endpoint, method = 'GET', backendUrl = null) {
+            const urls = backendUrl ? [backendUrl] : BACKEND_URLS;
+            const resultId = endpoint.split('/')[2] || 'health';
+            const resultDiv = document.getElementById(`${resultId}-result`) || 
+                             document.getElementById('testResults');
+
+            for (const baseUrl of urls) {
+                const fullUrl = `${baseUrl}${endpoint}`;
+                
+                try {
+                    console.log(`🧪 Testing: ${method} ${fullUrl}`);
+                    
+                    const startTime = Date.now();
+                    const response = await fetch(fullUrl, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        mode: 'cors',
+                        credentials: 'include'
+                    });
+                    const endTime = Date.now();
+                    
+                    const responseTime = endTime - startTime;
+                    let responseData = '';
+                    
+                    try {
+                        responseData = await response.text();
+                        // Try to parse as JSON
+                        JSON.parse(responseData);
+                    } catch (e) {
+                        // Not JSON, keep as text
+                    }
+
+                    const resultHtml = `
+                        <div class="test-section ${response.ok ? 'success' : 'error'}">
+                            <h4>✅ ${method} ${fullUrl}</h4>
+                            <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                            <p><strong>Response Time:</strong> ${responseTime}ms</p>
+                            <p><strong>Headers:</strong></p>
+                            <pre>${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}</pre>
+                            <p><strong>Response:</strong></p>
+                            <pre>${responseData.substring(0, 500)}${responseData.length > 500 ? '...' : ''}</pre>
+                        </div>
+                    `;
+                    
+                    resultDiv.innerHTML = resultHtml;
+                    
+                    if (response.ok) {
+                        console.log(`✅ Success: ${fullUrl}`);
+                        return { success: true, url: fullUrl, status: response.status, data: responseData };
+                    } else {
+                        console.log(`❌ Failed: ${fullUrl} - ${response.status}`);
+                    }
+                    
+                } catch (error) {
+                    console.error(`❌ Error testing ${fullUrl}:`, error);
+                    
+                    const errorHtml = `
+                        <div class="test-section error">
+                            <h4>❌ ${method} ${fullUrl}</h4>
+                            <p><strong>Error:</strong> ${error.message}</p>
+                            <p><strong>Error Type:</strong> ${error.name}</p>
+                            <pre>${error.stack || 'No stack trace available'}</pre>
+                        </div>
+                    `;
+                    
+                    resultDiv.innerHTML = errorHtml;
+                }
+            }
+            
+            return { success: false, error: 'All URLs failed' };
+        }
+
+        async function runAllTests() {
+            const testResults = document.getElementById('testResults');
+            testResults.innerHTML = '<p>🔄 Running tests...</p>';
+            
+            const endpoints = [
+                '/api/health',
+                '/api/public/banners/position/1',
+                '/api/projects?status=ONGOING&limit=6',
+                '/api/public/hizmetlerimiz?limit=4',
+                '/api/news?limit=3'
+            ];
+            
+            let results = [];
+            
+            for (const endpoint of endpoints) {
+                const result = await testEndpoint(endpoint);
+                results.push({ endpoint, result });
+            }
+            
+            // Summary
+            const successful = results.filter(r => r.result.success).length;
+            const total = results.length;
+            
+            const summaryHtml = `
+                <div class="test-section ${successful === total ? 'success' : 'warning'}">
+                    <h3>📊 Test Summary</h3>
+                    <p><strong>Successful:</strong> ${successful}/${total}</p>
+                    <p><strong>Success Rate:</strong> ${Math.round((successful/total) * 100)}%</p>
+                </div>
+            `;
+            
+            testResults.innerHTML = summaryHtml + testResults.innerHTML;
+        }
+
+        function checkNetworkInfo() {
+            const networkDiv = document.getElementById('networkInfo');
+            
+            const info = {
+                userAgent: navigator.userAgent,
+                language: navigator.language,
+                cookieEnabled: navigator.cookieEnabled,
+                onLine: navigator.onLine,
+                currentUrl: window.location.href,
+                referrer: document.referrer,
+                timestamp: new Date().toISOString()
+            };
+            
+            networkDiv.innerHTML = `
+                <div class="test-section info">
+                    <h4>🌐 Browser & Network Information</h4>
+                    <pre>${JSON.stringify(info, null, 2)}</pre>
+                </div>
+            `;
+        }
+
+        function clearResults() {
+            const resultDivs = [
+                'testResults', 'health-result', 'banners-result', 
+                'projects-result', 'services-result', 'news-result', 'networkInfo'
+            ];
+            
+            resultDivs.forEach(id => {
+                const div = document.getElementById(id);
+                if (div) div.innerHTML = '';
+            });
+        }
+
+        // Auto-run basic test on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testEndpoint('/api/health');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

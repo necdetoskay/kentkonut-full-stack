@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banner Tracking Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            margin: 20px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.2s;
+            position: relative;
+        }
+        .test-banner:hover {
+            transform: translateY(-2px);
+        }
+        .test-banner h2 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+        }
+        .test-banner p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        .debug-info {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .controls h3 {
+            margin-top: 0;
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .button.secondary {
+            background: #6c757d;
+        }
+        .button.secondary:hover {
+            background: #545b62;
+        }
+        .logs {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        .consent-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #333;
+            color: white;
+            padding: 20px;
+            z-index: 1000;
+            display: none;
+        }
+        .consent-banner.show {
+            display: block;
+        }
+        .consent-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .consent-text {
+            flex: 1;
+        }
+        .consent-buttons {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Banner Analytics Tracking Test</h1>
+        
+        <div class="controls">
+            <h3>Test Controls</h3>
+            <button class="button" onclick="initializeTracking()">Initialize Tracking</button>
+            <button class="button" onclick="grantConsent()">Grant Consent</button>
+            <button class="button secondary" onclick="revokeConsent()">Revoke Consent</button>
+            <button class="button" onclick="trackTestConversion()">Track Test Conversion</button>
+            <button class="button secondary" onclick="clearLogs()">Clear Logs</button>
+            <button class="button" onclick="testPerformance()">Test Performance</button>
+        </div>
+
+        <!-- Test Banners -->
+        <div class="test-banner" data-banner-id="1" onclick="handleBannerClick(1, event)">
+            <div class="debug-info">Banner ID: 1</div>
+            <h2>Test Banner 1</h2>
+            <p>Click me to test banner tracking!</p>
+        </div>
+
+        <div class="test-banner" data-banner-id="2" onclick="handleBannerClick(2, event)">
+            <div class="debug-info">Banner ID: 2</div>
+            <h2>Test Banner 2</h2>
+            <p>Another test banner with different content</p>
+        </div>
+
+        <div class="test-banner" data-banner-id="3" onclick="handleBannerClick(3, event)">
+            <div class="debug-info">Banner ID: 3</div>
+            <h2>Test Banner 3</h2>
+            <p>Third banner for comprehensive testing</p>
+        </div>
+
+        <!-- Spacer for scroll testing -->
+        <div style="height: 1000px; background: linear-gradient(to bottom, #f5f5f5, #e0e0e0); margin: 20px 0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #666;">
+            <p>Scroll down to test view tracking...</p>
+        </div>
+
+        <div class="test-banner" data-banner-id="4" onclick="handleBannerClick(4, event)">
+            <div class="debug-info">Banner ID: 4</div>
+            <h2>Scroll Test Banner</h2>
+            <p>This banner tests scroll-based view tracking</p>
+        </div>
+
+        <div class="logs" id="logs">
+            <div>Banner Tracking Test Console</div>
+            <div>Ready to test...</div>
+        </div>
+    </div>
+
+    <!-- Consent Banner -->
+    <div class="consent-banner" id="consentBanner">
+        <div class="consent-content">
+            <div class="consent-text">
+                <h4>Analytics Tracking Consent</h4>
+                <p>We use analytics to track banner performance. Do you consent to analytics tracking?</p>
+            </div>
+            <div class="consent-buttons">
+                <button class="button secondary" onclick="handleConsent(false)">Decline</button>
+                <button class="button" onclick="handleConsent(true)">Accept</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock BannerTracker for testing
+        class MockBannerTracker {
+            constructor(config = {}) {
+                this.config = {
+                    apiEndpoint: '/api/analytics/track-direct',
+                    batchSize: 10,
+                    flushInterval: 5000,
+                    consentRequired: true,
+                    debug: true,
+                    ...config
+                };
+                
+                this.sessionId = this.generateSessionId();
+                this.visitorId = this.getOrCreateVisitorId();
+                this.eventQueue = [];
+                this.consentGiven = this.checkConsent();
+                this.viewTrackers = new Map();
+                
+                this.log('BannerTracker initialized', {
+                    sessionId: this.sessionId,
+                    visitorId: this.visitorId,
+                    consentGiven: this.consentGiven
+                });
+                
+                this.setupIntersectionObserver();
+            }
+
+            setupIntersectionObserver() {
+                if (!window.IntersectionObserver) {
+                    this.log('IntersectionObserver not supported');
+                    return;
+                }
+
+                this.intersectionObserver = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach((entry) => {
+                            const bannerId = parseInt(entry.target.getAttribute('data-banner-id') || '0');
+                            
+                            if (entry.isIntersecting) {
+                                this.startViewTracking(bannerId, entry.target);
+                            } else {
+                                this.endViewTracking(bannerId);
+                            }
+                        });
+                    },
+                    {
+                        threshold: 0.5,
+                        rootMargin: '0px'
+                    }
+                );
+
+                // Observe all test banners
+                document.querySelectorAll('[data-banner-id]').forEach(el => {
+                    this.intersectionObserver.observe(el);
+                });
+            }
+
+            trackImpression(bannerId, element) {
+                if (!this.isConsentValid()) {
+                    this.log('Impression tracking skipped - no consent', { bannerId });
+                    return;
+                }
+
+                const event = {
+                    bannerId,
+                    eventType: 'impression',
+                    sessionId: this.sessionId,
+                    visitorId: this.visitorId,
+                    timestamp: new Date().toISOString(),
+                    pageUrl: window.location.href,
+                    referrer: document.referrer,
+                    userAgent: navigator.userAgent,
+                    consentGiven: this.consentGiven,
+                    dataProcessingConsent: this.consentGiven
+                };
+
+                this.queueEvent(event);
+                this.log('Impression tracked', { bannerId });
+            }
+
+            startViewTracking(bannerId, element) {
+                if (!this.isConsentValid()) return;
+
+                const startTime = Date.now();
+                element.setAttribute('data-view-start', startTime.toString());
+
+                const viewEvent = {
+                    bannerId,
+                    eventType: 'view',
+                    sessionId: this.sessionId,
+                    visitorId: this.visitorId,
+                    timestamp: new Date().toISOString(),
+                    pageUrl: window.location.href,
+                    consentGiven: this.consentGiven,
+                    dataProcessingConsent: this.consentGiven
+                };
+
+                this.queueEvent(viewEvent);
+                this.log('View started', { bannerId });
+            }
+
+            endViewTracking(bannerId) {
+                const element = document.querySelector(`[data-banner-id="${bannerId}"]`);
+                if (!element || !this.isConsentValid()) return;
+
+                const startTime = parseInt(element.getAttribute('data-view-start') || '0');
+                if (startTime === 0) return;
+
+                const engagementDuration = Date.now() - startTime;
+                
+                if (engagementDuration > 1000) {
+                    const engagementEvent = {
+                        bannerId,
+                        eventType: 'engagement',
+                        sessionId: this.sessionId,
+                        visitorId: this.visitorId,
+                        timestamp: new Date().toISOString(),
+                        pageUrl: window.location.href,
+                        engagementDuration,
+                        consentGiven: this.consentGiven,
+                        dataProcessingConsent: this.consentGiven
+                    };
+
+                    this.queueEvent(engagementEvent);
+                    this.log('Engagement tracked', { bannerId, engagementDuration });
+                }
+
+                element.removeAttribute('data-view-start');
+            }
+
+            trackClick(bannerId, event) {
+                if (!this.isConsentValid()) return;
+
+                const rect = event.target.getBoundingClientRect();
+                const clickPosition = {
+                    x: event.clientX - rect.left,
+                    y: event.clientY - rect.top
+                };
+
+                const clickEvent = {
+                    bannerId,
+                    eventType: 'click',
+                    sessionId: this.sessionId,
+                    visitorId: this.visitorId,
+                    timestamp: new Date().toISOString(),
+                    pageUrl: window.location.href,
+                    clickPosition,
+                    consentGiven: this.consentGiven,
+                    dataProcessingConsent: this.consentGiven
+                };
+
+                this.queueEvent(clickEvent);
+                this.sendEvents([clickEvent]); // Send immediately
+                this.log('Click tracked', { bannerId, clickPosition });
+            }
+
+            trackConversion(bannerId, conversionData) {
+                if (!this.isConsentValid()) return;
+
+                const conversionEvent = {
+                    bannerId,
+                    eventType: 'conversion',
+                    sessionId: this.sessionId,
+                    visitorId: this.visitorId,
+                    timestamp: new Date().toISOString(),
+                    pageUrl: window.location.href,
+                    conversionType: conversionData.type,
+                    conversionValue: conversionData.value,
+                    consentGiven: this.consentGiven,
+                    dataProcessingConsent: this.consentGiven
+                };
+
+                this.queueEvent(conversionEvent);
+                this.sendEvents([conversionEvent]); // Send immediately
+                this.log('Conversion tracked', { bannerId, conversionData });
+            }
+
+            queueEvent(event) {
+                this.eventQueue.push(event);
+                this.log('Event queued', { eventType: event.eventType, queueSize: this.eventQueue.length });
+            }
+
+            async sendEvents(events) {
+                for (const event of events) {
+                    try {
+                        const response = await fetch(this.config.apiEndpoint, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(event)
+                        });
+
+                        const data = await response.json();
+                        this.log('Event sent', { 
+                            eventType: event.eventType, 
+                            success: data.success,
+                            eventId: data.eventId 
+                        });
+                    } catch (error) {
+                        this.log('Event send failed', { error: error.message });
+                    }
+                }
+            }
+
+            setConsent(granted) {
+                this.consentGiven = granted;
+                localStorage.setItem('analytics_consent', granted ? 'granted' : 'denied');
+                this.log('Consent updated', { granted });
+            }
+
+            checkConsent() {
+                const consent = localStorage.getItem('analytics_consent');
+                return consent === 'granted';
+            }
+
+            isConsentValid() {
+                return !this.config.consentRequired || this.consentGiven;
+            }
+
+            generateSessionId() {
+                return `sess_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            }
+
+            getOrCreateVisitorId() {
+                const stored = localStorage.getItem('banner_visitor_id');
+                if (stored) return stored;
+
+                const visitorId = `visitor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                localStorage.setItem('banner_visitor_id', visitorId);
+                return visitorId;
+            }
+
+            log(message, data = {}) {
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = `[${timestamp}] ${message}`;
+                console.log(logEntry, data);
+                
+                const logsElement = document.getElementById('logs');
+                if (logsElement) {
+                    const logDiv = document.createElement('div');
+                    logDiv.textContent = `${logEntry} ${JSON.stringify(data)}`;
+                    logsElement.appendChild(logDiv);
+                    logsElement.scrollTop = logsElement.scrollHeight;
+                }
+            }
+        }
+
+        // Global tracker instance
+        let tracker = null;
+
+        // Test functions
+        function initializeTracking() {
+            tracker = new MockBannerTracker({
+                debug: true,
+                consentRequired: true
+            });
+
+            // Track impressions for all visible banners
+            document.querySelectorAll('[data-banner-id]').forEach(element => {
+                const bannerId = parseInt(element.getAttribute('data-banner-id'));
+                tracker.trackImpression(bannerId, element);
+            });
+        }
+
+        function grantConsent() {
+            if (tracker) {
+                tracker.setConsent(true);
+            }
+            hideConsentBanner();
+        }
+
+        function revokeConsent() {
+            if (tracker) {
+                tracker.setConsent(false);
+            }
+        }
+
+        function handleBannerClick(bannerId, event) {
+            if (tracker) {
+                tracker.trackClick(bannerId, event);
+            }
+        }
+
+        function trackTestConversion() {
+            if (tracker) {
+                tracker.trackConversion(1, {
+                    type: 'test_conversion',
+                    value: 99.99
+                });
+            }
+        }
+
+        function clearLogs() {
+            const logsElement = document.getElementById('logs');
+            if (logsElement) {
+                logsElement.innerHTML = '<div>Logs cleared...</div>';
+            }
+        }
+
+        function testPerformance() {
+            if (!tracker) {
+                alert('Please initialize tracking first');
+                return;
+            }
+
+            const startTime = performance.now();
+            
+            // Simulate rapid events
+            for (let i = 0; i < 100; i++) {
+                tracker.trackImpression(1, document.querySelector('[data-banner-id="1"]'));
+            }
+            
+            const endTime = performance.now();
+            tracker.log('Performance test completed', { 
+                duration: `${(endTime - startTime).toFixed(2)}ms`,
+                eventsPerSecond: (100 / ((endTime - startTime) / 1000)).toFixed(2)
+            });
+        }
+
+        function handleConsent(granted) {
+            if (granted) {
+                grantConsent();
+            } else {
+                revokeConsent();
+            }
+        }
+
+        function showConsentBanner() {
+            document.getElementById('consentBanner').classList.add('show');
+        }
+
+        function hideConsentBanner() {
+            document.getElementById('consentBanner').classList.remove('show');
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            // Check if consent is needed
+            const consent = localStorage.getItem('analytics_consent');
+            if (consent === null) {
+                showConsentBanner();
+            } else {
+                initializeTracking();
+            }
+        });
+    </script>
+</body>
+</html>

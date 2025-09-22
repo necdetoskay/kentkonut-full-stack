@@ -1,0 +1,560 @@
+/* Hero / Carousel özel stilleri */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* Full viewport height - banner extends behind navbar */
+  min-height: 700px; /* Minimum yükseklik garantisi */
+  overflow: hidden;
+  background-color: #b3b3b3; /* Gri arkaplan */
+  top: 0;
+  left: 0;
+  z-index: 1; /* Behind navbar but above other content */
+}
+
+.carousel-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 1s ease;
+
+  /* Performance optimizations */
+  will-change: opacity;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Slayt arka plan stilleri */
+.bg-slide {
+  transition: background-image 0.5s ease;
+  background-size: cover;
+  background-position: center;
+}
+
+.carousel-navigation {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100px; /* Aşağıdaki butonlar için yer açıldı */
+  display: none; /* Navigasyon noktalarını gizliyoruz */
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  z-index: 30;
+}
+
+.carousel-navigation-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.carousel-navigation-dot.active {
+  background-color: white;
+  transform: scale(1.25);
+}
+
+.carousel-control {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: white;
+  cursor: pointer;
+  z-index: 30;
+  transition: background-color 0.3s ease;
+}
+
+.carousel-control:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.carousel-control-prev {
+  left: 16px;
+}
+
+.carousel-control-next {
+  right: 16px;
+}
+
+/* Carousel alt navigasyon butonları */
+.carousel-navigation-buttons {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  z-index: 10;
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.carousel-nav-button {
+  width: 360px;
+  height: 155px;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+.carousel-nav-button a {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  padding: 30px 25px;
+  color: white;
+  text-decoration: none;
+}
+
+.button-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.white-square {
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  margin-right: 10px;
+  display: inline-block;
+}
+
+.main-text {
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.button-description {
+  font-size: 15px;
+  opacity: 0.9;
+}
+
+.carousel-nav-button:hover {
+  filter: brightness(1.1);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+.sanal-pos {
+  background-color: #8e5862;
+}
+
+.projelerimiz {
+  background-color: #5d7177;
+}
+
+.saglik-kent {
+  background-color: #3e7c46;
+}
+
+/* Touch gesture support and performance optimizations */
+.carousel-container {
+  touch-action: pan-y; /* Allow vertical scrolling but handle horizontal swipes */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  /* Performance optimizations */
+  will-change: transform; /* Hint browser for hardware acceleration */
+  transform: translateZ(0); /* Force hardware acceleration */
+  -webkit-transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Responsive düzenlemeler */
+@media (max-height: 800px) {
+  .carousel-container {
+    height: 100vh; /* Keep full height even on shorter screens */
+    min-height: 600px;
+  }
+}
+
+@media (max-height: 600px) {
+  .carousel-container {
+    height: 100vh; /* Keep full height even on very short screens */
+    min-height: 500px;
+  }
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 480px) {
+  .logo-img {
+    width: 90px !important;
+    max-width: 90px !important;
+    height: auto !important;
+    min-width: 0 !important;
+    margin: 0 auto !important;
+    display: block;
+  }
+  .carousel-container {
+    height: 100vh !important; /* Full height on mobile too */
+    min-height: 100vh !important;
+    position: relative;
+    overflow: hidden !important;
+  }
+  .carousel-slide {
+    height: 100vh !important; /* Full height slides on mobile */
+    min-height: 100vh !important;
+  }
+  .bg-slide {
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+  }
+  /* navigation-buttons ile ilgili tüm kodlar kaldırıldı */
+}
+
+/* Tablet improvements */
+@media (min-width: 481px) and (max-width: 768px) {
+  .carousel-slide h2 {
+    font-size: 3rem !important;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+  }
+
+  .carousel-slide p {
+    font-size: 1.25rem !important;
+    line-height: 1.4;
+  }
+}
+
+/* Mobil görünüm için butonların düzenlemesi */
+@media (max-width: 1140px) {
+  .carousel-navigation-buttons {
+    max-width: 100%;
+    padding: 0 10px;
+  }
+  
+  .carousel-nav-button {
+    width: 33.33%;
+    height: auto;
+  }
+  
+  .carousel-nav-button a {
+    padding: 20px 15px;
+  }
+  
+  .main-text {
+    font-size: 16px;
+  }
+  
+  .button-description {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .carousel-navigation-buttons {
+    flex-direction: column;
+  }
+  
+  .carousel-nav-button {
+    width: 100%;
+    height: auto;
+    min-height: 80px;
+  }
+  
+  .carousel-nav-button a {
+    padding: 15px 10px;
+  }
+  
+  .white-square {
+    width: 12px;
+    height: 12px;
+    margin-right: 8px;
+  }
+  
+  .main-text {
+    font-size: 14px;
+  }
+  
+  .button-description {
+    font-size: 12px;
+  }
+}
+
+/* Sayaç bölümü stilleri */
+.stats-section {
+  background: url('/images/counter_back.jpg') repeat left top;
+  min-height: 401px;
+  position: relative;
+}
+
+/* Önceki before pseudo-elementi kaldırıyoruz */
+.stats-section::before {
+  display: none;
+}
+
+.counter-box {
+  display: block;
+  text-align: center;
+}
+
+.counter-box p {
+  padding: 0;
+  color: #909090;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.counter {
+  display: block;
+}
+
+/* Sayaç renk ve boyut stilleri */
+@media (min-width: 375px) {
+  .cc1 {
+    color: #b5a51f;
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+  }
+  .cc2 {
+    color: #0d2650;
+    font-size: 25px;
+    font-weight: bold;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+  }
+  .cc3 {
+    color: #b5a51f;
+    font-size: 20px;
+    font-weight: bold;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+  }
+}
+
+@media (min-width: 768px) {
+  .cc1 {
+    color: #b5a51f;
+    font-size: 50px;
+    font-weight: bold;
+  }
+  .cc2 {
+    color: #0d2650;
+    font-size: 40px;
+    font-weight: bold;
+    line-height: 60px;
+  }
+  .cc3 {
+    color: #b5a51f;
+    font-size: 25px;
+    font-weight: bold;
+  }
+}
+
+@media (min-width: 992px) {
+  .cc1 {
+    color: #b5a51f;
+    font-size: 60px;
+    font-weight: bold;
+  }
+  .cc2 {
+    color: #0d2650;
+    font-size: 50px;
+    font-weight: bold;
+    line-height: 60px;
+  }
+  .cc3 {
+    color: #b5a51f;
+    font-size: 25px;
+    font-weight: bold;
+  }
+}
+
+@media (min-width: 1200px) {
+  .cc1 {
+    color: #b5a51f;
+    font-size: 70px;
+    font-weight: bold;
+  }
+  .cc2 {
+    color: #0d2650;
+    font-size: 60px;
+    font-weight: bold;
+    line-height: 60px;
+  }
+  .cc3 {
+    color: #b5a51f;
+    font-size: 30px;
+    font-weight: bold;
+  }
+}
+
+/* Bootstrap utility classları */
+.container-fluid {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.pl-0 {
+  padding-left: 0 !important;
+}
+
+.pr-0 {
+  padding-right: 0 !important;
+}
+
+.pt-0 {
+  padding-top: 0 !important;
+}
+
+.pt-2 {
+  padding-top: 0.5rem !important;
+}
+
+.pb-lg-0 {
+  padding-bottom: 0 !important;
+}
+
+.container {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.col-md-4 {
+  position: relative;
+  width: 100%;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+@media (min-width: 768px) {
+  .col-md-4 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+}
+
+.mt-0 {
+  margin-top: 0 !important;
+}
+
+.mt-lg-3 {
+  margin-top: 1rem !important;
+}
+
+@media (min-width: 992px) {
+  .pt-lg-5 {
+    padding-top: 3rem !important;
+  }
+  
+  .mt-lg-3 {
+    margin-top: 1rem !important;
+  }
+}
+
+/* Sayaç bölümündeki link stilleri */
+.stats-section a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  padding: 20px 15px;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+}
+
+.stats-section a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.stats-section a:hover .counter-box {
+  transform: translateY(0);
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+  .mobile-carousel {
+    /* Daha iyi dokunma kontrolü için */
+    touch-action: pan-y pinch-zoom;
+    user-select: none;
+  }
+
+  .carousel-control {
+    width: 40px;
+    height: 40px;
+    opacity: 0.8;
+    background-color: rgba(0, 0, 0, 0.6);
+    /* Daha büyük dokunma alanı */
+    padding: 12px;
+    margin: 0 8px;
+  }
+
+  .carousel-navigation-dot {
+    /* Daha büyük ve tıklanabilir noktalar */
+    width: 16px;
+    height: 16px;
+    margin: 0 6px;
+  }
+
+  .carousel-slide h2 {
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  }
+
+  .carousel-slide p {
+    font-size: clamp(0.875rem, 3vw, 1.25rem);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  }
+
+  /* İçerik pozisyonlama */
+  .carousel-content {
+    padding: 1rem;
+    max-width: 90%;
+  }
+}
+
+/* Tablet improvements */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .carousel-slide h2 {
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+
+  .carousel-slide p {
+    font-size: clamp(1rem, 4vw, 1.5rem);
+  }
+
+  .carousel-control {
+    width: 48px;
+    height: 48px;
+    opacity: 0.9;
+  }
+}

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Project Images</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .image-test { margin: 20px 0; padding: 10px; border: 1px solid #ccc; }
+        img { max-width: 300px; height: 200px; object-fit: cover; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Project Images Test</h1>
+    
+    <div class="image-test">
+        <h3>Test Image 1: Aile Bahçeleri Kooperatifi</h3>
+        <p>URL: http://localhost:3010/media/projeler/1753280413554_y1c4dvqo5e.jpg</p>
+        <img src="http://localhost:3010/media/projeler/1753280413554_y1c4dvqo5e.jpg" 
+             alt="Aile Bahçeleri Kooperatifi"
+             onload="this.nextElementSibling.textContent = '✅ Image loaded successfully'"
+             onerror="this.nextElementSibling.textContent = '❌ Image failed to load'">
+        <p class="status">Loading...</p>
+    </div>
+    
+    <div class="image-test">
+        <h3>Test Image 2: Şehir Merkezi Rezidansları</h3>
+        <p>URL: http://localhost:3010/media/projeler/1753280386425_7gxpi8p12vu.jpg</p>
+        <img src="http://localhost:3010/media/projeler/1753280386425_7gxpi8p12vu.jpg" 
+             alt="Şehir Merkezi Rezidansları"
+             onload="this.nextElementSibling.textContent = '✅ Image loaded successfully'"
+             onerror="this.nextElementSibling.textContent = '❌ Image failed to load'">
+        <p class="status">Loading...</p>
+    </div>
+    
+    <div class="image-test">
+        <h3>Test Image 3: Altın Tepeler Villaları</h3>
+        <p>URL: http://localhost:3010/media/projeler/1753280352969_yg55t4iuxci.jpg</p>
+        <img src="http://localhost:3010/media/projeler/1753280352969_yg55t4iuxci.jpg" 
+             alt="Altın Tepeler Villaları"
+             onload="this.nextElementSibling.textContent = '✅ Image loaded successfully'"
+             onerror="this.nextElementSibling.textContent = '❌ Image failed to load'">
+        <p class="status">Loading...</p>
+    </div>
+    
+    <div class="image-test">
+        <h3>Test Image 4: Mavi Deniz Sitesi (Banner)</h3>
+        <p>URL: http://localhost:3010/banners/1753280277039_d4r0c7pw0wm.png</p>
+        <img src="http://localhost:3010/banners/1753280277039_d4r0c7pw0wm.png" 
+             alt="Mavi Deniz Sitesi"
+             onload="this.nextElementSibling.textContent = '✅ Image loaded successfully'"
+             onerror="this.nextElementSibling.textContent = '❌ Image failed to load'">
+        <p class="status">Loading...</p>
+    </div>
+    
+    <div class="image-test">
+        <h3>Test Image 5: Yeşil Vadi Konutları (Banner)</h3>
+        <p>URL: http://localhost:3010/banners/1753280250995_8lmw51ldb83.png</p>
+        <img src="http://localhost:3010/banners/1753280250995_8lmw51ldb83.png" 
+             alt="Yeşil Vadi Konutları"
+             onload="this.nextElementSibling.textContent = '✅ Image loaded successfully'"
+             onerror="this.nextElementSibling.textContent = '❌ Image failed to load'">
+        <p class="status">Loading...</p>
+    </div>
+    
+    <div class="image-test">
+        <h3>Test Fallback Image</h3>
+        <p>URL: http://localhost:3002/images/projelerimiz.png</p>
+        <img src="http://localhost:3002/images/projelerimiz.png" 
+             alt="Fallback Image"
+             onload="this.nextElementSibling.textContent = '✅ Fallback image loaded successfully'"
+             onerror="this.nextElementSibling.textContent = '❌ Fallback image failed to load'">
+        <p class="status">Loading...</p>
+    </div>
+    
+    <script>
+        // Test API response
+        fetch('http://localhost:3010/api/projects?status=COMPLETED&limit=5')
+            .then(response => response.json())
+            .then(data => {
+                console.log('API Response:', data);
+                if (data.projects) {
+                    data.projects.forEach(project => {
+                        console.log(`Project: ${project.title}`);
+                        console.log(`Media URL: ${project.media?.url}`);
+                        console.log(`Full URL: ${project.media?.url ? 'http://localhost:3010' + project.media.url : 'No media'}`);
+                        console.log('---');
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+            });
+    </script>
+</body>
+</html>

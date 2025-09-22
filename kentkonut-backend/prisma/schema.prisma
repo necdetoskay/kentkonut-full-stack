@@ -1,0 +1,1076 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ApplicationLog {
+  id        String   @id @default(uuid())
+  timestamp DateTime @default(now())
+  level     String
+  message   String
+  context   String?
+  details   Json?
+
+  @@map("application_logs")
+}
+
+model User {
+  id            String    @id
+  name          String?
+  email         String    @unique
+  password      String?
+  role          String    @default("user")
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @default(now()) @map("updated_at")
+  accounts      Account[]
+  comments      Comment[]
+  media         Media[]
+  news          News[]
+  projects      Project[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+model Account {
+  userId            String    @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String    @map("provider_account_id")
+  refresh_token     String?
+  access_token      String?
+  expires_at        DateTime?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  sessionToken String   @id @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+  @@map("verification_tokens")
+}
+
+model MediaCategory {
+  id        Int      @id @default(autoincrement())
+  name      String
+  icon      String
+  order     Int
+  isBuiltIn Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  media     Media[]
+
+  @@map("media_categories")
+}
+
+model Media {
+  id                    String               @id @default(cuid())
+  filename              String
+  originalName          String?
+  mimeType              String
+  size                  Int
+  path                  String
+  alt                   String?
+  caption               String?
+  categoryId            Int?
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  isActive              Boolean              @default(true)
+  uploadedBy            String?
+  url                   String?
+  embedUrl              String?
+  type                  MediaType
+  category              MediaCategory?       @relation(fields: [categoryId], references: [id])
+  user                  User?                @relation(fields: [uploadedBy], references: [id])
+  news                  News[]
+  newsGalleryItems      NewsGalleryItem[]    @relation("NewsGalleryMedia")
+  personnelGalleryItems PersonnelGallery[]
+  projectGalleryItems   ProjectGalleryItem[] @relation("ProjectGalleryMedia")
+  projects              Project[]            @relation("ProjectMedia")
+  feedbackAttachments   FeedbackAttachment[]
+
+  @@map("media")
+}
+
+model Page {
+  id               String            @id @default(cuid())
+  slug             String            @unique
+  title            String
+  metaTitle        String?
+  metaDescription  String?
+  isActive         Boolean           @default(true)
+  isDeletable      Boolean           @default(true)
+  order            Int               @default(0)
+  publishedAt      DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  categoryId       String?
+  content          String
+  excerpt          String?
+  imageUrl         String?
+  metaKeywords     String[]
+  hasQuickAccess   Boolean           @default(false)
+  executives       Executive[]
+  seoMetrics       PageSeoMetrics[]
+  category         PageCategory?     @relation(fields: [categoryId], references: [id])
+  quickAccessLinks QuickAccessLink[] @relation("PageQuickAccess")
+
+  @@map("pages")
+}
+
+model PageCategory {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  pages       Page[]
+
+  @@map("page_categories")
+}
+
+model PageSeoMetrics {
+  id               String   @id @default(cuid())
+  pageId           String
+  date             DateTime @default(now())
+  views            Int      @default(0)
+  uniqueVisitors   Int      @default(0)
+  bounceRate       Float?
+  avgTimeOnPage    Int?
+  googleRanking    Int?
+  organicTraffic   Int      @default(0)
+  clickThroughRate Float?
+  shares           Int      @default(0)
+  likes            Int      @default(0)
+  comments         Int      @default(0)
+  page             Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@index([pageId, date])
+  @@map("page_seo_metrics")
+}
+
+model Executive {
+  id                  String               @id @default(cuid())
+  name                String
+  title               String
+  biography           String?
+  content             String               @default("")
+  imageUrl            String?
+  email               String?
+  phone               String?
+  linkedIn            String?
+  order               Int                  @default(0)
+  isActive            Boolean              @default(true)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  slug                String?              @unique
+  pageId              String?
+  quickAccessUrl      String?
+  hasQuickAccessLinks Boolean              @default(false)
+  managedDepartments  Department[]         @relation("DepartmentManager")
+  quickLinks          ExecutiveQuickLink[]
+  page                Page?                @relation(fields: [pageId], references: [id])
+
+  @@map("executives")
+}
+
+model ExecutiveQuickLink {
+  id          String    @id @default(cuid())
+  title       String
+  url         String
+  description String?
+  icon        String?   @default("link")
+  order       Int       @default(0)
+  isActive    Boolean   @default(true)
+  executiveId String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  executive   Executive @relation(fields: [executiveId], references: [id], onDelete: Cascade)
+
+  @@map("executive_quick_links")
+}
+
+model Department {
+  id               String                @id @default(cuid())
+  name             String
+  imageUrl         String?
+  services         String[]
+  order            Int                   @default(0)
+  isActive         Boolean               @default(true)
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+  content          String                @default("")
+  directorId       String?
+  slug             String?               @unique
+  hasQuickAccess   Boolean               @default(false)
+  managerId        String?
+  quickLinks       DepartmentQuickLink[]
+  director         Personnel?            @relation(fields: [directorId], references: [id])
+  manager          Executive?            @relation("DepartmentManager", fields: [managerId], references: [id])
+  quickAccessLinks QuickAccessLink[]     @relation("DepartmentQuickAccess")
+  chiefs           Personnel[]           @relation("DepartmentChiefs")
+
+  @@map("departments")
+}
+
+model Personnel {
+  id                  String             @id @default(cuid())
+  name                String
+  title               String
+  content             String             @default("")
+  phone               String?
+  email               String?
+  imageUrl            String?
+  slug                String?            @unique
+  order               Int                @default(0)
+  isActive            Boolean            @default(true)
+  type                PersonnelType      @default(CHIEF)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  directedDepartments Department[]
+  galleryItems        PersonnelGallery[]
+  chiefInDepts        Department[]       @relation("DepartmentChiefs")
+
+  @@map("personnel")
+}
+
+model PersonnelGallery {
+  id          String          @id @default(cuid())
+  personnelId String
+  mediaId     String
+  type        GalleryItemType @default(IMAGE)
+  order       Int             @default(0)
+  title       String?
+  description String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  media       Media           @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  personnel   Personnel       @relation(fields: [personnelId], references: [id], onDelete: Cascade)
+
+  @@map("personnel_gallery")
+}
+
+model DepartmentQuickLink {
+  id           String     @id @default(cuid())
+  title        String
+  url          String
+  icon         String?    @default("link")
+  departmentId String
+  order        Int        @default(0)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  @@map("department_quick_links")
+}
+
+model CorporateContent {
+  id        String               @id @default(cuid())
+  type      CorporateContentType @unique
+  title     String
+  content   String
+  imageUrl  String?
+  icon      String?
+  order     Int                  @default(0)
+  isActive  Boolean              @default(true)
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+
+  @@map("corporate_content")
+}
+
+model NewsCategory {
+  id          Int      @id @default(autoincrement())
+  name        String
+  slug        String   @unique
+  description String?
+  imageUrl    String?
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  news        News[]
+
+  @@map("news_categories")
+}
+
+model News {
+  id               Int               @id @default(autoincrement())
+  title            String
+  slug             String            @unique
+  summary          String?
+  content          String
+  mediaId          String?
+  viewCount        Int               @default(0)
+  readingTime      Int               @default(3)
+  published        Boolean           @default(false)
+  publishedAt      DateTime?
+  categoryId       Int
+  authorId         String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @default(now())
+  downloadCount    Int               @default(0)
+  likeCount        Int               @default(0)
+  shareCount       Int               @default(0)
+  hasQuickAccess   Boolean           @default(false)
+  comments         Comment[]
+  author           User              @relation(fields: [authorId], references: [id])
+  category         NewsCategory      @relation(fields: [categoryId], references: [id])
+  media            Media?            @relation(fields: [mediaId], references: [id])
+  galleryItems     NewsGalleryItem[]
+  relatedNews      NewsRelation[]    @relation("NewsToRelated")
+  relatedToNews    NewsRelation[]    @relation("RelatedToNews")
+  tags             NewsTag[]
+  quickAccessLinks QuickAccessLink[] @relation("NewsQuickAccess")
+
+  @@map("news")
+}
+
+model NewsGalleryItem {
+  id        Int      @id @default(autoincrement())
+  newsId    Int
+  mediaId   String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  media     Media    @relation("NewsGalleryMedia", fields: [mediaId], references: [id], onDelete: Cascade)
+  news      News     @relation(fields: [newsId], references: [id], onDelete: Cascade)
+
+  @@unique([newsId, mediaId])
+  @@map("news_gallery_items")
+}
+
+model Tag {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  slug        String       @unique
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  newsTags    NewsTag[]
+  projectTags ProjectTag[]
+
+  @@map("tags")
+}
+
+model NewsTag {
+  newsId Int
+  tagId  Int
+  news   News @relation(fields: [newsId], references: [id])
+  tag    Tag  @relation(fields: [tagId], references: [id])
+
+  @@id([newsId, tagId])
+  @@map("news_tags")
+}
+
+model NewsRelation {
+  id            Int  @id @default(autoincrement())
+  newsId        Int
+  relatedNewsId Int
+  news          News @relation("NewsToRelated", fields: [newsId], references: [id])
+  relatedNews   News @relation("RelatedToNews", fields: [relatedNewsId], references: [id])
+
+  @@unique([newsId, relatedNewsId])
+  @@map("news_relations")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  approved  Boolean  @default(false)
+  newsId    Int?
+  projectId Int?
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  news      News?    @relation(fields: [newsId], references: [id], onDelete: Restrict)
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("comments")
+}
+
+model Project {
+  id                Int                  @id @default(autoincrement())
+  title             String
+  slug              String               @unique
+  summary           String?
+  content           String
+  status            ProjectStatus        @default(ONGOING)
+  latitude          Float?
+  longitude         Float?
+  locationName      String?
+  province          String?
+  district          String?
+  address           String?
+  mediaId           String?
+  viewCount         Int                  @default(0)
+  readingTime       Int                  @default(3)
+  published         Boolean              @default(false)
+  publishedAt       DateTime?
+  authorId          String
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  hasQuickAccess    Boolean              @default(false)
+  yil               String?
+  blokDaireSayisi   String?              @map("blok_daire_sayisi")
+  comments          Comment[]
+  galleryItems      ProjectGalleryItem[]
+  relatedProjects   ProjectRelation[]    @relation("ProjectToRelated")
+  relatedToProjects ProjectRelation[]    @relation("RelatedToProject")
+  tags              ProjectTag[]
+  author            User                 @relation(fields: [authorId], references: [id])
+  media             Media?               @relation("ProjectMedia", fields: [mediaId], references: [id])
+  quickAccessLinks  QuickAccessLink[]    @relation("ProjectQuickAccess")
+
+  @@map("projects")
+}
+
+model ProjectGalleryItem {
+  id        Int      @id @default(autoincrement())
+  projectId Int
+  mediaId   String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  media     Media    @relation("ProjectGalleryMedia", fields: [mediaId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, mediaId])
+  @@map("project_gallery_items")
+}
+
+model ProjectTag {
+  projectId Int
+  tagId     Int
+  project   Project @relation(fields: [projectId], references: [id])
+  tag       Tag     @relation(fields: [tagId], references: [id])
+
+  @@id([projectId, tagId])
+  @@map("project_tags")
+}
+
+model ProjectRelation {
+  id               Int     @id @default(autoincrement())
+  projectId        Int
+  relatedProjectId Int
+  project          Project @relation("ProjectToRelated", fields: [projectId], references: [id])
+  relatedProject   Project @relation("RelatedToProject", fields: [relatedProjectId], references: [id])
+
+  @@unique([projectId, relatedProjectId])
+  @@map("project_relations")
+}
+
+model HafriyatBolge {
+  id                String         @id @default(cuid())
+  ad                String         @unique
+  aciklama          String?
+  yetkiliKisi       String
+  yetkiliTelefon    String
+  aktif             Boolean        @default(true)
+  olusturulmaTarihi DateTime       @default(now())
+  guncellemeTarihi  DateTime       @updatedAt
+  sahalar           HafriyatSaha[]
+
+  @@map("hafriyat_bolgeler")
+}
+
+model HafriyatSaha {
+  id                 String            @id @default(cuid())
+  ad                 String
+  konumAdi           String
+  enlem              Float
+  boylam             Float
+  anaResimUrl        String?
+  durum              HafriyatSahaDurum @default(DEVAM_EDIYOR)
+  ilerlemeyuzdesi    Int               @default(0)
+  tonBasiUcret       Decimal
+  kdvOrani           Int               @default(20)
+  bolgeId            String
+  aktif              Boolean           @default(true)
+  olusturulmaTarihi  DateTime          @default(now())
+  guncellemeTarihi   DateTime          @updatedAt
+  aciklama           String?
+  baslangicTarihi    DateTime?
+  tahminibitisTarihi DateTime?
+  tamamlananTon      Decimal?
+  toplamTon          Decimal?
+  seoCanonicalUrl    String?
+  seoDescription     String?
+  seoKeywords        String?
+  seoLink            String?
+  seoTitle           String?
+  belgeler           HafriyatBelge[]
+  resimler           HafriyatResim[]
+  bolge              HafriyatBolge     @relation(fields: [bolgeId], references: [id])
+
+  @@unique([ad, bolgeId])
+  @@map("hafriyat_sahalar")
+}
+
+model HafriyatBelgeKategori {
+  id                Int             @id @default(autoincrement())
+  ad                String          @unique
+  ikon              String          @default("document")
+  sira              Int             @default(0)
+  olusturulmaTarihi DateTime        @default(now())
+  guncellemeTarihi  DateTime        @updatedAt
+  belgeler          HafriyatBelge[]
+
+  @@map("hafriyat_belge_kategorileri")
+}
+
+model HafriyatBelge {
+  id                String                @id @default(cuid())
+  baslik            String
+  dosyaAdi          String
+  orjinalAd         String
+  dosyaTipi         String
+  boyut             Int
+  dosyaYolu         String
+  sahaId            String
+  kategoriId        Int
+  olusturulmaTarihi DateTime              @default(now())
+  guncellemeTarihi  DateTime              @updatedAt
+  kategori          HafriyatBelgeKategori @relation(fields: [kategoriId], references: [id])
+  saha              HafriyatSaha          @relation(fields: [sahaId], references: [id], onDelete: Cascade)
+
+  @@map("hafriyat_belgeler")
+}
+
+model HafriyatResim {
+  id                String       @id @default(cuid())
+  baslik            String?
+  dosyaAdi          String
+  orjinalAd         String?
+  dosyaYolu         String
+  altMetin          String?
+  aciklama          String?
+  sahaId            String
+  sira              Int          @default(0)
+  olusturulmaTarihi DateTime     @default(now())
+  guncellemeTarihi  DateTime     @updatedAt
+  saha              HafriyatSaha @relation(fields: [sahaId], references: [id], onDelete: Cascade)
+
+  @@map("hafriyat_resimler")
+}
+
+model BannerPosition {
+  id              Int          @id @default(autoincrement())
+  positionUUID    String       @unique @db.VarChar(36)
+  name            String
+  description     String?
+  bannerGroupId   Int?
+  fallbackGroupId Int?
+  isActive        Boolean      @default(true)
+  priority        Int          @default(1)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  bannerGroup     BannerGroup? @relation("PrimaryBannerGroup", fields: [bannerGroupId], references: [id])
+  fallbackGroup   BannerGroup? @relation("FallbackBannerGroup", fields: [fallbackGroupId], references: [id])
+
+  @@index([positionUUID])
+  @@index([isActive])
+  @@map("banner_positions")
+}
+
+model BannerGroup {
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  description        String?
+  deletable          Boolean             @default(true)
+  transitionDuration Float               @default(0.5)
+  width              Int                 @default(1200)
+  height             Int                 @default(400)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  displayDuration    Int                 @default(5000)
+  isActive           Boolean             @default(true)
+  mobileHeight       Int                 @default(200)
+  mobileWidth        Int                 @default(400)
+  tabletHeight       Int                 @default(300)
+  tabletWidth        Int                 @default(800)
+  animationType      BannerAnimasyonTipi @default(SOLUKLESTIR)
+  usageType          String?
+  primaryPositions   BannerPosition[]    @relation("PrimaryBannerGroup")
+  fallbackPositions  BannerPosition[]    @relation("FallbackBannerGroup")
+  banners            Banner[]
+
+  @@index([isActive])
+  @@index([usageType])
+  @@index([createdAt])
+  @@map("banner_groups")
+}
+
+model Banner {
+  id                Int                @id @default(autoincrement())
+  title             String
+  description       String?
+  link              String?
+  isActive          Boolean            @default(true)
+  deletable         Boolean            @default(true)
+  order             Int                @default(0)
+  viewCount         Int                @default(0)
+  clickCount        Int                @default(0)
+  imageUrl          String
+  altText           String?
+  bannerGroupId     Int
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  avgEngagementTime Int                @default(0)
+  bounceCount       Int                @default(0)
+  conversionCount   Int                @default(0)
+  endDate           DateTime?
+  impressionCount   Int                @default(0)
+  startDate         DateTime?
+  uniqueViewCount   Int                @default(0)
+  statistics        BannerStatistics[]
+  bannerGroup       BannerGroup        @relation(fields: [bannerGroupId], references: [id], onDelete: Cascade)
+
+  @@index([bannerGroupId])
+  @@index([isActive])
+  @@index([order])
+  @@index([createdAt])
+  @@index([startDate])
+  @@index([endDate])
+  @@map("banners")
+}
+
+model BannerStatistics {
+  id        Int      @id @default(autoincrement())
+  bannerId  Int
+  type      String
+  ipAddress String?
+  userAgent String?
+  referrer  String?
+  createdAt DateTime @default(now())
+  banner    Banner   @relation(fields: [bannerId], references: [id], onDelete: Cascade)
+
+  @@index([bannerId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("banner_statistics")
+}
+
+model MenuItem {
+  id           String           @id @default(cuid())
+  title        String
+  slug         String?          @unique
+  url          String?
+  icon         String?
+  description  String?
+  isActive     Boolean          @default(true)
+  isExternal   Boolean          @default(false)
+  target       String           @default("_self")
+  cssClass     String?
+  orderIndex   Int              @default(0)
+  menuLocation String           @default("main")
+  parentId     String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  parent       MenuItem?        @relation("MenuHierarchy", fields: [parentId], references: [id])
+  children     MenuItem[]       @relation("MenuHierarchy")
+  permissions  MenuPermission[]
+
+  @@index([menuLocation])
+  @@index([orderIndex])
+  @@index([parentId])
+  @@index([isActive])
+  @@map("menu_items")
+}
+
+model MenuPermission {
+  id         String   @id @default(cuid())
+  menuItemId String
+  role       String
+  permission String
+  createdAt  DateTime @default(now())
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+
+  @@index([menuItemId])
+  @@index([role])
+  @@map("menu_permissions")
+}
+
+model QuickAccessLink {
+  id           String      @id @default(cuid())
+  title        String
+  url          String
+  icon         String?     @default("link")
+  sortOrder    Int         @default(0)
+  isActive     Boolean     @default(true)
+  moduleType   String
+  pageId       String?
+  newsId       Int?
+  projectId    Int?
+  departmentId String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  department   Department? @relation("DepartmentQuickAccess", fields: [departmentId], references: [id], onDelete: Cascade)
+  news         News?       @relation("NewsQuickAccess", fields: [newsId], references: [id], onDelete: Cascade)
+  page         Page?       @relation("PageQuickAccess", fields: [pageId], references: [id], onDelete: Cascade)
+  project      Project?    @relation("ProjectQuickAccess", fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([moduleType])
+  @@index([pageId])
+  @@index([newsId])
+  @@index([projectId])
+  @@index([departmentId])
+  @@index([sortOrder])
+  @@index([isActive])
+  @@map("quick_access_links")
+}
+
+model ServiceCard {
+  id               Int      @id @default(autoincrement())
+  title            String
+  description      String?
+  shortDescription String?
+  slug             String   @unique
+  imageUrl         String
+  altText          String?
+  targetUrl        String?
+  isExternal       Boolean  @default(false)
+  color            String   @default("#4F772D")
+  backgroundColor  String?
+  textColor        String?
+  isActive         Boolean  @default(true)
+  isFeatured       Boolean  @default(false)
+  displayOrder     Int      @default(0)
+  viewCount        Int      @default(0)
+  clickCount       Int      @default(0)
+  metaTitle        String?
+  metaDescription  String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([displayOrder])
+  @@index([isFeatured])
+  @@index([slug])
+  @@index([createdAt])
+  @@map("service_cards")
+}
+
+model CorporateLayoutSettings {
+  id          String   @id
+  key         String   @unique
+  value       String
+  description String?
+  type        String   @default("string")
+  category    String   @default("layout")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([key])
+  @@index([category])
+  @@map("CorporateLayoutSettings")
+}
+
+model Highlight {
+  id               String              @id @default(cuid())
+  order            Int                 @default(0)
+  isActive         Boolean             @default(true)
+  sourceType       HighlightSourceType
+  sourceRefId      String?
+  titleOverride    String?
+  subtitleOverride String?
+  imageMode        HighlightImageMode  @default(AUTO)
+  imageUrl         String?
+  routeOverride    String?
+  redirectUrl      String?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  @@index([order])
+  @@index([isActive])
+  @@index([sourceType])
+  @@map("highlights")
+}
+
+model HizliErisimSayfa {
+  id        String             @id @default(cuid())
+  sayfaUrl  String             @unique
+  baslik    String             @default("HIZLI ERİŞİM")
+  aktif     Boolean            @default(true)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  linkler   HizliErisimOgesi[]
+
+  @@map("hizli_erisim_sayfalar")
+}
+
+model HizliErisimOgesi {
+  id            String           @id @default(cuid())
+  title         String
+  hedefUrl      String
+  sira          Int              @default(0)
+  clickCount    Int              @default(0)
+  viewCount     Int              @default(0)
+  lastClickedAt DateTime?
+  sayfaId       String
+  sayfa         HizliErisimSayfa @relation(fields: [sayfaId], references: [id], onDelete: Cascade)
+
+  @@map("hizli_erisim_ogeleri")
+}
+
+model SayfaArkaPlan {
+  id        Int      @id @default(autoincrement())
+  sayfaUrl  String   @unique
+  resimUrl  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sayfa_arka_planlar")
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  group     String?
+  label     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("site_ayarlari")
+}
+
+model FooterColumn {
+  id        Int          @id @default(autoincrement())
+  title     String       @unique
+  order     Int          @default(0)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  links     FooterLink[]
+
+  @@map("footer_kolonlari")
+}
+
+model FooterLink {
+  id         Int          @id @default(autoincrement())
+  text       String
+  url        String
+  isExternal Boolean      @default(false)
+  order      Int          @default(0)
+  columnId   Int
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  column     FooterColumn @relation(fields: [columnId], references: [id], onDelete: Cascade)
+
+  @@map("footer_linkleri")
+}
+
+model FooterSection {
+  id           String            @id @default(cuid())
+  key          String            @unique
+  title        String?
+  type         FooterSectionType
+  orientation  FooterOrientation @default(VERTICAL)
+  order        Int               @default(0)
+  isActive     Boolean           @default(true)
+  layoutConfig Json?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  items        FooterItem[]
+
+  @@index([order])
+  @@map("footer_sections")
+}
+
+model FooterItem {
+  id         String         @id @default(cuid())
+  sectionId  String
+  order      Int            @default(0)
+  type       FooterItemType
+  label      String?
+  url        String?
+  target     String?        @default("_self")
+  isExternal Boolean        @default(false)
+  icon       String?
+  imageUrl   String?
+  text       String?
+  metadata   Json?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  section    FooterSection  @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+
+  @@index([sectionId, order])
+  @@map("footer_items")
+}
+
+enum HighlightSourceType {
+  PRESIDENT
+  GENERAL_MANAGER
+  DEPARTMENTS
+  MISSION
+  VISION
+  CUSTOM
+}
+
+enum HighlightImageMode {
+  AUTO
+  CUSTOM
+}
+
+enum BannerAnimasyonTipi {
+  SOLUKLESTIR
+  KAYDIR
+  YAKINLESTIR
+  CEVIR
+  ZIPLA
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  PDF
+  WORD
+  EMBED
+}
+
+enum PersonnelType {
+  DIRECTOR
+  CHIEF
+}
+
+enum GalleryItemType {
+  IMAGE
+  DOCUMENT
+  PDF
+  WORD
+}
+
+enum CorporateContentType {
+  VISION
+  MISSION
+  STRATEGY
+  GOALS
+  ABOUT
+}
+
+enum ProjectStatus {
+  ONGOING
+  COMPLETED
+}
+
+enum HafriyatSahaDurum {
+  DEVAM_EDIYOR
+  TAMAMLANDI
+
+  @@map("hafriyat_saha_durum")
+}
+
+enum FooterSectionType {
+  LINKS
+  IMAGE
+  CONTACT
+  TEXT
+  LEGAL
+}
+
+enum FooterOrientation {
+  VERTICAL
+  HORIZONTAL
+}
+
+enum FooterItemType {
+  LINK
+  EMAIL
+  PHONE
+  ADDRESS
+  IMAGE
+  TEXT
+}
+
+// Contact & Feedback Module
+
+model ContactInfo {
+  id            String   @id @default(cuid())
+  title         String?
+  address       String
+  latitude      Float?
+  longitude     Float?
+  mapUrl        String?
+  phonePrimary  String?
+  phoneSecondary String?
+  email         String?
+  workingHours  String?
+  socialLinks   Json?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("contact_info")
+}
+
+model Feedback {
+  id         String          @id @default(cuid())
+  category   FeedbackCategory
+  firstName  String
+  lastName   String
+  nationalId String?
+  email      String?
+  phone      String?
+  address    String?
+  message    String
+  ipAddress  String?
+  userAgent  String?
+  status     FeedbackStatus  @default(NEW)
+  createdAt  DateTime        @default(now())
+  attachments FeedbackAttachment[]
+
+  @@index([category, status, createdAt])
+  @@map("feedback")
+}
+
+model FeedbackAttachment {
+  id         String   @id @default(cuid())
+  feedbackId String
+  mediaId    String
+  title      String?
+  createdAt  DateTime @default(now())
+  feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+  media      Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@map("feedback_attachments")
+}
+
+enum FeedbackCategory {
+  REQUEST
+  SUGGESTION
+  COMPLAINT
+}
+
+enum FeedbackStatus {
+  NEW
+  IN_REVIEW
+  RESOLVED
+  CLOSED
+}

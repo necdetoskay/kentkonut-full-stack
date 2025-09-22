@@ -1,0 +1,36 @@
+# Dockerfile.dev for kentkonut-backend (Production Build)
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install OpenSSL and other dependencies for Prisma
+RUN apk add --no-cache curl openssl libc6-compat
+
+# Set development environment for now
+ENV NODE_ENV=development
+ENV PRISMA_CLI_BINARY_TARGETS=linux-musl
+
+# Install dependencies
+COPY kentkonut-backend/package*.json ./
+RUN npm install
+
+# Copy source code
+COPY kentkonut-backend/ .
+
+# Generate Prisma client with binary targets for Alpine
+RUN npx prisma generate
+
+# Create media directories
+RUN mkdir -p /app/public/uploads /app/public/media /app/public/banners \
+    /app/public/haberler /app/public/hafriyat /app/public/kurumsal \
+    /app/public/services /app/public/proje
+
+# Expose port
+EXPOSE ${PORT:-3010}
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD p=${PORT:-3010}; curl -f http://localhost:$p/api/health || exit 1
+
+# Start development server
+CMD ["npm", "run", "dev"]

@@ -1,0 +1,21 @@
+{
+  "name": "@kentkonut/types",
+  "version": "1.0.0",
+  "description": "Merkezi Türkçe enum ve tip tanımları",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@prisma/client": "^5.0.0"
+  },
+  "files": [
+    "dist"
+  ]
+}

@@ -1,0 +1,290 @@
+<svg width="1200" height="3000" viewBox="0 0 1200 3000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .wireframe-text { font-family: Arial, sans-serif; font-size: 12px; fill: #333; }
+      .section-title { font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; fill: #2563eb; }
+      .component-box { fill: #f8fafc; stroke: #e2e8f0; stroke-width: 2; }
+      .hero-box { fill: #dbeafe; stroke: #3b82f6; stroke-width: 2; }
+      .nav-box { fill: #ecfdf5; stroke: #10b981; stroke-width: 2; }
+      .content-box { fill: #fef3c7; stroke: #f59e0b; stroke-width: 2; }
+      .footer-box { fill: #f3f4f6; stroke: #6b7280; stroke-width: 2; }
+      .interactive-element { fill: #fecaca; stroke: #ef4444; stroke-width: 2; }
+      .data-element { fill: #e0e7ff; stroke: #6366f1; stroke-width: 2; }
+    </style>
+  </defs>
+  
+  <!-- Title -->
+  <text x="600" y="30" text-anchor="middle" class="section-title" font-size="20">Kent Konut - Modern Homepage Wireframe</text>
+  
+  <!-- Navigation Section -->
+  <g id="navigation">
+    <rect x="50" y="60" width="1100" height="80" class="nav-box" rx="8"/>
+    <text x="70" y="85" class="section-title">Navigation Header</text>
+    
+    <!-- Logo Area -->
+    <rect x="70" y="95" width="150" height="35" class="component-box" rx="4"/>
+    <text x="145" y="115" text-anchor="middle" class="wireframe-text">Logo</text>
+    
+    <!-- Main Menu -->
+    <rect x="250" y="95" width="600" height="35" class="component-box" rx="4"/>
+    <text x="550" y="115" text-anchor="middle" class="wireframe-text">Main Menu (Dynamic from Backend)</text>
+    
+    <!-- Social Links -->
+    <rect x="880" y="95" width="120" height="35" class="component-box" rx="4"/>
+    <text x="940" y="115" text-anchor="middle" class="wireframe-text">Social Links</text>
+    
+    <!-- Contact Info -->
+    <rect x="1020" y="95" width="120" height="35" class="component-box" rx="4"/>
+    <text x="1080" y="115" text-anchor="middle" class="wireframe-text">Contact Info</text>
+  </g>
+  
+  <!-- Hero Section -->
+  <g id="hero">
+    <rect x="50" y="160" width="1100" height="500" class="hero-box" rx="8"/>
+    <text x="70" y="185" class="section-title">Hero Banner Carousel</text>
+    
+    <!-- Main Banner Area -->
+    <rect x="70" y="200" width="1060" height="350" class="data-element" rx="4"/>
+    <text x="600" y="225" text-anchor="middle" class="wireframe-text">Dynamic Banner Slides (from Backend)</text>
+    <text x="600" y="245" text-anchor="middle" class="wireframe-text">• Full-screen background images</text>
+    <text x="600" y="265" text-anchor="middle" class="wireframe-text">• Overlay content with titles and CTAs</text>
+    <text x="600" y="285" text-anchor="middle" class="wireframe-text">• Touch/swipe support for mobile</text>
+    
+    <!-- Navigation Dots -->
+    <circle cx="580" cy="520" r="8" class="interactive-element"/>
+    <circle cx="600" cy="520" r="8" class="component-box"/>
+    <circle cx="620" cy="520" r="8" class="component-box"/>
+    <text x="600" y="540" text-anchor="middle" class="wireframe-text">Navigation Dots</text>
+    
+    <!-- Arrow Controls -->
+    <rect x="70" y="360" width="40" height="40" class="interactive-element" rx="20"/>
+    <text x="90" y="385" text-anchor="middle" class="wireframe-text">‹</text>
+    <rect x="1090" y="360" width="40" height="40" class="interactive-element" rx="20"/>
+    <text x="1110" y="385" text-anchor="middle" class="wireframe-text">›</text>
+    
+    <!-- Quick Access Boxes -->
+    <rect x="70" y="570" width="350" height="80" class="content-box" rx="4"/>
+    <text x="245" y="595" text-anchor="middle" class="wireframe-text">SANAL POS</text>
+    <text x="245" y="615" text-anchor="middle" class="wireframe-text">Hafriyat Yönetim Sistemi</text>
+    
+    <rect x="430" y="570" width="350" height="80" class="content-box" rx="4"/>
+    <text x="605" y="595" text-anchor="middle" class="wireframe-text">PROJELERİMİZ</text>
+    <text x="605" y="615" text-anchor="middle" class="wireframe-text">Devam Eden ve Tamamlanan</text>
+    
+    <rect x="790" y="570" width="340" height="80" class="content-box" rx="4"/>
+    <text x="960" y="595" text-anchor="middle" class="wireframe-text">SAĞLIK KENT KONUTLARI</text>
+    <text x="960" y="615" text-anchor="middle" class="wireframe-text">Detaylı Bilgi</text>
+  </g>
+  
+  <!-- Statistics Section -->
+  <g id="statistics">
+    <rect x="50" y="680" width="1100" height="120" class="data-element" rx="8"/>
+    <text x="70" y="705" class="section-title">Statistics Counter</text>
+    
+    <rect x="120" y="720" width="200" height="60" class="component-box" rx="4"/>
+    <text x="220" y="745" text-anchor="middle" class="wireframe-text">Devam Eden</text>
+    <text x="220" y="765" text-anchor="middle" class="wireframe-text">Konut-İşyeri</text>
+    
+    <rect x="350" y="720" width="200" height="60" class="component-box" rx="4"/>
+    <text x="450" y="745" text-anchor="middle" class="wireframe-text">10,608</text>
+    <text x="450" y="765" text-anchor="middle" class="wireframe-text">Tamamlanan Konut</text>
+    
+    <rect x="580" y="720" width="200" height="60" class="component-box" rx="4"/>
+    <text x="680" y="745" text-anchor="middle" class="wireframe-text">120</text>
+    <text x="680" y="765" text-anchor="middle" class="wireframe-text">Tamamlanan İşyeri</text>
+  </g>
+  
+  <!-- Featured Projects Section -->
+  <g id="projects">
+    <rect x="50" y="820" width="1100" height="400" class="content-box" rx="8"/>
+    <text x="70" y="845" class="section-title">Featured Projects</text>
+    
+    <!-- Tab Navigation -->
+    <rect x="400" y="860" width="400" height="40" class="component-box" rx="20"/>
+    <text x="500" y="885" text-anchor="middle" class="wireframe-text">Devam Eden</text>
+    <text x="700" y="885" text-anchor="middle" class="wireframe-text">Tamamlanan</text>
+    
+    <!-- Project Cards Grid -->
+    <rect x="70" y="920" width="340" height="280" class="data-element" rx="4"/>
+    <text x="240" y="945" text-anchor="middle" class="wireframe-text">Project Card 1</text>
+    <rect x="80" y="955" width="320" height="160" class="component-box" rx="4"/>
+    <text x="240" y="1040" text-anchor="middle" class="wireframe-text">Project Image</text>
+    <text x="240" y="1140" text-anchor="middle" class="wireframe-text">Title, Location, Description</text>
+    <text x="240" y="1160" text-anchor="middle" class="wireframe-text">Completion Date, Details Link</text>
+    
+    <rect x="430" y="920" width="340" height="280" class="data-element" rx="4"/>
+    <text x="600" y="945" text-anchor="middle" class="wireframe-text">Project Card 2</text>
+    <rect x="440" y="955" width="320" height="160" class="component-box" rx="4"/>
+    <text x="600" y="1040" text-anchor="middle" class="wireframe-text">Project Image</text>
+    <text x="600" y="1140" text-anchor="middle" class="wireframe-text">Title, Location, Description</text>
+    <text x="600" y="1160" text-anchor="middle" class="wireframe-text">Completion Date, Details Link</text>
+    
+    <rect x="790" y="920" width="340" height="280" class="data-element" rx="4"/>
+    <text x="960" y="945" text-anchor="middle" class="wireframe-text">Project Card 3</text>
+    <rect x="800" y="955" width="320" height="160" class="component-box" rx="4"/>
+    <text x="960" y="1040" text-anchor="middle" class="wireframe-text">Project Image</text>
+    <text x="960" y="1140" text-anchor="middle" class="wireframe-text">Title, Location, Description</text>
+    <text x="960" y="1160" text-anchor="middle" class="wireframe-text">Completion Date, Details Link</text>
+  </g>
+  
+  <!-- About Section -->
+  <g id="about">
+    <rect x="50" y="1240" width="1100" height="300" class="component-box" rx="8"/>
+    <text x="70" y="1265" class="section-title">About Section</text>
+    
+    <!-- Image Column -->
+    <rect x="70" y="1280" width="500" height="240" class="data-element" rx="4"/>
+    <text x="320" y="1405" text-anchor="middle" class="wireframe-text">Company Image with Decorative Elements</text>
+    
+    <!-- Content Column -->
+    <rect x="590" y="1280" width="540" height="240" class="component-box" rx="4"/>
+    <text x="860" y="1305" text-anchor="middle" class="wireframe-text">About Content</text>
+    <text x="610" y="1330" class="wireframe-text">• Company history and mission</text>
+    <text x="610" y="1350" class="wireframe-text">• Key achievements and statistics</text>
+    <text x="610" y="1370" class="wireframe-text">• Trust indicators (25+ years, 10k+ customers)</text>
+    <text x="610" y="1390" class="wireframe-text">• Call-to-action button</text>
+    
+    <!-- Key Features Grid -->
+    <rect x="610" y="1410" width="120" height="30" class="interactive-element" rx="4"/>
+    <text x="670" y="1430" text-anchor="middle" class="wireframe-text">25+ Yıl</text>
+    <rect x="750" y="1410" width="120" height="30" class="interactive-element" rx="4"/>
+    <text x="810" y="1430" text-anchor="middle" class="wireframe-text">10k+ Müşteri</text>
+    <rect x="890" y="1410" width="120" height="30" class="interactive-element" rx="4"/>
+    <text x="950" y="1430" text-anchor="middle" class="wireframe-text">50+ Proje</text>
+  </g>
+  
+  <!-- Services Section -->
+  <g id="services">
+    <rect x="50" y="1560" width="1100" height="350" class="content-box" rx="8"/>
+    <text x="70" y="1585" class="section-title">Services Section</text>
+    
+    <!-- Section Header -->
+    <text x="600" y="1615" text-anchor="middle" class="section-title">HİZMETLERİMİZ</text>
+    <rect x="500" y="1625" width="200" height="4" class="interactive-element" rx="2"/>
+    
+    <!-- Service Cards Grid -->
+    <rect x="70" y="1650" width="250" height="240" class="data-element" rx="4"/>
+    <text x="195" y="1675" text-anchor="middle" class="wireframe-text">Konut Hizmetleri</text>
+    <rect x="80" y="1685" width="230" height="140" class="component-box" rx="4"/>
+    <text x="195" y="1760" text-anchor="middle" class="wireframe-text">Service Image</text>
+    <text x="195" y="1850" text-anchor="middle" class="wireframe-text">Clickable Card</text>
+    
+    <rect x="340" y="1650" width="250" height="240" class="data-element" rx="4"/>
+    <text x="465" y="1675" text-anchor="middle" class="wireframe-text">Hafriyat Hizmetleri</text>
+    <rect x="350" y="1685" width="230" height="140" class="component-box" rx="4"/>
+    <text x="465" y="1760" text-anchor="middle" class="wireframe-text">Service Image</text>
+    <text x="465" y="1850" text-anchor="middle" class="wireframe-text">Clickable Card</text>
+    
+    <rect x="610" y="1650" width="250" height="240" class="data-element" rx="4"/>
+    <text x="735" y="1675" text-anchor="middle" class="wireframe-text">Mimari Projelendirme</text>
+    <rect x="620" y="1685" width="230" height="140" class="component-box" rx="4"/>
+    <text x="735" y="1760" text-anchor="middle" class="wireframe-text">Service Image</text>
+    <text x="735" y="1850" text-anchor="middle" class="wireframe-text">Clickable Card</text>
+    
+    <rect x="880" y="1650" width="250" height="240" class="data-element" rx="4"/>
+    <text x="1005" y="1675" text-anchor="middle" class="wireframe-text">Kentsel Dönüşüm</text>
+    <rect x="890" y="1685" width="230" height="140" class="component-box" rx="4"/>
+    <text x="1005" y="1760" text-anchor="middle" class="wireframe-text">Service Image</text>
+    <text x="1005" y="1850" text-anchor="middle" class="wireframe-text">Clickable Card</text>
+  </g>
+  
+  <!-- News Section -->
+  <g id="news">
+    <rect x="50" y="1930" width="1100" height="350" class="component-box" rx="8"/>
+    <text x="70" y="1955" class="section-title">News Section</text>
+    
+    <!-- Section Header -->
+    <text x="600" y="1985" text-anchor="middle" class="section-title">Bizden Haberler</text>
+    <text x="600" y="2005" text-anchor="middle" class="wireframe-text">Kent Konut'tan en güncel gelişmeler</text>
+    
+    <!-- News Cards Grid -->
+    <rect x="70" y="2020" width="340" height="240" class="data-element" rx="4"/>
+    <text x="240" y="2045" text-anchor="middle" class="wireframe-text">News Article 1</text>
+    <rect x="80" y="2055" width="320" height="140" class="component-box" rx="4"/>
+    <text x="240" y="2130" text-anchor="middle" class="wireframe-text">News Image</text>
+    <text x="240" y="2220" text-anchor="middle" class="wireframe-text">Title, Date, Excerpt</text>
+    <text x="240" y="2240" text-anchor="middle" class="wireframe-text">Read More Link</text>
+    
+    <rect x="430" y="2020" width="340" height="240" class="data-element" rx="4"/>
+    <text x="600" y="2045" text-anchor="middle" class="wireframe-text">News Article 2</text>
+    <rect x="440" y="2055" width="320" height="140" class="component-box" rx="4"/>
+    <text x="600" y="2130" text-anchor="middle" class="wireframe-text">News Image</text>
+    <text x="600" y="2220" text-anchor="middle" class="wireframe-text">Title, Date, Excerpt</text>
+    <text x="600" y="2240" text-anchor="middle" class="wireframe-text">Read More Link</text>
+    
+    <rect x="790" y="2020" width="340" height="240" class="data-element" rx="4"/>
+    <text x="960" y="2045" text-anchor="middle" class="wireframe-text">News Article 3</text>
+    <rect x="800" y="2055" width="320" height="140" class="component-box" rx="4"/>
+    <text x="960" y="2130" text-anchor="middle" class="wireframe-text">News Image</text>
+    <text x="960" y="2220" text-anchor="middle" class="wireframe-text">Title, Date, Excerpt</text>
+    <text x="960" y="2240" text-anchor="middle" class="wireframe-text">Read More Link</text>
+  </g>
+  
+  <!-- Footer Section -->
+  <g id="footer">
+    <rect x="50" y="2300" width="1100" height="300" class="footer-box" rx="8"/>
+    <text x="70" y="2325" class="section-title">Footer</text>
+    
+    <!-- Footer Columns -->
+    <rect x="70" y="2340" width="200" height="240" class="component-box" rx="4"/>
+    <text x="170" y="2365" text-anchor="middle" class="wireframe-text">Menu Links 1</text>
+    <text x="90" y="2385" class="wireframe-text">• İhale Yönetimi</text>
+    <text x="90" y="2405" class="wireframe-text">• Kurumsal Kimlik</text>
+    <text x="90" y="2425" class="wireframe-text">• Yayınlarımız</text>
+    <text x="90" y="2445" class="wireframe-text">• Memnuniyet Anketi</text>
+    
+    <rect x="290" y="2340" width="200" height="240" class="component-box" rx="4"/>
+    <text x="390" y="2365" text-anchor="middle" class="wireframe-text">Menu Links 2</text>
+    <text x="310" y="2385" class="wireframe-text">• Hafriyat Ücret Tarifeleri</text>
+    <text x="310" y="2405" class="wireframe-text">• Hafriyat Sahaları</text>
+    <text x="310" y="2425" class="wireframe-text">• Kredi Hesaplama</text>
+    <text x="310" y="2445" class="wireframe-text">• Dökümanlarımız</text>
+    
+    <rect x="510" y="2340" width="180" height="240" class="component-box" rx="4"/>
+    <text x="600" y="2365" text-anchor="middle" class="wireframe-text">Company Logo</text>
+    <rect x="530" y="2380" width="140" height="80" class="data-element" rx="4"/>
+    <text x="600" y="2425" text-anchor="middle" class="wireframe-text">Kocaeli</text>
+    <text x="600" y="2445" text-anchor="middle" class="wireframe-text">Büyükşehir</text>
+    <text x="600" y="2465" text-anchor="middle" class="wireframe-text">Belediyesi</text>
+    
+    <rect x="710" y="2340" width="420" height="240" class="component-box" rx="4"/>
+    <text x="920" y="2365" text-anchor="middle" class="wireframe-text">Contact Information</text>
+    <text x="730" y="2390" class="wireframe-text">📍 Körfez Mah. Hafız Binbaşı Cad. No:3 İzmit / Kocaeli</text>
+    <text x="730" y="2420" class="wireframe-text">📧 halklailiskiler@kentkonut.com.tr</text>
+    <text x="730" y="2450" class="wireframe-text">📞 0 262 331 0703</text>
+    
+    <!-- Footer Bottom -->
+    <rect x="70" y="2500" width="1060" height="60" class="footer-box" rx="4"/>
+    <text x="90" y="2525" class="wireframe-text">KENT KONUT İNŞAAT SAN. VE TİC. A.Ş. KOCAELİ BÜYÜKŞEHİR BELEDİYESİ İŞTİRAKİDİR</text>
+    <text x="1050" y="2525" class="wireframe-text">Site Kullanımı | KVKK | Web Mail | RSS | Yazılım K7</text>
+  </g>
+  
+  <!-- Legend -->
+  <g id="legend">
+    <rect x="50" y="2620" width="1100" height="180" class="component-box" rx="8"/>
+    <text x="70" y="2645" class="section-title">Component Legend</text>
+    
+    <rect x="70" y="2660" width="30" height="20" class="nav-box"/>
+    <text x="110" y="2675" class="wireframe-text">Navigation Components</text>
+    
+    <rect x="270" y="2660" width="30" height="20" class="hero-box"/>
+    <text x="310" y="2675" class="wireframe-text">Hero/Banner Elements</text>
+    
+    <rect x="470" y="2660" width="30" height="20" class="content-box"/>
+    <text x="510" y="2675" class="wireframe-text">Content Sections</text>
+    
+    <rect x="650" y="2660" width="30" height="20" class="data-element"/>
+    <text x="690" y="2675" class="wireframe-text">Dynamic Data Elements</text>
+    
+    <rect x="850" y="2660" width="30" height="20" class="interactive-element"/>
+    <text x="890" y="2675" class="wireframe-text">Interactive Elements</text>
+    
+    <rect x="70" y="2690" width="30" height="20" class="footer-box"/>
+    <text x="110" y="2705" class="wireframe-text">Footer Components</text>
+    
+    <text x="70" y="2730" class="wireframe-text">Modern Design Improvements:</text>
+    <text x="70" y="2750" class="wireframe-text">• Improved visual hierarchy with better spacing and typography</text>
+    <text x="70" y="2770" class="wireframe-text">• Enhanced mobile responsiveness with touch-friendly interactions</text>
+    <text x="70" y="2790" class="wireframe-text">• Better accessibility with proper ARIA labels and keyboard navigation</text>
+  </g>
+</svg>

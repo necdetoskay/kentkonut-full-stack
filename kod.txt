@@ -1,0 +1,58 @@
+Your branch is ahead of 'origin/main' by 29 commits.
+  (use "git push" to publish your local commits)
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   hata.png
+        modified:   kentkonut-backend/.next/app-build-manifest.json
+        modified:   kentkonut-backend/.next/cache/webpack/client-development/10.pack.gz
+        modified:   kentkonut-backend/.next/cache/webpack/client-development/3.pack.gz
+        modified:   kentkonut-backend/.next/cache/webpack/client-development/6.pack.gz
+        modified:   kentkonut-backend/.next/cache/webpack/client-development/index.pack.gz
+        modified:   kentkonut-backend/.next/cache/webpack/client-development/index.pack.gz.old
+        modified:   kentkonut-backend/.next/cache/webpack/server-development/11.pack.gz
+        modified:   kentkonut-backend/.next/cache/webpack/server-development/13.pack.gz
+        modified:   kentkonut-backend/.next/cache/webpack/server-development/14.pack.gz
+        modified:   kentkonut-backend/.next/cache/webpack/server-development/15.pack.gz
+        modified:   kentkonut-backend/.next/cache/webpack/server-development/16.pack.gz
+        modified:   kentkonut-backend/.next/cache/webpack/server-development/17.pack.gz
+        modified:   kentkonut-backend/.next/cache/webpack/server-development/4.pack.gz
+        modified:   kentkonut-backend/.next/cache/webpack/server-development/8.pack.gz
+        modified:   kentkonut-backend/.next/cache/webpack/server-development/index.pack.gz
+        modified:   kentkonut-backend/.next/cache/webpack/server-development/index.pack.gz.old
+        modified:   kentkonut-backend/.next/react-loadable-manifest.json
+        modified:   kentkonut-backend/.next/server/app-paths-manifest.json
+        modified:   kentkonut-backend/.next/server/app/dashboard/banner-groups/[id]/banners/page.js
+        modified:   kentkonut-backend/.next/server/app/dashboard/banner-groups/[id]/banners/page_client-reference-manifest.js
+        modified:   kentkonut-backend/.next/server/app/dashboard/banner-groups/[id]/edit/page.js
+        modified:   kentkonut-backend/.next/server/app/dashboard/banner-groups/[id]/edit/page_client-reference-manifest.js
+        modified:   kentkonut-backend/.next/server/app/dashboard/banner-groups/page_client-reference-manifest.js
+        modified:   kentkonut-backend/.next/server/app/dashboard/footer/page.js
+        modified:   kentkonut-backend/.next/server/app/dashboard/footer/page_client-reference-manifest.js
+        modified:   kentkonut-backend/.next/server/app/dashboard/hafriyat/page_client-reference-manifest.js
+        modified:   kentkonut-backend/.next/server/app/dashboard/kurumsal/birimler/page_client-reference-manifest.js
+        modified:   kentkonut-backend/.next/server/app/dashboard/kurumsal/highlights/page.js
+        modified:   kentkonut-backend/.next/server/app/dashboard/kurumsal/highlights/page_client-reference-manifest.js
+        modified:   kentkonut-backend/.next/server/app/dashboard/menu-management/page.js
+        modified:   kentkonut-backend/.next/server/app/dashboard/menu-management/page_client-reference-manifest.js
+        modified:   kentkonut-backend/.next/server/app/dashboard/news/page_client-reference-manifest.js
+        modified:   kentkonut-backend/.next/server/app/dashboard/page_client-reference-manifest.js
+        modified:   kentkonut-backend/.next/server/app/dashboard/projects/page.js
+        modified:   kentkonut-backend/.next/server/app/dashboard/projects/page_client-reference-manifest.js
+        modified:   kentkonut-backend/.next/server/app/page_client-reference-manifest.js
+        modified:   kentkonut-backend/.next/server/middleware-react-loadable-manifest.js
+        modified:   kentkonut-backend/.next/server/vendor-chunks/@babel.js
+        modified:   kentkonut-backend/.next/server/vendor-chunks/@radix-ui.js
+        modified:   kentkonut-backend/.next/server/vendor-chunks/class-variance-authority.js
+        modified:   kentkonut-backend/.next/server/vendor-chunks/clsx.js
+        modified:   kentkonut-backend/.next/server/vendor-chunks/lucide-react.js
+        modified:   kentkonut-backend/.next/server/vendor-chunks/next.js
+        modified:   kentkonut-backend/.next/server/vendor-chunks/tailwind-merge.js
+        modified:   kentkonut-backend/.next/server/webpack-runtime.js
+        modified:   kentkonut-backend/.next/static/chunks/webpack.js
+        modified:   kentkonut-backend/.next/trace
+
+no changes added to commit (use "git add" and/or "git commit -a")
+* main
+  security/dependency-updates

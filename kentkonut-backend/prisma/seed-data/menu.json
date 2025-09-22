@@ -1,0 +1,9 @@
+
+[
+  { "id": "seed-menu-anasayfa", "title": "ANASAYFA", "url": "/", "orderIndex": 1, "menuLocation": "main", "isActive": true, "isExternal": false, "target": "_self" },
+  { "id": "seed-menu-hakkimizda", "title": "HAKKIMIZDA", "url": "/hakkimizda", "orderIndex": 2, "menuLocation": "main", "isActive": true, "isExternal": false, "target": "_self" },
+  { "id": "seed-menu-kurumsal", "title": "KURUMSAL", "url": "/kurumsal", "orderIndex": 3, "menuLocation": "main", "isActive": true, "isExternal": false, "target": "_self" },
+  { "id": "seed-menu-projeler", "title": "PROJELERİMİZ", "url": "/projeler", "orderIndex": 4, "menuLocation": "main", "isActive": true, "isExternal": false, "target": "_self" },
+  { "id": "seed-menu-hafriyat", "title": "HAFRİYAT", "url": "/hafriyat", "orderIndex": 5, "menuLocation": "main", "isActive": true, "isExternal": false, "target": "_self" },
+  { "id": "seed-menu-bize-ulasin", "title": "BİZE ULAŞIN", "url": "/bize-ulasin", "orderIndex": 6, "menuLocation": "main", "isActive": true, "isExternal": false, "target": "_self" }
+]

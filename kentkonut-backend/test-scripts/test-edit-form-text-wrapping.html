@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Form Text Wrapping Test - Kent Konut</title>
+    <link rel="stylesheet" href="components/editors/TipTapEditor/tiptap-styles.css">
+    <link rel="stylesheet" href="app/globals.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+        .test-title {
+            color: #374151;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .editor-container {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 300px;
+            background: white;
+        }
+        .debug-info {
+            background: #fef3c7;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #92400e;
+            border-left: 4px solid #f59e0b;
+        }
+        .success-info {
+            background: #d1fae5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .comparison-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            background: white;
+        }
+        .comparison-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <h1>Kent Konut Edit Form - Text Wrapping Test</h1>
+    <p>Bu test sayfası, edit formunda kullanılan RichTextEditor'ün text wrapping davranışını test etmek için oluşturulmuştur.</p>
+
+    <div class="debug-info">
+        <strong>🔍 Test Edilen Sorun:</strong> Edit formunda (düzenle) TipTap editöründe floating resim yanına metin yazıp Enter tuşuna basıldığında, 
+        metin resmin yanında kalmak yerine hemen resmin altına geçiyor ve resim yanında boşluk kalıyor.
+    </div>
+
+    <div class="success-info">
+        <strong>✅ Beklenen Davranış:</strong> Enter tuşuna basıldığında yeni paragraflar resmin yanında devam etmeli, 
+        sadece yeterli metin olduğunda resmin altına geçmeli.
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">Test 1: Edit Form RichTextEditor Simülasyonu</h2>
+        <div class="debug-info">
+            Bu test, edit formunda kullanılan RichTextEditor'ün tam konfigürasyonunu simüle ediyor:
+            <br>• prose prose-sm max-w-none focus:outline-none classes
+            <br>• CustomImage with image-wrapper class
+            <br>• inline: false configuration
+        </div>
+        
+        <div class="editor-container prose prose-sm max-w-none focus:outline-none">
+            <div class="image-wrapper float-left" style="width: 220px;">
+                <img src="https://via.placeholder.com/220x165/0070f3/ffffff?text=Edit+Form+Test" alt="Edit form test resmi" style="width: 100%; height: auto;">
+            </div>
+            <p>Bu paragraf, edit formundaki RichTextEditor'de floating resmin yanında yer alıyor.</p>
+            <p>Enter tuşuna basıldığında oluşan bu paragraf resmin yanında kalmalı, altına geçmemeli.</p>
+            <p>Üçüncü paragraf da resmin yanında devam etmeli.</p>
+            <p>Dördüncü paragraf hala resmin yanında olmalı.</p>
+            <p>Beşinci paragraf artık resmin altına geçebilir çünkü yeterli metin var.</p>
+            <p>Altıncı paragraf tamamen resmin altında.</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">Test 2: Sağ Float Test (Edit Form)</h2>
+        <div class="debug-info">
+            Sağ float davranışını edit form konfigürasyonu ile test ediyoruz
+        </div>
+        
+        <div class="editor-container prose prose-sm max-w-none focus:outline-none">
+            <div class="image-wrapper float-right" style="width: 200px;">
+                <img src="https://via.placeholder.com/200x150/dc2626/ffffff?text=Sag+Float+Edit" alt="Sağ float edit test" style="width: 100%; height: auto;">
+            </div>
+            <p>Bu paragraf, edit formunda sağ tarafa float edilmiş resmin yanında başlıyor.</p>
+            <p>Enter ile oluşturulan bu paragraf resmin sol tarafında kalmalı.</p>
+            <p>Üçüncü paragraf da resmin yanında devam etmeli.</p>
+            <p>Dördüncü paragraf artık resmin altına geçebilir.</p>
+        </div>
+    </div>
+
+    <div class="comparison">
+        <div class="comparison-item">
+            <div class="comparison-title">❌ Önceki Sorunlu Davranış</div>
+            <ul style="font-size: 14px; color: #6b7280;">
+                <li>Enter tuşuna basıldığında metin hemen resmin altına geçiyordu</li>
+                <li>Resim yanında büyük boşluklar kalıyordu</li>
+                <li>Prose classes editör içeriğine uygulanmıyordu</li>
+                <li>CSS specificity yetersizdi</li>
+            </ul>
+        </div>
+        <div class="comparison-item">
+            <div class="comparison-title">✅ Düzeltilmiş Davranış</div>
+            <ul style="font-size: 14px; color: #065f46;">
+                <li>Enter tuşuna basıldığında metin resmin yanında devam ediyor</li>
+                <li>Resim yanında boşluk kalmıyor</li>
+                <li>Prose classes doğru şekilde uygulanıyor</li>
+                <li>Yüksek specificity CSS kuralları çalışıyor</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">Test 3: Data-Align Attribute Test (Edit Form)</h2>
+        <div class="debug-info">
+            Bu test, data-align attribute'u ile floating davranışını edit form ortamında test ediyor
+        </div>
+        
+        <div class="editor-container prose prose-sm max-w-none focus:outline-none">
+            <img src="https://via.placeholder.com/180x135/059669/ffffff?text=Data+Align" alt="Data align test" data-align="float-left" style="width: 180px;">
+            <p>Bu paragraf, data-align="float-left" attribute'u ile float edilmiş resmin yanında yer alıyor.</p>
+            <p>Edit formunda Enter tuşuna basıldığında oluşan bu paragraf resmin yanında kalmalı.</p>
+            <p>Üçüncü paragraf da resmin yanında devam etmeli.</p>
+            <p>Dördüncü paragraf artık resmin altına geçebilir.</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">🔧 Yapılan Düzeltmeler</h2>
+        <div style="background: white; padding: 16px; border-radius: 8px;">
+            <h3 style="color: #374151; margin-top: 0;">1. EditorProps Eklendi</h3>
+            <p style="font-size: 14px; color: #6b7280;">Edit form RichTextEditor'üne eksik olan editorProps konfigürasyonu eklendi:</p>
+            <pre style="background: #f3f4f6; padding: 8px; border-radius: 4px; font-size: 12px;">editorProps: {
+  attributes: {
+    class: 'prose prose-sm max-w-none focus:outline-none',
+  },
+}</pre>
+
+            <h3 style="color: #374151;">2. CustomImage Class Standardizasyonu</h3>
+            <p style="font-size: 14px; color: #6b7280;">Tüm editörlerde CustomImage class'ı 'image-wrapper' olarak standardize edildi.</p>
+
+            <h3 style="color: #374151;">3. CSS Specificity Artırıldı</h3>
+            <p style="font-size: 14px; color: #6b7280;">Edit form için özel yüksek specificity CSS kuralları eklendi.</p>
+        </div>
+    </div>
+
+    <script>
+        console.log('🧪 Edit Form Text Wrapping Test Page Loaded');
+        console.log('Bu sayfa, edit formundaki TipTap editörünün metin sarma davranışını test etmek için oluşturulmuştur.');
+        
+        // Test the CSS behavior
+        document.addEventListener('DOMContentLoaded', function() {
+            const editors = document.querySelectorAll('.editor-container');
+            console.log(`Found ${editors.length} test editors`);
+            
+            editors.forEach((editor, index) => {
+                const classes = editor.className;
+                console.log(`Editor ${index + 1}: ${classes}`);
+                
+                const images = editor.querySelectorAll('.image-wrapper, img[data-align]');
+                console.log(`  - Images: ${images.length}`);
+                
+                images.forEach((img, imgIndex) => {
+                    const imgClasses = img.className || 'no-class';
+                    const dataAlign = img.getAttribute('data-align') || 'no-data-align';
+                    console.log(`    Image ${imgIndex + 1}: classes="${imgClasses}", data-align="${dataAlign}"`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

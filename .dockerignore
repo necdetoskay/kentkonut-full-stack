@@ -1,0 +1,34 @@
+# .dockerignore for kentkonut-full-stack
+# Backend specific ignores
+kentkonut-backend/node_modules
+kentkonut-backend/npm-debug.log
+kentkonut-backend/.next
+kentkonut-backend/.env.local
+kentkonut-backend/.env.development.local
+kentkonut-backend/.env.test.local
+kentkonut-backend/.env.production.local
+kentkonut-backend/.nyc_output
+kentkonut-backend/coverage
+kentkonut-backend/backups
+kentkonut-backend/docs
+kentkonut-backend/scripts/*.sh
+
+# Frontend specific ignores
+kentkonut-frontend/node_modules
+kentkonut-frontend/dist
+kentkonut-frontend/dev-dist
+kentkonut-frontend/.vite
+
+# General ignores
+.git
+.gitignore
+README.md
+.DS_Store
+*.log
+.vscode
+.idea
+*.swp
+*.swo
+*~
+docs/
+dev/

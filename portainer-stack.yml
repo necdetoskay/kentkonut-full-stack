@@ -1,0 +1,159 @@
+# KentKonut Production Stack for Portainer
+# Host: 172.41.42.51 | Frontend: 3020 | Backend: 3021
+# Database and Redis: Internal only (secure)
+# Updated with API connection fixes - Version 1.10.0
+version: '3.8'
+
+networks:
+  kentkonut-network:
+    driver: bridge
+    name: kentkonut-prod-network
+
+volumes:
+  postgres_data:
+    driver: local
+    name: kentkonut_postgres_data
+  redis_data:
+    driver: local
+    name: kentkonut_redis_data
+  # Backend data volumes for persistent storage
+  backend_uploads:
+    driver: local
+    name: kentkonut_backend_uploads
+  backend_media:
+    driver: local
+    name: kentkonut_backend_media
+  backend_banners:
+    driver: local
+    name: kentkonut_backend_banners
+  backend_logs:
+    driver: local
+    name: kentkonut_backend_logs
+
+services:
+  # PostgreSQL Database - Internal Only (No External Access)
+  postgresql:
+    image: postgres:15-alpine
+    container_name: kentkonut-postgres
+    hostname: postgresql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-P@ssw0rd}
+      POSTGRES_DB: kentkonutdb
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    # No external port for security - internal access only
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d kentkonutdb"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      kentkonut-network:
+        aliases:
+          - postgres
+          - postgresql
+
+  # Redis Cache Service - Internal Only (No External Access)
+  redis:
+    image: redis:7-alpine
+    container_name: kentkonut-redis
+    # No external port for security - internal access only
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - kentkonut-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # KentKonut Backend Service - External Access on Port 3021
+  backend:
+    image: necdetoskay/kentkonut-backend:1.10.0
+    container_name: kentkonut-backend
+    hostname: kentkonut-backend
+    environment:
+      # Database Configuration - Internal container communication
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-P@ssw0rd}@postgresql:5432/kentkonutdb
+
+      # NextAuth Configuration - Fixed for host IP
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://172.41.42.51:3021}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-c8cde4f2b1d5a3e9f7h6j8k4m2n5p7q9s3t5v8w1z4}
+      - NEXTAUTH_URL_INTERNAL=${NEXTAUTH_URL_INTERNAL:-http://kentkonut-backend:3021}
+      - AUTH_TRUST_HOST=true
+
+      # Application Configuration
+      - NODE_ENV=production
+      - PORT=${PORT:-3021}
+      - HOSTNAME=0.0.0.0
+      - NEXT_TELEMETRY_DISABLED=1
+
+      # API URLs - Host IP configuration
+      - API_BASE_URL=${API_BASE_URL:-http://172.41.42.51:3021}
+      - NEXT_PUBLIC_API_URL=${API_BASE_URL:-http://172.41.42.51:3021}
+
+      # CORS Configuration - Frontend port 3020
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://172.41.42.51:3020,http://localhost:3020}
+      - ALLOWED_ORIGINS=${CORS_ORIGIN:-http://172.41.42.51:3020,http://localhost:3020}
+
+      # File Upload Configuration
+      - UPLOAD_DIR=/app/public/uploads
+      - MAX_FILE_SIZE=10485760
+      - UPLOAD_ALLOWED_TYPES=image/jpeg,image/png,image/gif,image/webp
+
+      # Security Configuration
+      - JWT_SECRET=${JWT_SECRET:-c8cde4f2b1d5a3e9f7h6j8k4m2n5p7q9s3t5v8w1z4}
+      - JWT_EXPIRES_IN=7d
+      - BCRYPT_ROUNDS=12
+
+      # Email Configuration (Optional)
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASS=${SMTP_PASS:-}
+
+      # Rate Limiting
+      - RATE_LIMIT_WINDOW=15
+      - RATE_LIMIT_MAX=100
+    volumes:
+      - backend_uploads:/app/public/uploads
+      - backend_media:/app/public/media
+      - backend_banners:/app/public/banners
+      - backend_logs:/app/logs
+    ports:
+      - "${BACKEND_PORT:-3021}:3021"
+    depends_on:
+      - postgresql
+      - redis
+    restart: unless-stopped
+    networks:
+      - kentkonut-network
+
+  # KentKonut Frontend Service - External Access on Port 3020
+  frontend:
+    image: necdetoskay/kentkonut-frontend:latest
+    container_name: kentkonut-frontend
+    hostname: kentkonut-frontend
+    environment:
+      - NODE_ENV=production
+      # Frontend API configuration - Points to backend on host IP
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://172.41.42.51:3021}
+      - NEXT_TELEMETRY_DISABLED=1
+      # Port configuration for frontend
+      - FRONTEND_PORT=3020
+      - BACKEND_PORT=3021
+      # Ensure production environment is detected
+      - VITE_NODE_ENV=production
+    ports:
+      - "${FRONTEND_PORT:-3020}:3020"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - kentkonut-network

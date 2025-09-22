@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kent Konut – Kurumsal Landing Wireframe (V2)</title>
+    <meta name="description" content="Modern, kurumsal ve animasyonlu landing page wireframe – üstte carousel hero.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --blue-950: #081a38;
+        --blue-900: #0b244c;
+        --blue-800: #103163;
+        --blue-100: #e8eef9;
+        --blue-050: #f7f9fe;
+        --gold: #e2c46d;
+        --text-strong: #0b244c;
+        --text-muted: #5f6c82;
+        --card-border: #e6ebf3;
+        --shadow: 0 12px 32px rgba(11,36,76,.18);
+      }
+
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        margin: 0;
+        font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        color: var(--text-strong);
+        background: #fff;
+      }
+
+      .container { width: min(1280px, 92%); margin: 0 auto; }
+      .section { padding: 72px 0; }
+      .title { font-weight: 800; font-size: clamp(24px, 2.8vw, 34px); margin: 0 0 10px; letter-spacing: .2px; }
+      .lead { color: var(--text-muted); font-size: 15px; margin: 0 0 26px; }
+      .card { background: #fff; border: 1px solid var(--card-border); border-radius: 18px; box-shadow: var(--shadow); }
+
+      /* Hero with Carousel */
+      .hero {
+        position: relative;
+        color: #fff;
+        background: radial-gradient(1200px 600px at 20% 0%, #16386e 0%, #0b244c 55%, #081a38 100%);
+        overflow: hidden;
+      }
+      .hero .glow { position:absolute; inset: -20% -10% auto auto; width: 60vw; height: 60vw; background: radial-gradient(closest-side, rgba(255,255,255,.06), transparent 60%); filter: blur(6px); }
+      .nav {
+        margin: 18px auto 0; width: min(1280px, 92%); height: 72px;
+        display: grid; grid-template-columns: 1fr auto; align-items: center;
+        background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.18);
+        border-radius: 14px; padding: 0 16px; backdrop-filter: blur(6px);
+      }
+      .brand { display:flex; align-items:center; gap: 10px; font-weight: 800; letter-spacing: .4px; }
+      .brand-mark { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(140deg, #00d0ff, #2f7cff); box-shadow: 0 6px 16px rgba(0,208,255,.35); }
+      .links { display:flex; align-items:center; gap: 26px; font-size: 14px; opacity: .95; }
+      .cta { margin-left: 16px; background: #fff; color: var(--blue-900); font-weight: 800; border-radius: 10px; padding: 12px 16px; border: none; }
+
+      .hero-wrap { position: relative; padding: 56px 0 64px; }
+      .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 36px; align-items: center; }
+      .hero-copy { border-radius: 18px; border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.06); padding: 26px; }
+      .hero-title { font-weight: 800; font-size: clamp(28px, 3.6vw, 48px); line-height: 1.12; margin: 0 0 10px; }
+      .hero-lead { color: #eaf1fb; margin: 0 0 18px; font-weight: 400; }
+      .chips { display:flex; gap: 10px; flex-wrap: wrap; margin: 16px 0 22px; }
+      .chip { background: rgba(255,255,255,.95); color: var(--blue-900); font-weight: 700; padding: 9px 14px; border-radius: 18px; font-size: 13px; }
+      .hero-ctas { display:flex; gap: 12px; }
+      .btn-gold { background: linear-gradient(90deg, #e2c46d, #f2dc99); color: #122; font-weight: 800; border: none; border-radius: 12px; padding: 12px 18px; }
+      .btn-ghost { background: rgba(255,255,255,.18); color: #fff; font-weight: 800; border: 1px solid rgba(255,255,255,.32); border-radius: 12px; padding: 12px 18px; }
+      .kpis { display:flex; gap: 16px; margin-top: 24px; flex-wrap: wrap; }
+      .kpi { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); border-radius: 14px; padding: 14px 16px; min-width: 160px; }
+      .kpi .n { font-weight: 900; font-size: 24px; }
+      .kpi .l { color:#eaf1fb; font-size: 12px; }
+
+      /* Carousel */
+      .carousel { position: relative; height: 460px; border-radius: 22px; overflow: hidden; border: 1px solid rgba(255,255,255,.22); box-shadow: var(--shadow); }
+      .slides { position:absolute; inset:0; display:grid; }
+      .slide { grid-area:1/1; background-size: cover; background-position: center; transform: scale(1.03); opacity: 0; transition: opacity .8s ease, transform 1s ease; }
+      .slide.active { opacity: 1; transform: scale(1); }
+      .slide::after { content:""; position:absolute; inset:0; background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.08), transparent 45%), linear-gradient(to bottom, rgba(0,0,0,.25), rgba(0,0,0,.45)); }
+      .c-dots { position:absolute; left: 50%; bottom: 16px; transform: translateX(-50%); display:flex; gap:8px; }
+      .c-dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,.55); border: 1px solid rgba(255,255,255,.8); }
+      .c-dot.active { background: #fff; }
+      .c-nav { position:absolute; inset: 0; display:flex; align-items:center; justify-content: space-between; padding: 0 8px; pointer-events: none; }
+      .c-btn { pointer-events: auto; width: 44px; height: 44px; border-radius: 50%; display:grid; place-items:center; background: rgba(255,255,255,.85); border: none; font-weight: 900; color: var(--blue-900); }
+
+      /* Quick actions */
+      .quick { margin-top: -30px; }
+      .strip { display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px; background:#fff; border-radius: 14px; box-shadow: var(--shadow); padding: 16px; border:1px solid var(--card-border); }
+      .item { display:flex; align-items:center; gap:10px; background: linear-gradient(135deg, var(--blue-100), var(--blue-050)); border-radius: 12px; padding: 14px; font-weight: 700; color: var(--blue-900); }
+      .ico { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(140deg, #00d0ff, #2f7cff); box-shadow: 0 4px 12px rgba(0,208,255,.25); }
+
+      /* Services */
+      .services-grid { display:grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+      .service { position: relative; overflow: hidden; padding: 18px; border-radius: 18px; }
+      .service .icon { width: 46px; height: 46px; border-radius: 12px; background: linear-gradient(140deg, #ffd36e, #ffae34); box-shadow: 0 6px 20px rgba(255,171,52,.35); }
+      .service .band { position:absolute; left:0; right:0; bottom:0; height: 88px; background: rgba(11,36,76,.06); }
+      .service h3 { position: relative; margin: 10px 0 6px; font-size: 16px; }
+      .service p { position: relative; margin: 0; color: var(--text-muted); font-size: 13px; }
+      .service:hover { transform: translateY(-3px) scale(1.01); transition: transform .25s ease; }
+
+      /* Projects carousel concept */
+      .projects-rail { position: relative; overflow: hidden; }
+      .viewport { overflow: hidden; padding: 18px; }
+      .track { display:flex; gap: 18px; }
+      .p { width: 248px; height: 230px; border-radius: 14px; border:1px solid var(--card-border); background: linear-gradient(#fff, #f6f7fb); box-shadow: var(--shadow); }
+      .animate { animation: marquee 20s linear infinite; }
+      @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+      .dots { display:flex; gap: 8px; justify-content: center; margin-top: 8px; }
+      .dot { width: 8px; height: 8px; border-radius: 50%; background: #b6c2d6; }
+      .dot.active { background: var(--text-strong); }
+
+      /* Stats */
+      .stats { background: linear-gradient(180deg, #f7f9fe, #eef3fc); border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border); }
+      .grid-4 { display:grid; grid-template-columns: repeat(4, 1fr); gap: 26px; }
+      .stat .n { font-weight: 900; font-size: clamp(22px, 3vw, 36px); }
+      .stat .l { color: var(--text-muted); }
+
+      /* News */
+      .news-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+      .news { overflow: hidden; border-radius: 18px; }
+      .thumb { height: 140px; background: linear-gradient(140deg, #dfe7f5, #cfdaf0); }
+      .body { padding: 16px 16px 20px; }
+      .hr { height: 1px; background: rgba(11,36,76,.12); margin: 10px 0 12px; }
+      .s1, .s2 { height: 12px; background: #d3dbe8; border-radius: 6px; }
+      .s1 { width: 72%; }
+      .s2 { width: 58%; margin-top: 8px; }
+
+      /* Partners */
+      .partners-grid { display:grid; grid-template-columns: repeat(6, 1fr); gap: 18px; }
+      .partner { height: 84px; border-radius: 14px; border:1px solid var(--card-border); background: #fff; box-shadow: var(--shadow); filter: grayscale(1) contrast(1.05); }
+
+      /* Footer */
+      .footer { background: linear-gradient(180deg, var(--blue-900), var(--blue-950)); color: #fff; position: relative; }
+      .footer .grid { display:grid; grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 26px; }
+      .foot-muted { color: rgba(255,255,255,.88); }
+      .foot-hr { height: 1px; background: rgba(255,255,255,.15); margin-top: 22px; }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .hero-grid { grid-template-columns: 1fr; }
+        .services-grid { grid-template-columns: repeat(2, 1fr); }
+        .news-grid { grid-template-columns: repeat(2, 1fr); }
+        .partners-grid { grid-template-columns: repeat(3, 1fr); }
+        .footer .grid { grid-template-columns: 1fr 1fr; }
+      }
+      @media (max-width: 640px) {
+        .services-grid { grid-template-columns: 1fr; }
+        .news-grid { grid-template-columns: 1fr; }
+        .partners-grid { grid-template-columns: repeat(2, 1fr); }
+        .links { display: none; }
+        .nav { grid-template-columns: 1fr auto; height: 66px; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HERO WITH CAROUSEL -->
+    <header class="hero section" aria-label="Hero">
+      <div class="glow" aria-hidden="true"></div>
+      <div class="nav" aria-label="Primary Navigation">
+        <div class="brand"><div class="brand-mark"></div><div>KENT KONUT</div></div>
+        <div style="display:flex; align-items:center;">
+          <div class="links">
+            <span>Projeler</span>
+            <span>Kurumsal</span>
+            <span>Hizmetler</span>
+            <span>Haberler</span>
+            <span>İletişim</span>
+          </div>
+          <button class="cta">Teklif Al</button>
+        </div>
+      </div>
+
+      <div class="container hero-wrap">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <h1 class="hero-title">Şehri Dönüştüren Modern Yaşam Alanları</h1>
+            <p class="hero-lead">Sürdürülebilir, estetik ve güvenilir projelerle kente değer katıyoruz.</p>
+            <div class="chips">
+              <span class="chip">Yenilikçi Mimari</span>
+              <span class="chip">Sürdürülebilirlik</span>
+              <span class="chip">Kurumsal Güven</span>
+            </div>
+            <div class="hero-ctas">
+              <button class="btn-gold">Projeleri Keşfet</button>
+              <button class="btn-ghost">Bize Ulaşın</button>
+            </div>
+            <div class="kpis" role="list" aria-label="KPI">
+              <div class="kpi" role="listitem"><div class="n">10.6K+</div><div class="l">Tamamlanan Konut</div></div>
+              <div class="kpi" role="listitem"><div class="n">120</div><div class="l">İşyeri Teslim</div></div>
+              <div class="kpi" role="listitem"><div class="n">25+ Yıl</div><div class="l">Deneyim</div></div>
+            </div>
+          </div>
+
+          <!-- Carousel -->
+          <div class="carousel" aria-roledescription="carousel" aria-label="Hero Carousel">
+            <div class="slides">
+              <div class="slide active" style="background-image: linear-gradient(120deg, #0f4c81, #2a7ab9);"></div>
+              <div class="slide" style="background-image: linear-gradient(120deg, #0a6a5e, #24a88a);"></div>
+              <div class="slide" style="background-image: linear-gradient(120deg, #6e2a99, #b36ad6);"></div>
+            </div>
+            <div class="c-nav" aria-hidden="true">
+              <button class="c-btn" data-prev aria-label="Önceki">‹</button>
+              <button class="c-btn" data-next aria-label="Sonraki">›</button>
+            </div>
+            <div class="c-dots" role="tablist" aria-label="Hero slaytları">
+              <button class="c-dot active" data-goto="0" role="tab" aria-selected="true" aria-label="1. slayt"></button>
+              <button class="c-dot" data-goto="1" role="tab" aria-selected="false" aria-label="2. slayt"></button>
+              <button class="c-dot" data-goto="2" role="tab" aria-selected="false" aria-label="3. slayt"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- QUICK ACTIONS -->
+    <section class="quick" aria-label="Hızlı Aksiyonlar">
+      <div class="container">
+        <div class="strip">
+          <div class="item"><div class="ico"></div><div>Sanal POS</div></div>
+          <div class="item"><div class="ico"></div><div>Projelerimiz</div></div>
+          <div class="item"><div class="ico"></div><div>Sağlık Kent Konutları</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="section" aria-labelledby="services-title">
+      <div class="container">
+        <h2 id="services-title" class="title">Hizmetlerimiz</h2>
+        <p class="lead">Kamu ve özel sektöre kurumsal hizmetler</p>
+        <div class="services-grid">
+          <div class="card service"><div class="icon"></div><div class="band"></div><h3>Konut Hizmetleri</h3><p>Kısa açıklama iki satır...</p></div>
+          <div class="card service"><div class="icon"></div><div class="band"></div><h3>Hafriyat Hizmetleri</h3><p>Kısa açıklama iki satır...</p></div>
+          <div class="card service"><div class="icon"></div><div class="band"></div><h3>Mimari Projelendirme</h3><p>Kısa açıklama iki satır...</p></div>
+          <div class="card service"><div class="icon"></div><div class="band"></div><h3>Kentsel Dönüşüm</h3><p>Kısa açıklama iki satır...</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURED PROJECTS (MARQUEE CONCEPT) -->
+    <section class="section" aria-labelledby="projects-title">
+      <div class="container">
+        <h2 id="projects-title" class="title">Öne Çıkan Projeler</h2>
+        <p class="lead">Devam eden ve tamamlanan projelerden seçkiler</p>
+        <div class="projects-rail card">
+          <div class="viewport">
+            <div class="track animate">
+              <div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div>
+              <div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div>
+            </div>
+          </div>
+          <div class="dots" aria-hidden="true">
+            <div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS STRIP -->
+    <section class="stats section" aria-label="İstatistikler">
+      <div class="container grid-4">
+        <div class="stat"><div class="n">1.2M m²</div><div class="l">İnşa edilen yaşam alanı</div></div>
+        <div class="stat"><div class="n">98%</div><div class="l">Müşteri memnuniyeti</div></div>
+        <div class="stat"><div class="n">50+</div><div class="l">Tamamlanan proje</div></div>
+        <div class="stat"><div class="n">25+</div><div class="l">Yıllık tecrübe</div></div>
+      </div>
+    </section>
+
+    <!-- NEWS -->
+    <section class="section" aria-labelledby="news-title">
+      <div class="container">
+        <h2 id="news-title" class="title">Bizden Haberler</h2>
+        <p class="lead">Güncel duyuru ve gelişmeler</p>
+        <div class="news-grid">
+          <article class="card news" aria-label="Haber kartı"><div class="thumb"></div><div class="body"><div class="hr"></div><div class="s1"></div><div class="s2"></div></div></article>
+          <article class="card news" aria-label="Haber kartı"><div class="thumb"></div><div class="body"><div class="hr"></div><div class="s1"></div><div class="s2"></div></div></article>
+          <article class="card news" aria-label="Haber kartı"><div class="thumb"></div><div class="body"><div class="hr"></div><div class="s1"></div><div class="s2"></div></div></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PARTNERS -->
+    <section class="section" aria-labelledby="partners-title">
+      <div class="container">
+        <h2 id="partners-title" class="title">Referanslar</h2>
+        <p class="lead">İş ortaklarımız ve kurumlar</p>
+        <div class="partners-grid">
+          <div class="partner"></div><div class="partner"></div><div class="partner"></div>
+          <div class="partner"></div><div class="partner"></div><div class="partner"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer section" aria-label="Alt Bilgi">
+      <div class="container">
+        <div class="grid">
+          <div>
+            <div style="font-weight:800; letter-spacing:.3px;">KENT KONUT</div>
+            <div style="height:6px; width: 240px; background: linear-gradient(90deg, var(--gold), #f2dc99); border-radius:3px; margin:10px 0 12px;"></div>
+            <div class="foot-muted">Körfez Mah. Hafız Binbaşı Cad. No:3 İzmit / Kocaeli</div>
+            <div class="foot-muted">halklailiskiler@kentkonut.com.tr • 0 262 331 0703</div>
+          </div>
+          <div>
+            <div class="foot-muted" style="font-weight:800;">Kurumsal</div>
+            <div class="foot-muted">İhale Yönetimi</div>
+            <div class="foot-muted">Kurumsal Kimlik</div>
+            <div class="foot-muted">Yayınlarımız</div>
+          </div>
+          <div>
+            <div class="foot-muted" style="font-weight:800;">Hizmetler</div>
+            <div class="foot-muted">Hafriyat</div>
+            <div class="foot-muted">Kentsel Dönüşüm</div>
+            <div class="foot-muted">Mimari Projelendirme</div>
+          </div>
+          <div>
+            <div class="foot-muted" style="font-weight:800;">Hızlı Erişim</div>
+            <div class="foot-muted">Sanal POS</div>
+            <div class="foot-muted">Kredi Hesaplama</div>
+            <div class="foot-muted">Dökümanlarımız</div>
+          </div>
+        </div>
+        <div class="foot-hr"></div>
+        <div class="foot-muted" style="margin-top:12px;">KBB İştiraki • Site Kullanımı • KVKK • RSS • Web Mail</div>
+      </div>
+    </footer>
+
+    <script>
+      (function() {
+        const carousel = document.querySelector('.carousel');
+        if (!carousel) return;
+        const slides = Array.from(carousel.querySelectorAll('.slide'));
+        const dots = Array.from(carousel.querySelectorAll('.c-dot'));
+        const prev = carousel.querySelector('[data-prev]');
+        const next = carousel.querySelector('[data-next]');
+
+        let index = 0;
+        let timer;
+
+        function show(i) {
+          slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+          dots.forEach((d, idx) => {
+            d.classList.toggle('active', idx === i);
+            d.setAttribute('aria-selected', String(idx === i));
+          });
+          index = i;
+        }
+
+        function step(dir = 1) {
+          const i = (index + dir + slides.length) % slides.length;
+          show(i);
+        }
+
+        function auto() {
+          clearInterval(timer);
+          timer = setInterval(() => step(1), 5000);
+        }
+
+        dots.forEach((d) => d.addEventListener('click', () => { show(Number(d.dataset.goto)); auto(); }));
+        prev.addEventListener('click', () => { step(-1); auto(); });
+        next.addEventListener('click', () => { step(1); auto(); });
+
+        show(0);
+        auto();
+      })();
+    </script>
+  </body>
+  </html>
+
+

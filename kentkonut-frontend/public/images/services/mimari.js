@@ -1,0 +1,22 @@
+// Mimari Projelendirme görseli
+const imageData = 'data:image/png;base64,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';
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Tüm servis kartları alınıyor
+  const servicesCards = document.querySelectorAll('[class*="services"]');
+  
+  // Mimari projelendirme kartı bulunuyor
+  const mimariCard = Array.from(servicesCards).find(card => {
+    const titleElement = card.querySelector('h3');
+    return titleElement && titleElement.textContent.includes('Mimari Projelendirme');
+  });
+  
+  // Eğer kart bulunduysa
+  if (mimariCard) {
+    // Kart içindeki img elementini bulup src özelliğini değiştiriyoruz
+    const imgElement = mimariCard.querySelector('img');
+    if (imgElement) {
+      imgElement.src = imageData;
+    }
+  }
+}); 

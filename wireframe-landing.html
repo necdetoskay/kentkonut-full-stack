@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kent Konut – Modern Kurumsal Landing Wireframe</title>
+    <meta name="description" content="Modern kurumsal landing page wireframe – yalnızca iskelet tasarım ve animasyon konsepti">
+    <style>
+      :root {
+        --kent-blue-900: #0b244c;
+        --kent-blue-700: #12386f;
+        --kent-blue-100: #e9eef6;
+        --kent-blue-050: #f7f9fc;
+        --kent-gold: #d6b25e;
+        --text-strong: #0b244c;
+        --text-muted: #5b6c84;
+        --card-border: #e7ebf2;
+        --shadow: 0 6px 24px rgba(0,0,0,.12);
+      }
+
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        color: var(--text-strong);
+        background: #fff;
+      }
+
+      /* Utilities */
+      .container { width: min(1280px, 92%); margin: 0 auto; }
+      .section { padding: 56px 0; }
+      .title { font-weight: 800; font-size: clamp(22px, 2.6vw, 32px); margin: 0 0 8px; }
+      .lead { color: var(--text-muted); font-size: 14px; margin: 0 0 24px; }
+      .card { background: #fff; border: 1px solid var(--card-border); border-radius: 16px; box-shadow: var(--shadow); }
+      .muted { color: var(--text-muted); }
+
+      /* Navbar + Hero */
+      .hero {
+        background: linear-gradient(90deg, var(--kent-blue-900), var(--kent-blue-700));
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero::before {
+        content: "";
+        position: absolute; inset: 0;
+        background-image: radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px);
+        background-size: 24px 24px;
+        mask-image: linear-gradient(to bottom, rgba(0,0,0,.8), rgba(0,0,0,.4));
+        pointer-events: none;
+      }
+      .nav {
+        margin: 16px auto 0;
+        width: min(1280px, 92%);
+        height: 64px;
+        display: grid; grid-template-columns: 1fr auto; align-items: center;
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.15);
+        border-radius: 12px; padding: 0 16px;
+        backdrop-filter: blur(6px);
+      }
+      .nav-brand { font-weight: 800; letter-spacing: .5px; }
+      .nav-links { display: flex; gap: 24px; font-size: 14px; opacity: .9; }
+      .nav-cta { margin-left: 16px; background:#fff; color: var(--kent-blue-900); font-weight: 700; border-radius: 8px; padding: 10px 14px; border: none; }
+
+      .hero-wrap { position: relative; padding: 48px 0 56px; }
+      .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 32px; align-items: center; }
+      .hero-card { border-radius: 16px; border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.06); padding: 24px; }
+      .hero-title { font-weight: 900; font-size: clamp(26px, 3.6vw, 44px); margin: 0 0 8px; }
+      .hero-lead { color: #eaf1fb; margin: 0 0 16px; }
+      .chips { display:flex; gap:12px; flex-wrap: wrap; margin: 16px 0 20px; }
+      .chip { background: rgba(255,255,255,.92); color: var(--kent-blue-900); font-weight: 700; padding: 8px 14px; border-radius: 18px; font-size: 14px; }
+      .hero-ctas { display:flex; gap: 12px; }
+      .btn-gold { background: linear-gradient(90deg, #d6b25e, #f0d58b); color: #122; font-weight: 800; border: none; border-radius: 10px; padding: 12px 18px; }
+      .btn-light { background: #fff; color: var(--kent-blue-900); font-weight: 800; border: none; border-radius: 10px; padding: 12px 18px; }
+
+      .kpis { display:flex; gap: 16px; margin-top: 24px; flex-wrap: wrap; }
+      .kpi { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 14px 16px; min-width: 160px; }
+      .kpi .n { font-weight: 900; font-size: 24px; }
+      .kpi .l { color:#eaf1fb; font-size: 12px; }
+
+      .hero-visual { position: relative; border-radius: 20px; overflow: hidden; height: 420px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); box-shadow: var(--shadow); }
+      .hero-visual::after { content:""; position:absolute; inset:0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent); transform: translateX(-100%); animation: sweep 6s linear infinite; }
+      @keyframes sweep { to { transform: translateX(100%); } }
+
+      /* Quick actions */
+      .quick { margin-top: -26px; }
+      .quick .strip { display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; background:#fff; border-radius: 12px; box-shadow: var(--shadow); padding: 14px; border:1px solid var(--card-border); }
+      .quick .item { background: linear-gradient(135deg, var(--kent-blue-100), var(--kent-blue-050)); border-radius: 10px; padding: 14px; font-weight: 700; }
+
+      /* Services */
+      .services-grid { display:grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+      .service { position: relative; overflow: hidden; padding: 16px; }
+      .service .band { position:absolute; left:0; right:0; bottom:0; height: 84px; background: rgba(11,36,76,.06); }
+      .service h3 { position: relative; margin: 0; padding-top: 8px; }
+      .service p { position: relative; margin: 8px 0 0; color: var(--text-muted); font-size: 13px; }
+      .service:hover { transform: translateY(-2px); transition: transform .25s ease; }
+
+      /* Projects carousel (marquee concept) */
+      .projects-rail { position: relative; overflow: hidden; }
+      .projects-rail .viewport { overflow: hidden; padding: 16px; }
+      .track { display:flex; gap: 16px; }
+      .track .p { width: 240px; height: 220px; border-radius: 12px; border:1px solid var(--card-border); background: linear-gradient(#fff, #f6f7fb); box-shadow: var(--shadow); }
+      .track.animate { animation: slide 18s linear infinite; }
+      @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+      .dots { display:flex; gap: 8px; justify-content: center; margin-top: 8px; }
+      .dot { width: 8px; height: 8px; border-radius: 50%; background: #b6c2d6; }
+      .dot.active { background: var(--text-strong); }
+
+      /* Stats strip */
+      .stats { background: #f4f6fb; }
+      .stats .grid { display:grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+      .stat .n { font-weight: 900; font-size: clamp(22px, 3vw, 36px); }
+      .stat .l { color: var(--text-muted); }
+
+      /* News cards */
+      .news-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+      .news { overflow: hidden; }
+      .news .thumb { height: 120px; background: #dfe7f5; border-top-left-radius: 16px; border-top-right-radius: 16px; }
+      .news .body { padding: 14px 16px 18px; }
+      .hr { height: 1px; background: rgba(11,36,76,.12); margin: 10px 0; }
+      .s1, .s2 { height: 12px; background: #d3dbe8; border-radius: 6px; }
+      .s1 { width: 70%; }
+      .s2 { width: 55%; margin-top: 8px; }
+
+      /* Partners */
+      .partners-grid { display:grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+      .partner { height: 80px; border-radius: 12px; border:1px solid var(--card-border); background: #fff; box-shadow: var(--shadow); }
+
+      /* Footer */
+      .site-footer { background: var(--kent-blue-900); color: #fff; position: relative; }
+      .site-footer .grid { display:grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; gap: 24px; }
+      .foot-muted { color: rgba(255,255,255,.85); }
+      .foot-hr { height: 1px; background: rgba(255,255,255,.15); margin-top: 20px; }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .hero-grid { grid-template-columns: 1fr; }
+        .services-grid { grid-template-columns: repeat(2, 1fr); }
+        .news-grid { grid-template-columns: repeat(2, 1fr); }
+        .partners-grid { grid-template-columns: repeat(3, 1fr); }
+        .site-footer .grid { grid-template-columns: 1fr 1fr; }
+      }
+      @media (max-width: 640px) {
+        .services-grid { grid-template-columns: 1fr; }
+        .news-grid { grid-template-columns: 1fr; }
+        .partners-grid { grid-template-columns: repeat(2, 1fr); }
+        .nav-links { display: none; }
+        .nav { grid-template-columns: 1fr auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HERO -->
+    <header class="hero section" aria-label="Hero">
+      <nav class="nav" aria-label="Primary">
+        <div class="nav-brand">KENT KONUT</div>
+        <div style="display:flex; align-items:center;">
+          <div class="nav-links">
+            <span>Projeler</span>
+            <span>Kurumsal</span>
+            <span>Hizmetler</span>
+            <span>Haberler</span>
+            <span>İletişim</span>
+          </div>
+          <button class="nav-cta">Teklif Al</button>
+        </div>
+      </nav>
+      <div class="container hero-wrap">
+        <div class="hero-grid">
+          <div class="hero-card">
+            <h1 class="hero-title">Modern Konut ve Proje Geliştirme</h1>
+            <p class="hero-lead">Şehirler için sürdürülebilir, estetik ve yenilikçi yaşam alanları</p>
+            <div class="chips" aria-label="Özellikler">
+              <span class="chip">Yenilikçi</span>
+              <span class="chip">Sürdürülebilir</span>
+              <span class="chip">Kurumsal Güven</span>
+            </div>
+            <div class="hero-ctas">
+              <button class="btn-gold">Projeleri Gör</button>
+              <button class="btn-light">Bize Ulaşın</button>
+            </div>
+            <div class="kpis" role="list" aria-label="KPI">
+              <div class="kpi" role="listitem"><div class="n">10.6K+</div><div class="l">Tamamlanan Konut</div></div>
+              <div class="kpi" role="listitem"><div class="n">120</div><div class="l">İşyeri Teslim</div></div>
+              <div class="kpi" role="listitem"><div class="n">25+ Yıl</div><div class="l">Deneyim</div></div>
+            </div>
+          </div>
+          <div class="hero-visual" aria-label="Hero görsel alanı (carousel placeholder)"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- QUICK ACTIONS -->
+    <section class="quick" aria-label="Hızlı Aksiyonlar">
+      <div class="container">
+        <div class="strip">
+          <div class="item">Sanal POS</div>
+          <div class="item">Projelerimiz</div>
+          <div class="item">Sağlık Kent Konutları</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="section" aria-labelledby="services-title">
+      <div class="container">
+        <h2 id="services-title" class="title">Hizmetlerimiz</h2>
+        <p class="lead">Öne çıkan kurumsal hizmet alanlarımız</p>
+        <div class="services-grid">
+          <div class="card service"><div class="band"></div><h3>Konut Hizmetleri</h3><p>Kısa açıklama iki satır...</p></div>
+          <div class="card service"><div class="band"></div><h3>Hafriyat Hizmetleri</h3><p>Kısa açıklama iki satır...</p></div>
+          <div class="card service"><div class="band"></div><h3>Mimari Projelendirme</h3><p>Kısa açıklama iki satır...</p></div>
+          <div class="card service"><div class="band"></div><h3>Kentsel Dönüşüm</h3><p>Kısa açıklama iki satır...</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURED PROJECTS (MARQUEE CONCEPT) -->
+    <section class="section" aria-labelledby="projects-title">
+      <div class="container">
+        <h2 id="projects-title" class="title">Öne Çıkan Projeler</h2>
+        <p class="lead">Devam eden ve tamamlanan projelerden seçkiler</p>
+        <div class="projects-rail card">
+          <div class="viewport">
+            <div class="track animate">
+              <div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div>
+              <div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div>
+            </div>
+          </div>
+          <div class="dots" aria-hidden="true">
+            <div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS STRIP -->
+    <section class="stats section" aria-label="İstatistikler">
+      <div class="container grid">
+        <div class="stat"><div class="n">1.2M m²</div><div class="l">İnşa edilen yaşam alanı</div></div>
+        <div class="stat"><div class="n">98%</div><div class="l">Müşteri memnuniyeti</div></div>
+        <div class="stat"><div class="n">50+</div><div class="l">Tamamlanan proje</div></div>
+        <div class="stat"><div class="n">25+</div><div class="l">Yıllık tecrübe</div></div>
+      </div>
+    </section>
+
+    <!-- NEWS -->
+    <section class="section" aria-labelledby="news-title">
+      <div class="container">
+        <h2 id="news-title" class="title">Bizden Haberler</h2>
+        <p class="lead">Güncel duyuru ve gelişmeler</p>
+        <div class="news-grid">
+          <article class="card news" aria-label="Haber kartı">
+            <div class="thumb"></div>
+            <div class="body">
+              <div class="hr"></div>
+              <div class="s1"></div>
+              <div class="s2"></div>
+            </div>
+          </article>
+          <article class="card news" aria-label="Haber kartı">
+            <div class="thumb"></div>
+            <div class="body">
+              <div class="hr"></div>
+              <div class="s1"></div>
+              <div class="s2"></div>
+            </div>
+          </article>
+          <article class="card news" aria-label="Haber kartı">
+            <div class="thumb"></div>
+            <div class="body">
+              <div class="hr"></div>
+              <div class="s1"></div>
+              <div class="s2"></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PARTNERS -->
+    <section class="section" aria-labelledby="partners-title">
+      <div class="container">
+        <h2 id="partners-title" class="title">Referanslar</h2>
+        <p class="lead">İş ortaklarımız ve kurumlar</p>
+        <div class="partners-grid">
+          <div class="partner"></div><div class="partner"></div><div class="partner"></div>
+          <div class="partner"></div><div class="partner"></div><div class="partner"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="site-footer section" aria-label="Alt Bilgi">
+      <div class="container">
+        <div class="grid">
+          <div>
+            <div style="font-weight:800; letter-spacing:.3px;">KENT KONUT</div>
+            <div style="height:6px; width: 220px; background: linear-gradient(90deg, #d6b25e, #f0d58b); border-radius:3px; margin:10px 0 12px;"></div>
+            <div class="foot-muted">Körfez Mah. Hafız Binbaşı Cad. No:3 İzmit / Kocaeli</div>
+            <div class="foot-muted">halklailiskiler@kentkonut.com.tr • 0 262 331 0703</div>
+          </div>
+          <div>
+            <div class="foot-muted" style="font-weight:800;">Kurumsal</div>
+            <div class="foot-muted">İhale Yönetimi</div>
+            <div class="foot-muted">Kurumsal Kimlik</div>
+            <div class="foot-muted">Yayınlarımız</div>
+          </div>
+          <div>
+            <div class="foot-muted" style="font-weight:800;">Hizmetler</div>
+            <div class="foot-muted">Hafriyat</div>
+            <div class="foot-muted">Kentsel Dönüşüm</div>
+            <div class="foot-muted">Mimari Projelendirme</div>
+          </div>
+          <div>
+            <div class="foot-muted" style="font-weight:800;">Hızlı Erişim</div>
+            <div class="foot-muted">Sanal POS</div>
+            <div class="foot-muted">Kredi Hesaplama</div>
+            <div class="foot-muted">Dökümanlarımız</div>
+          </div>
+        </div>
+        <div class="foot-hr"></div>
+        <div class="foot-muted" style="margin-top:12px;">KBB İştiraki • Site Kullanımı • KVKK • RSS • Web Mail</div>
+      </div>
+    </footer>
+  </body>
+  </html>
+
+

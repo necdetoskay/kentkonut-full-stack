@@ -1,0 +1,9 @@
+{
+  "pageId": "cmbwc9s240000inxl961v85qy",
+  "type": "TEXT",
+  "title": "UI Test İçeriği",
+  "content": "<p>Bu içerik <strong>ContentEditor UI testi</strong> için oluşturuldu. Türkçe karakterler: ğüşiöç</p>",
+  "order": 10,
+  "isActive": true,
+  "fullWidth": false
+}

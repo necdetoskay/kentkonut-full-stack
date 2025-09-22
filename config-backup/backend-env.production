@@ -1,0 +1,41 @@
+# Production Environment Configuration for KentKonut Backend
+# This file contains production-ready environment variables
+
+# Database Configuration (Container networking)
+DATABASE_URL=postgresql://postgres:P@ssw0rd@postgresql:5432/kentkonutdb
+
+# NextAuth Configuration
+NEXTAUTH_SECRET=your-super-secret-production-key-change-this-in-production
+NEXTAUTH_URL=http://localhost:3021
+NEXTAUTH_URL_INTERNAL=http://backend:3021
+NEXT_PUBLIC_API_URL=http://localhost:3021
+
+# CORS Configuration - Allow frontend origins
+CORS_ALLOWED_ORIGIN=http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3020
+
+# Redis Configuration (Container networking)
+REDIS_URL=redis://redis:6379
+
+# File Upload Configuration
+UPLOAD_DIR=/app/public/uploads
+MAX_FILE_SIZE=10485760
+
+# Security Configuration
+RATE_LIMIT_WINDOW=900000
+RATE_LIMIT_MAX=100
+
+# Analytics Configuration
+ANALYTICS_ENABLED=true
+ANALYTICS_CONSENT_REQUIRED=false
+
+# Production Configuration
+NODE_ENV=production
+PORT=3021
+
+# Disable telemetry in production
+NEXT_TELEMETRY_DISABLED=1
+
+# Admin User Configuration (for automatic creation)
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=Admin123!
+ADMIN_NAME=Admin User

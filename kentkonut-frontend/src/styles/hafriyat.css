@@ -1,0 +1,126 @@
+.hafriyat-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.circular-progress-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin-bottom: 3rem;
+}
+
+.circular-progress-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1rem;
+}
+
+.progress-bars-container {
+  margin-top: 2rem;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  font-size: 1.2rem;
+  color: #ff4d4f;
+}
+
+/* Hafriyat İçerik Stilleri - Ortak CSS kullanımı */
+.hafriyat-content {
+  font-size: var(--typography-font-size-base);
+  line-height: 1.8;
+  font-family: var(--typography-font-family-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: var(--text-rendering);
+  font-feature-settings: var(--font-feature-settings);
+}
+
+/* Nötr başlık stilleri (backend önizlemesine yakın) */
+.hafriyat-content h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 1rem 0 .5rem 0;
+  line-height: 1.3;
+}
+
+.hafriyat-content h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 1.25rem 0 .5rem 0;
+  line-height: 1.4;
+}
+
+.hafriyat-content p {
+  margin: 0 0 var(--spacing-margin-bottom) 0;
+  text-align: justify;
+  font-size: 1.375rem;
+  line-height: inherit;
+  color: inherit;
+}
+
+.hafriyat-content ul {
+  margin: 1rem 0 1rem 1.25rem;
+  padding-left: 1rem;
+  list-style: disc;
+}
+
+.hafriyat-content ul li {
+  padding: .25rem 0;
+  margin: .25rem 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+.hafriyat-content ul li:hover { background: transparent; transform: none; }
+
+/* Varsayılan marker kullanılacak, özel ikon kaldırıldı */
+
+@media (max-width: 768px) {
+  .hafriyat-container {
+    padding: 1rem;
+  }
+  
+  .circular-progress-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .hafriyat-content h2 {
+    font-size: 2.25rem;
+  }
+  
+  .hafriyat-content h3 {
+    font-size: 1.75rem;
+  }
+  
+  .hafriyat-content p {
+    font-size: 1.25rem;
+    text-align: left;
+  }
+  
+  .hafriyat-content ul li {
+    padding-left: 1.5rem;
+  }
+}

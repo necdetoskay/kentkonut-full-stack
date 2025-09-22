@@ -1,0 +1,6 @@
+{
+  "title": "GÜNCELLENEN UI Test İçeriği",
+  "content": "<p>Bu içerik <strong>ContentEditor düzenleme testi</strong> için güncellendi. <em>Türkçe karakterler test:</em> ğüşiöç ĞÜŞIÖÇ</p><p>İkinci paragraf da eklendi.</p>",
+  "isActive": true,
+  "fullWidth": true
+}

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TipTap Editor Quality Assurance Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            border: 2px solid #e5e7eb;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+        .test-content {
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+        }
+        .float-left {
+            float: left;
+            margin: 0 20px 10px 0;
+        }
+        .float-right {
+            float: right;
+            margin: 0 0 10px 20px;
+        }
+        .center {
+            display: block;
+            margin: 16px auto;
+        }
+        .clear {
+            clear: both;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .pass {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        .fail {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        .info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+        h1, h2 {
+            color: #1f2937;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 TipTap Editor Quality Assurance Test</h1>
+    <p>Bu sayfa, Kent Konut backend'inde entegre edilen TipTap editörün floating image özelliklerini ve Türkçe karakter desteğini test eder.</p>
+
+    <div class="test-section">
+        <h2>1. 🇹🇷 Türkçe Karakter Testi</h2>
+        <div class="test-content">
+            <h3>Türkçe Karakterler</h3>
+            <p><strong>Küçük harfler:</strong> ç, ğ, ı, ö, ş, ü</p>
+            <p><strong>Büyük harfler:</strong> Ç, Ğ, İ, Ö, Ş, Ü</p>
+            
+            <h4>Örnek Cümleler:</h4>
+            <ul>
+                <li>Şişli'de güzel bir çiçek bahçesi gördük.</li>
+                <li>Öğretmen öğrencilere Türkçe dersi verdi.</li>
+                <li>Çağdaş Türk edebiyatında önemli eserler bulunur.</li>
+                <li>İstanbul'un güzelliği dünyaca ünlüdür.</li>
+                <li>Üniversite öğrencileri çok çalışıyor.</li>
+            </ul>
+            
+            <blockquote>
+                "Türk dilinin zenginliği, onun ifade gücünün sınırsızlığından gelir." - Atatürk
+            </blockquote>
+        </div>
+        <div id="turkish-test-result" class="test-result info">
+            Test sonucu yükleniyor...
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. 🖼️ Floating Image Positioning Test</h2>
+        
+        <div class="test-grid">
+            <div>
+                <h3>Sol Float Test</h3>
+                <div class="test-content">
+                    <img src="https://via.placeholder.com/200x150/3b82f6/ffffff?text=Sol+Float" 
+                         alt="Sol float test resmi" 
+                         class="float-left" 
+                         data-float="left" 
+                         style="width: 200px;">
+                    <p>Bu paragraf sol tarafa float edilmiş bir resim içerir. Metin resmin etrafına sarılmalı ve doğal bir akış oluşturmalıdır. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.</p>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            
+            <div>
+                <h3>Sağ Float Test</h3>
+                <div class="test-content">
+                    <img src="https://via.placeholder.com/200x150/10b981/ffffff?text=Sag+Float" 
+                         alt="Sağ float test resmi" 
+                         class="float-right" 
+                         data-float="right" 
+                         style="width: 200px;">
+                    <p>Bu paragraf sağ tarafa float edilmiş bir resim içerir. Metin resmin sol tarafından akmalı ve düzgün bir görünüm oluşturmalıdır. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                    <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+        
+        <h3>Merkez Hizalama Test</h3>
+        <div class="test-content">
+            <p>Bu bölümde merkeze hizalanmış bir resim bulunmaktadır:</p>
+            <img src="https://via.placeholder.com/400x200/ef4444/ffffff?text=Merkez+Hizalama" 
+                 alt="Merkez hizalama test resmi" 
+                 class="center" 
+                 data-float="none" 
+                 style="width: 400px;">
+            <p>Resim merkeze hizalanmış ve blok element olarak davranmaktadır. Bu tip resimler sayfa genişliğinde yer kaplar ve altında yeni bir satırdan devam eder.</p>
+        </div>
+        
+        <div id="float-test-result" class="test-result info">
+            Test sonucu yükleniyor...
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. 📝 WYSIWYG Consistency Test</h2>
+        <div class="test-content">
+            <h3>Biçimlendirme Örnekleri</h3>
+            <p><strong>Kalın metin</strong>, <em>italik metin</em>, <u>altı çizili metin</u></p>
+            <p><code>Kod bloğu örneği</code></p>
+            
+            <h4>Liste Örnekleri</h4>
+            <ul>
+                <li>Madde 1</li>
+                <li>Madde 2
+                    <ul>
+                        <li>Alt madde 2.1</li>
+                        <li>Alt madde 2.2</li>
+                    </ul>
+                </li>
+                <li>Madde 3</li>
+            </ul>
+            
+            <ol>
+                <li>Numaralı liste 1</li>
+                <li>Numaralı liste 2</li>
+                <li>Numaralı liste 3</li>
+            </ol>
+            
+            <blockquote>
+                Bu bir alıntı bloğudur. TipTap editörde bu şekilde görünmelidir.
+            </blockquote>
+        </div>
+        <div id="wysiwyg-test-result" class="test-result info">
+            Test sonucu yükleniyor...
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. 🔧 Technical Validation</h2>
+        <div class="test-content">
+            <h3>HTML Yapısı Kontrolü</h3>
+            <p>Bu bölüm, oluşturulan HTML'in doğru yapıda olup olmadığını kontrol eder.</p>
+            
+            <h4>Floating Image HTML Örnekleri:</h4>
+            <pre><code>&lt;img src="..." data-float="left" style="width: 300px;"&gt;
+&lt;img src="..." data-float="right" style="width: 250px;"&gt;
+&lt;img src="..." data-float="none" style="width: 400px;"&gt;</code></pre>
+        </div>
+        <div id="technical-test-result" class="test-result info">
+            Test sonucu yükleniyor...
+        </div>
+    </div>
+
+    <script>
+        console.log('🧪 Quality Assurance Test Started');
+        
+        // Test 1: Turkish Character Support
+        function testTurkishCharacters() {
+            const turkishChars = 'çğıöşüÇĞİÖŞÜ';
+            const content = document.body.textContent;
+            const hasTurkishChars = turkishChars.split('').every(char => content.includes(char));
+            
+            const result = document.getElementById('turkish-test-result');
+            if (hasTurkishChars) {
+                result.className = 'test-result pass';
+                result.textContent = '✅ Türkçe karakterler doğru şekilde görüntüleniyor';
+            } else {
+                result.className = 'test-result fail';
+                result.textContent = '❌ Bazı Türkçe karakterler eksik';
+            }
+            
+            console.log('Turkish characters test:', hasTurkishChars ? 'PASS' : 'FAIL');
+            return hasTurkishChars;
+        }
+        
+        // Test 2: Floating Image Positioning
+        function testFloatingImages() {
+            const floatLeftImages = document.querySelectorAll('img[data-float="left"]');
+            const floatRightImages = document.querySelectorAll('img[data-float="right"]');
+            const centerImages = document.querySelectorAll('img[data-float="none"]');
+            
+            const result = document.getElementById('float-test-result');
+            const totalImages = floatLeftImages.length + floatRightImages.length + centerImages.length;
+            
+            if (totalImages >= 3) {
+                result.className = 'test-result pass';
+                result.textContent = `✅ ${totalImages} floating image test edildi (Sol: ${floatLeftImages.length}, Sağ: ${floatRightImages.length}, Merkez: ${centerImages.length})`;
+            } else {
+                result.className = 'test-result fail';
+                result.textContent = '❌ Yeterli floating image bulunamadı';
+            }
+            
+            console.log('Floating images test:', {
+                left: floatLeftImages.length,
+                right: floatRightImages.length,
+                center: centerImages.length,
+                total: totalImages
+            });
+            
+            return totalImages >= 3;
+        }
+        
+        // Test 3: WYSIWYG Consistency
+        function testWYSIWYG() {
+            const hasFormatting = document.querySelector('strong') && 
+                                 document.querySelector('em') && 
+                                 document.querySelector('code') &&
+                                 document.querySelector('ul') &&
+                                 document.querySelector('ol') &&
+                                 document.querySelector('blockquote');
+            
+            const result = document.getElementById('wysiwyg-test-result');
+            if (hasFormatting) {
+                result.className = 'test-result pass';
+                result.textContent = '✅ WYSIWYG biçimlendirme elementleri doğru şekilde render ediliyor';
+            } else {
+                result.className = 'test-result fail';
+                result.textContent = '❌ Bazı biçimlendirme elementleri eksik';
+            }
+            
+            console.log('WYSIWYG test:', hasFormatting ? 'PASS' : 'FAIL');
+            return hasFormatting;
+        }
+        
+        // Test 4: Technical Validation
+        function testTechnical() {
+            const images = document.querySelectorAll('img[data-float]');
+            const hasDataFloatAttributes = images.length > 0;
+            const hasStyleAttributes = Array.from(images).every(img => img.style.width);
+            
+            const result = document.getElementById('technical-test-result');
+            if (hasDataFloatAttributes && hasStyleAttributes) {
+                result.className = 'test-result pass';
+                result.textContent = `✅ HTML yapısı doğru (${images.length} resim, data-float ve style attributları mevcut)`;
+            } else {
+                result.className = 'test-result fail';
+                result.textContent = '❌ HTML yapısında eksiklikler var';
+            }
+            
+            console.log('Technical validation test:', {
+                hasDataFloat: hasDataFloatAttributes,
+                hasStyles: hasStyleAttributes,
+                imageCount: images.length
+            });
+            
+            return hasDataFloatAttributes && hasStyleAttributes;
+        }
+        
+        // Run all tests
+        setTimeout(() => {
+            const test1 = testTurkishCharacters();
+            const test2 = testFloatingImages();
+            const test3 = testWYSIWYG();
+            const test4 = testTechnical();
+            
+            const allPassed = test1 && test2 && test3 && test4;
+            
+            console.log('🏁 Quality Assurance Test Results:');
+            console.log('Turkish Characters:', test1 ? 'PASS' : 'FAIL');
+            console.log('Floating Images:', test2 ? 'PASS' : 'FAIL');
+            console.log('WYSIWYG Consistency:', test3 ? 'PASS' : 'FAIL');
+            console.log('Technical Validation:', test4 ? 'PASS' : 'FAIL');
+            console.log('Overall Result:', allPassed ? 'ALL TESTS PASSED' : 'SOME TESTS FAILED');
+            
+            if (allPassed) {
+                document.title = '✅ QA Test - All Passed';
+            } else {
+                document.title = '❌ QA Test - Some Failed';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

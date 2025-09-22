@@ -1,0 +1,13 @@
+"id": "cmf2eetkl0000uexpcvbhg1cr",
+            "order": 0,
+            "isActive": true,
+            "sourceType": "PRESIDENT",
+            "sourceRefId": "cmeskhspj000h27bopqfxlmhu",
+            "titleOverride": "BAŞKANIMIZ",
+            "subtitleOverride": "Doç. Dr. Tahir BÜYÜKAKIN",
+            "imageMode": "CUSTOM",
+            "imageUrl": "https:///media/kurumsal/1756214676829_pvrovfb3ucb.png",
+            "routeOverride": "/tahir-buyukakin",
+            "redirectUrl": null,
+            "createdAt": "2025-09-02T10:21:23.633Z",
+            "updatedAt": "2025-09-03T05:45:07.657Z"

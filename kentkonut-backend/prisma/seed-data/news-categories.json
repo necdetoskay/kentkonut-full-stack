@@ -1,0 +1,4 @@
+[
+  { "id": 101, "name": "Kentsel Dönüşüm", "slug": "kentsel-donusum-seed", "order": 1, "active": true },
+  { "id": 102, "name": "Yeni Projeler", "slug": "yeni-projeler-seed", "order": 2, "active": true }
+]

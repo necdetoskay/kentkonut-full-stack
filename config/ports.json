@@ -1,0 +1,61 @@
+{
+  "_note": "This file contains port and URL configurations for different environments.",
+  "development": {
+    "backend": {
+      "port": "3021",
+      "url": "http://localhost:3021"
+    },
+    "frontend": {
+      "port": "3020",
+      "url": "http://localhost:3020"
+    },
+    "database": {
+      "port": "5433",
+      "url": "postgresql://postgres:P@ssw0rd@172.41.42.51:5433/kentkonutdb"
+    },
+    "redis": {
+      "port": "6379",
+      "url": "redis://localhost:6379"
+    }
+  },
+  "production": {
+    "backend": {
+      "port": "3021",
+      "url": "http://172.41.42.51:3021"
+    },
+    "frontend": {
+      "port": "3020",
+      "url": "http://172.41.42.51:3020"
+    },
+    "database": {
+      "port": "5433",
+      "url": "postgresql://postgres:P@ssw0rd@172.41.42.51:5433/kentkonutdb"
+    },
+    "redis": {
+      "port": "6379",
+      "url": "redis://redis:6379"
+    }
+  },
+  "docker": {
+    "backend": {
+      "internal_port": "3021",
+      "external_port": "3021",
+      "url": "http://backend:3021"
+    },
+    "frontend": {
+      "internal_port": "3020",
+      "external_port": "3020",
+      "url": "http://frontend:3020"
+    },
+    "database": {
+      "internal_port": "5432",
+      "external_port": "5433",
+      "url": "postgresql://postgres:P@ssw0rd@172.41.42.51:5433/kentkonutdb"
+    },
+    "redis": {
+      "internal_port": "6379",
+      "external_port": "6379",
+      "url": "redis://redis:6379"
+    }
+  }
+}

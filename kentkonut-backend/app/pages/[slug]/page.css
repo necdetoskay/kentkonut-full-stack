@@ -1,0 +1,430 @@
+/* Sayfa detay sayfası için özel stiller */
+
+/* Float sorunlarını çözmek için clearfix */
+.content-viewer::after,
+.content-display::after,
+.full-content::after,
+.page-content::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.content-viewer {
+  height: auto !important;
+  min-height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  white-space: normal !important;
+  text-overflow: clip !important;
+  word-break: normal !important;
+  display: block !important;
+  clear: both !important;
+}
+
+/* İçerik görüntüleme için ek stil iyileştirmeleri */
+.content-display,
+.full-content {
+  height: auto !important; 
+  min-height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  white-space: normal !important;
+  text-overflow: clip !important;
+  word-break: normal !important;
+  display: block !important;
+  clear: both !important;
+}
+
+.page-content {
+  width: 100%;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  overflow: visible !important;
+  display: block !important;
+  min-height: 300px;
+  clear: both !important;
+}
+
+/* Her content block için float temizleme */
+.page-content > div {
+  clear: both !important;
+  display: block !important;
+  overflow: hidden !important;
+  width: 100% !important;
+}
+
+.page-content img {
+  height: auto;
+  margin: 0; /* Default margin'i sıfırla, spesifik kurallar aşağıda */
+  float: none !important; /* Hiçbir resmin float olmamasını sağla */
+  display: block !important;
+  position: static !important;
+  /* Remove max-width: 100% to preserve inline width styles */
+}
+
+/* Image wrapper'lar için özel margin'ler */
+.page-content .image-wrapper {
+  margin: 0; /* Default margin'i sıfırla */
+}
+
+/* Sol tarafa float edilmiş resimler: sadece sağ ve alttan margin */
+.page-content .image-wrapper.float-left {
+  margin: 0 25px 15px 0; /* Üst: 0, Sağ: 25px, Alt: 15px, Sol: 0 */
+  float: left;
+}
+
+/* Sağ tarafa float edilmiş resimler: sadece sol ve alttan margin */
+.page-content .image-wrapper.float-right {
+  margin: 0 0 15px 25px; /* Üst: 0, Sağ: 0, Alt: 15px, Sol: 25px */
+  float: right;
+}
+
+/* Normal resimler için (float olmayan) */
+.page-content .image-wrapper:not(.float-left):not(.float-right) {
+  margin: 15px auto; /* Ortalanmış resimler için üst-alt margin */
+  display: block;
+}
+
+/* Direkt img elementleri için float kuralları (wrapper olmayan resimler) */
+.page-content img.float-left,
+.page-content-images img.float-left {
+  float: left;
+  margin: 0 25px 15px 0; /* Sadece sağ ve alttan margin */
+}
+
+.page-content img.float-right,
+.page-content-images img.float-right {
+  float: right;
+  margin: 0 0 15px 25px; /* Sadece sol ve alttan margin */
+}
+
+/* Normal img elementleri için (float olmayan) */
+.page-content img:not(.float-left):not(.float-right),
+.page-content-images img:not(.float-left):not(.float-right) {
+  margin: 15px auto;
+  display: block;
+}
+
+/* Preserve inline image dimensions while ensuring responsive behavior */
+.page-content img[style*="width"] {
+  /* Allow inline width styles to take precedence */
+  max-width: none !important;
+}
+
+/* Ancak, mobilde resimlerin kapsayıcılarını aşmadığından emin ol */
+@media (max-width: 768px) {
+  .page-content img[style*="width"] {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+    /* Mobile'da resimler için margin reset */
+  .page-content img,
+  .page-content-images img {
+    margin: 10px 0;
+  }
+  
+  /* Mobile'da float'ları kaldır, tüm resimler blok olsun */
+  .page-content .image-wrapper.float-left,
+  .page-content .image-wrapper.float-right,
+  .page-content-images .image-wrapper.float-left,
+  .page-content-images .image-wrapper.float-right {
+    float: none;
+    margin: 15px auto; /* Mobile'da ortalanmış margin */
+    display: block;
+    text-align: center;
+  }
+  
+  .page-content-images .image-wrapper {
+    margin: 15px 0;
+    width: 100% !important;
+  }
+}
+
+.page-content p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  display: block;
+  overflow: visible !important;
+  white-space: normal !important;
+  text-overflow: clip !important;
+}
+
+.page-content h1,
+.page-content h2, 
+.page-content h3, 
+.page-content h4, 
+.page-content h5, 
+.page-content h6 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.page-content h1 {
+  font-size: 2rem;
+}
+
+.page-content h2 {
+  font-size: 1.75rem;
+}
+
+.page-content h3 {
+  font-size: 1.5rem;
+}
+
+.page-content ul,
+.page-content ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.page-content ul {
+  list-style-type: disc;
+}
+
+.page-content ol {
+  list-style-type: decimal;
+}
+
+.page-content li {
+  margin-bottom: 0.5rem;
+}
+
+.page-content a {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+
+.page-content blockquote {
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  font-style: italic;
+}
+
+.page-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.page-content table th,
+.page-content table td {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem;
+}
+
+.page-content pre {
+  background-color: #f1f5f9;
+  padding: 1rem;
+  border-radius: 0.25rem;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+.page-content code {
+  background-color: #f1f5f9;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-family: monospace;
+}
+
+/* Sadece 2 satır sorununun çözümü için */
+.full-content {
+  overflow: visible !important;
+  max-height: none !important;
+  height: auto !important;
+  min-height: auto !important;
+  white-space: normal !important;
+}
+
+.full-content p {
+  white-space: normal !important;
+  overflow: visible !important;
+  display: block !important;
+  min-height: auto !important;
+  line-height: 1.6 !important;
+  margin-bottom: 1em !important;
+}
+
+.full-content * {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* Metni iki satırla sınırlandıran stilleri geçersiz kılmak için */
+.full-content p,
+.full-content span,
+.full-content div,
+.full-content h1,
+.full-content h2,
+.full-content h3,
+.full-content h4,
+.full-content h5,
+.full-content h6,
+.full-content li {
+  display: block !important;
+  -webkit-line-clamp: unset !important;
+  line-clamp: unset !important;
+  -webkit-box-orient: unset !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* ContentRenderer component için özel stiller */
+.page-content-images img {
+  margin: 0; /* Default margin'i sıfırla */
+  border-radius: 8px; /* Köşeleri yuvarla */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Hafif gölge ekle */
+}
+
+.page-content-images .image-wrapper {
+  margin: 0; /* Default margin'i sıfırla */
+  display: inline-block;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Sol tarafa float edilmiş resimler: sadece sağ ve alttan margin */
+.page-content-images .image-wrapper.float-left {
+  float: left;
+  margin: 0 25px 15px 0; /* Üst: 0, Sağ: 25px, Alt: 15px, Sol: 0 */
+}
+
+/* Sağ tarafa float edilmiş resimler: sadece sol ve alttan margin */
+.page-content-images .image-wrapper.float-right {
+  float: right;
+  margin: 0 0 15px 25px; /* Üst: 0, Sağ: 0, Alt: 15px, Sol: 25px */
+}
+
+/* Normal resimler için (float olmayan) */
+.page-content-images .image-wrapper:not(.float-left):not(.float-right) {
+  margin: 15px auto; /* Ortalanmış resimler için üst-alt margin */
+  display: block;
+}
+
+/* Paragraf'larda daha iyi text flow için */
+.page-content-images p {
+  text-align: justify;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+/* Galeri özel kuralları - inline-block layout'u korumak için */
+.content-viewer div[style*="font-size: 0"] {
+  font-size: 0 !important;
+  line-height: 0 !important;
+  display: block !important;
+  clear: none !important;
+}
+
+.content-viewer div[style*="display: inline-block"] {
+  display: inline-block !important;
+  clear: none !important;
+  float: none !important;
+  overflow: visible !important;
+}
+
+/* Galeri container'lar için özel kurallar */
+.content-viewer div[style*="font-size: 0"] > div {
+  display: inline-block !important;
+  clear: none !important;
+  float: none !important;
+}
+
+/* Galeri resimlerinin doğru boyutlarda kalması için */
+.content-viewer div[style*="display: inline-block"] img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  float: none !important;
+}
+
+/* Injected styles from getStyledContent - REVISED */
+
+.styled-content-wrapper {
+  line-height: 1.7;
+  font-size: 16px;
+  color: #374151;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.styled-content-wrapper p {
+  margin-bottom: 1rem;
+  line-height: 1.7;
+  min-height: 1.7em;
+}
+
+.styled-content-wrapper p:empty {
+  min-height: 1.7em;
+  margin-bottom: 1rem;
+}
+
+.styled-content-wrapper p:empty::before {
+  content: "\00a0";
+  opacity: 0;
+}
+
+.styled-content-wrapper h1, .styled-content-wrapper h2, .styled-content-wrapper h3,
+.styled-content-wrapper h4, .styled-content-wrapper h5, .styled-content-wrapper h6 {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.styled-content-wrapper strong {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.styled-content-wrapper ul, .styled-content-wrapper ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.styled-content-wrapper li {
+  margin-bottom: 0.5rem;
+}
+
+/* --- REVISED IMAGE RULES --- */
+
+/* DEFAULT: Center all images unless specified otherwise */
+.styled-content-wrapper img {
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  max-width: 100%;
+  height: auto;
+  float: none !important; /* Explicitly disable float */
+}
+
+/* OVERRIDE: for left-aligned images */
+.styled-content-wrapper img[data-float="left"] {
+  float: left !important;
+  margin: 0 20px 20px 0 !important;
+  max-width: 300px !important;
+}
+
+/* OVERRIDE: for right-aligned images */
+.styled-content-wrapper img[data-float="right"] {
+  float: right !important;
+  margin: 0 0 20px 20px !important;
+  max-width: 300px !important;
+}
+
+/* Clearfix for the container to handle floated elements */
+.styled-content-wrapper::after {
+  content: "";
+  display: table;
+  clear: both;
+}

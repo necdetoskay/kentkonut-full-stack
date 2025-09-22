@@ -1,0 +1,730 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Shared Styles for consistent backend and frontend rendering */
+@import '../../shared/styles/common.css';
+
+/* Import TipTap Universal Styles for consistent editor and frontend rendering */
+@import '../styles/tiptap-universal-styles.css';
+
+/* TipTap Universal Styles imported above - no additional Tailwind overrides needed */
+
+/* Video aspet oranları */
+.aspect-w-16 {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio (9/16 = 0.5625) */
+  height: 0;
+  overflow: hidden;
+}
+
+.aspect-w-16 iframe,
+.aspect-w-16 video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.375rem;
+}
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+/* Form element styles */
+select,
+input,
+.dropdown-item {
+  @apply text-gray-900 dark:text-gray-100;
+}
+
+/* İçerik görüntüleme için özel stiller */
+.content-display {
+  width: 100%;
+  height: auto !important;
+  overflow: visible !important;
+  max-height: none !important;
+}
+
+/* TipTap Universal CSS handles all floating image styles - no overrides needed */
+
+/* FRONTEND SPECIFIC - Floating Image Text Wrapping Fix */
+.content-display .simple-floating-image.float-left,
+.readonly-content .simple-floating-image.float-left {
+  float: left !important;
+  margin: 0 15px 10px 0 !important;
+  max-width: 50% !important;
+  clear: none !important;
+  display: block !important;
+}
+
+.content-display .simple-floating-image.float-right,
+.readonly-content .simple-floating-image.float-right {
+  float: right !important;
+  margin: 0 0 10px 15px !important;
+  max-width: 50% !important;
+  clear: none !important;
+  display: block !important;
+}
+
+.content-display .simple-floating-image.center,
+.readonly-content .simple-floating-image.center {
+  float: none !important;
+  margin: 15px auto !important;
+  max-width: 80% !important;
+  clear: both;
+  display: block !important;
+  text-align: center;
+}
+
+/* TipTap Universal CSS handles all text flow - no overrides needed */
+
+.content-display,
+.readonly-content {
+  overflow: visible !important;
+}
+
+/* Ensure floating works in all contexts */
+.simple-floating-image[style*="float: left"] {
+  float: left !important;
+  margin: 0 15px 10px 0 !important;
+}
+
+.simple-floating-image[style*="float: right"] {
+  float: right !important;
+  margin: 0 0 10px 15px !important;
+}
+
+/* FRONTEND SPECIFIC - Override Tailwind and other CSS */
+.content-display {
+  /* Remove any flow-root or contain styles */
+  contain: none !important;
+  display: block !important;
+  overflow: visible !important;
+}
+
+.content-display * {
+  /* Ensure all elements allow text flow */
+  overflow: visible !important;
+}
+
+/* Force inline styles to work */
+img[style*="float: left"] {
+  float: left !important;
+  margin: 0 15px 10px 0 !important;
+  max-width: 50% !important;
+  clear: none !important;
+}
+
+img[style*="float: right"] {
+  float: right !important;
+  margin: 0 0 10px 15px !important;
+  max-width: 50% !important;
+  clear: none !important;
+}
+
+/* Clear floats at the end of content containers */
+.content-display::after,
+.readonly-content::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+/* ULTRA HIGH PRIORITY - Override everything for floating images */
+.content-display img[style*="float: left"],
+.readonly-content img[style*="float: left"],
+.content-display img.simple-floating-image.float-left,
+.readonly-content img.simple-floating-image.float-left {
+  float: left !important;
+  margin: 0 15px 10px 0 !important;
+  max-width: 50% !important;
+  clear: none !important;
+  display: block !important;
+  position: static !important;
+}
+
+.content-display img[style*="float: right"],
+.readonly-content img[style*="float: right"],
+.content-display img.simple-floating-image.float-right,
+.readonly-content img.simple-floating-image.float-right {
+  float: right !important;
+  margin: 0 0 10px 15px !important;
+  max-width: 50% !important;
+  clear: none !important;
+  display: block !important;
+  position: static !important;
+}
+
+/* Force paragraphs to not clear floats in content display */
+.content-display p,
+.readonly-content p,
+.content-display div,
+.readonly-content div {
+  clear: none !important;
+  overflow: visible !important;
+  display: block !important;
+  margin-bottom: 1rem !important;
+  line-height: 1.6 !important;
+  contain: none !important;
+  isolation: auto !important;
+  /* Remove any CSS that creates new block formatting context */
+  transform: none !important;
+  filter: none !important;
+  perspective: none !important;
+  clip-path: none !important;
+  mask: none !important;
+}
+
+/* Remove any Tailwind prose styles that might interfere */
+.content-display.prose p,
+.readonly-content.prose p {
+  clear: none !important;
+}
+
+.content-display.prose img,
+.readonly-content.prose img {
+  margin: 0 !important;
+}
+
+/* Ensure container doesn't create new formatting context */
+.content-display {
+  isolation: auto !important;
+  contain: none !important;
+  display: block !important;
+  overflow: visible !important;
+}
+
+.content-display .readonly-content {
+  max-height: none !important;
+  overflow: visible !important;
+  height: auto !important;
+}
+
+/* Page content containers styling */
+.page-content-container {
+  height: auto !important;
+  min-height: 150px;
+  overflow: visible !important;
+}
+
+.dropdown-item:hover {
+  @apply bg-gray-100 dark:bg-gray-700;
+}
+
+/* Form labels and text */
+label,
+.form-text {
+  @apply text-gray-700 dark:text-gray-300;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+  }
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Media Gallery Thumbnail Fixes */
+.media-thumbnail-contain {
+  object-fit: contain !important;
+  object-position: center !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.media-thumbnail-container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: #f9fafb !important;
+  overflow: hidden !important;
+}
+
+/* Ensure aspect ratio containers work properly */
+.media-thumbnail-container.aspect-square {
+  aspect-ratio: 1 / 1 !important;
+}
+
+/* Navigation Loading Overlay Animations */
+@keyframes loading-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes loading-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.loading-overlay-enter {
+  animation: loading-fade-in 0.2s ease-out;
+}
+
+.loading-content-enter {
+  animation: loading-scale-in 0.2s ease-out;
+}
+
+/* Ensure loading overlay is always on top */
+.navigation-loading-overlay {
+  z-index: 9999 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+}
+
+/* Prevent body scroll when loading overlay is active */
+body.loading-active {
+  overflow: hidden;
+}
+
+/* TipTap Universal CSS handles all content styling */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* TipTap Universal CSS handles all styling - no conflicting rules needed */
+
+/* Resim Hizalama Stilleri - Hem editör hem önizleme için */
+img[data-align="left"] {
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 0.5rem;
+  /* Removed clear: left to allow natural text flow */
+}
+
+img[data-align="right"] {
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 0.5rem;
+  /* Removed clear: right to allow natural text flow */
+}
+
+img[data-align="center"] {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1rem;
+  clear: both;
+}
+
+img[data-align="float-left"] {
+  float: left;
+  max-width: 50%;
+  margin-right: 1rem;
+  margin-bottom: 0.5rem;
+  /* No clear property to allow text wrapping */
+}
+
+img[data-align="float-right"] {
+  float: right;
+  max-width: 50%;
+  margin-left: 1rem;
+  margin-bottom: 0.5rem;
+  /* No clear property to allow text wrapping */
+}
+
+/* Enhanced text flow rules for TipTap editor */
+.prose.prose-sm.max-w-none .ProseMirror p {
+  margin-top: 0 !important;
+  margin-bottom: 0.75rem !important;
+  /* Ensure paragraphs don't create block formatting contexts */
+  display: block !important;
+  /* Allow text to flow around floated elements */
+}
+
+/* Specific rules for paragraphs following floating images */
+.prose.prose-sm.max-w-none .ProseMirror .image-wrapper.float-left + p,
+.prose.prose-sm.max-w-none .ProseMirror .image-wrapper.float-right + p,
+.prose.prose-sm.max-w-none .ProseMirror img[data-align="float-left"] + p,
+.prose.prose-sm.max-w-none .ProseMirror img[data-align="float-right"] + p {
+  margin-top: 0 !important;
+  /* Start at the same vertical level as the image */
+}
+
+/* Prevent any clearing behavior on paragraphs */
+.prose.prose-sm.max-w-none .ProseMirror p {
+  clear: none !important;
+  /* Never clear floats automatically */
+}
+
+/* Additional rules for tiptap-image class (for backward compatibility) */
+.prose.prose-sm.max-w-none .ProseMirror .tiptap-image.float-left + p,
+.prose.prose-sm.max-w-none .ProseMirror .tiptap-image.float-right + p {
+  margin-top: 0 !important;
+  /* Start at the same vertical level as the image */
+}
+
+/* Ensure tiptap-image class also follows floating rules */
+.prose.prose-sm.max-w-none .ProseMirror .tiptap-image.float-left,
+.prose.prose-sm.max-w-none .ProseMirror .tiptap-image.float-right {
+  clear: none !important;
+  /* Allow multiple floating elements to coexist */
+}
+
+img[data-align="float-right"] {
+  float: right;
+  max-width: 50%;
+  margin-left: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Önizleme sayfası için özel stiller */
+.prose img[data-align="left"] {
+  float: left !important;
+  margin-right: 1rem !important;
+  margin-bottom: 0.5rem !important;
+  clear: left !important;
+}
+
+.prose img[data-align="right"] {
+  float: right !important;
+  margin-left: 1rem !important;
+  margin-bottom: 0.5rem !important;
+  clear: right !important;
+}
+
+.prose img[data-align="center"] {
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-bottom: 1rem !important;
+  clear: both !important;
+}
+
+.prose img[data-align="float-left"] {
+  float: left !important;
+  max-width: 50% !important;
+  margin-right: 1rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.prose img[data-align="float-right"] {
+  float: right !important;
+  max-width: 50% !important;
+  margin-left: 1rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Image Container Fix - Force proper containment */
+.image-container-fixed {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  background-color: #f9fafb !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.5rem !important;
+}
+
+.image-container-fixed img {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  object-position: center !important;
+}
+
+/* Aspect ratio containers */
+.aspect-square-fixed {
+  aspect-ratio: 1 / 1 !important;
+  position: relative !important;
+}
+
+/* Gallery thumbnail specific fixes */
+.gallery-thumb-container {
+  width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  background-color: #f3f4f6 !important;
+  border-radius: 0.5rem !important;
+}
+
+.gallery-thumb-image {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* SafeHtmlRenderer için clearfix */
+.prose:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* TipTap Image Container Styles */
+.tiptap-image-container {
+  position: relative;
+  display: inline-block;
+  margin: 16px 0;
+}
+
+.tiptap-image-container.tiptap-image-center {
+  display: block;
+  text-align: center;
+  margin: 16px auto;
+}
+
+.tiptap-image-container.tiptap-image-left {
+  display: block;
+  text-align: left;
+  margin: 16px 0 16px 0;
+}
+
+.tiptap-image-container.tiptap-image-right {
+  display: block;
+  text-align: right;
+  margin: 16px 0 16px 0;
+}
+
+.tiptap-image-container.tiptap-image-float-left {
+  float: left;
+  clear: left;
+  margin: 0 16px 16px 0;
+  max-width: 50%;
+}
+
+.tiptap-image-container.tiptap-image-float-right {
+  float: right;
+  clear: right;
+  margin: 0 0 16px 16px;
+  max-width: 50%;
+}
+
+.tiptap-image-container.tiptap-image-float-none {
+  float: none;
+  clear: both;
+  display: block;
+  margin: 16px auto;
+}
+
+/* Resizable Image Styles */
+.tiptap-image.resizable-image {
+  max-width: 100%;
+  height: auto;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+/* Selected Image Styles */
+.ProseMirror-selectednode.tiptap-image {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+/* Resize Handles */
+.tiptap-resize-handles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* pointer-events: none; */
+}
+
+.tiptap-resize-handle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #3b82f6;
+  border: 2px solid white;
+  border-radius: 50%;
+  pointer-events: all;
+  cursor: grab;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.tiptap-resize-handle:active {
+  cursor: grabbing;
+}
+
+.tiptap-resize-handle-nw {
+  top: -6px;
+  left: -6px;
+  cursor: nw-resize;
+}
+
+.tiptap-resize-handle-ne {
+  top: -6px;
+  right: -6px;
+  cursor: ne-resize;
+}
+
+.tiptap-resize-handle-sw {
+  bottom: -6px;
+  left: -6px;
+  cursor: sw-resize;
+}
+
+.tiptap-resize-handle-se {
+  bottom: -6px;
+  right: -6px;
+  cursor: se-resize;
+}
+
+/* Editor specific floating styles */
+.prose.prose-sm .ProseMirror .tiptap-image-container.tiptap-image-float-left {
+  float: left;
+  clear: left;
+  margin: 0 16px 16px 0;
+  max-width: 50%;
+}
+
+.prose.prose-sm .ProseMirror .tiptap-image-container.tiptap-image-float-right {
+  float: right;
+  clear: right;
+  margin: 0 0 16px 16px;
+  max-width: 50%;
+}
+
+.prose.prose-sm .ProseMirror .tiptap-image-container.tiptap-image-float-none {
+  float: none;
+  clear: both;
+  display: block;
+  margin: 16px auto;
+}
+
+.prose.prose-sm .ProseMirror .tiptap-image-container.tiptap-image-center {
+  display: block;
+  text-align: center;
+  margin: 16px auto;
+}
+
+.prose.prose-sm .ProseMirror .tiptap-image-container.tiptap-image-left {
+  display: block;
+  text-align: left;
+  margin: 16px 0;
+}
+
+.prose.prose-sm .ProseMirror .tiptap-image-container.tiptap-image-right {
+  display: block;
+  text-align: right;
+  margin: 16px 0;
+}
+
+/* Preview/content rendering floating styles */
+.tiptap-preview .tiptap-image-container.tiptap-image-float-left,
+.content-renderer .tiptap-image-container.tiptap-image-float-left {
+  float: left;
+  clear: left;
+  margin: 0 16px 16px 0;
+  max-width: 50%;
+}
+
+.tiptap-preview .tiptap-image-container.tiptap-image-float-right,
+.content-renderer .tiptap-image-container.tiptap-image-float-right {
+  float: right;
+  clear: right;
+  margin: 0 0 16px 16px;
+  max-width: 50%;
+}
+
+.tiptap-preview .tiptap-image-container.tiptap-image-float-none,
+.content-renderer .tiptap-image-container.tiptap-image-float-none {
+  float: none;
+  clear: both;
+  display: block;
+  margin: 16px auto;
+}
+
+/* Clearfix for paragraphs after floating images */
+.prose.prose-sm .ProseMirror p:after,
+.tiptap-preview p:after,
+.content-renderer p:after {
+  content: "";
+  display: table;
+  clear: both;
+}

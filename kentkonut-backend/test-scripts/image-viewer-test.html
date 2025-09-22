@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Resim Görüntüleyici Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .gallery img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+        
+        .content-with-images {
+            margin-top: 30px;
+            line-height: 1.6;
+        }
+        
+        .content-with-images img {
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 10px;
+        }
+        
+        /* Modern Image Modal */
+        .image-modal {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-modal.fullscreen {
+            background-color: rgba(0, 0, 0, 1);
+        }
+        
+        /* Close Button */
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 20;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .close-btn:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        /* Top Controls */
+        .top-controls {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 20;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .control-btn:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        /* Navigation Arrows */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 20;
+            width: 48px;
+            height: 48px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .nav-arrow:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        .nav-arrow.left {
+            left: 16px;
+        }
+        
+        .nav-arrow.right {
+            right: 16px;
+        }
+        
+        /* Image Container */
+        .image-container {
+            position: relative;
+            max-width: 800px;
+            max-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-container.fullscreen {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .modal-image {
+            max-width: 800px;
+            max-height: 600px;
+            object-fit: contain;
+        }
+        
+        /* Image Counter */
+        .image-counter {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖼️ Modern Resim Görüntüleyici Test</h1>
+        
+        <h2>Galeri Resimleri</h2>
+        <div class="gallery">
+            <img src="https://picsum.photos/400/300?random=1" alt="Test Resmi 1" data-gallery="main">
+            <img src="https://picsum.photos/400/300?random=2" alt="Test Resmi 2" data-gallery="main">
+            <img src="https://picsum.photos/400/300?random=3" alt="Test Resmi 3" data-gallery="main">
+            <img src="https://picsum.photos/400/300?random=4" alt="Test Resmi 4" data-gallery="main">
+            <img src="https://picsum.photos/400/300?random=5" alt="Test Resmi 5" data-gallery="main">
+            <img src="https://picsum.photos/400/300?random=6" alt="Test Resmi 6" data-gallery="main">
+        </div>
+        
+        <h2>İçerik İçinde Resimler</h2>
+        <div class="content-with-images">
+            <p>Bu metin içinde resimler bulunmaktadır. Resimlere tıklayarak modern görüntüleyiciyi test edebilirsiniz.</p>
+            
+            <img src="https://picsum.photos/300/200?random=7" alt="İçerik Resmi 1" style="float: left; width: 300px; margin-right: 20px;" data-gallery="content">
+            
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            
+            <img src="https://picsum.photos/250/180?random=8" alt="İçerik Resmi 2" style="float: right; width: 250px; margin-left: 20px;" data-gallery="content">
+            
+            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            
+            <div style="clear: both;"></div>
+            
+            <img src="https://picsum.photos/400/250?random=9" alt="İçerik Resmi 3" style="display: block; margin: 20px auto;" data-gallery="content">
+            
+            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
+        </div>
+    </div>
+
+    <!-- Modern Image Modal -->
+    <div id="imageModal" class="image-modal hidden">
+        <!-- Close Button -->
+        <button class="close-btn" onclick="closeModal()">×</button>
+
+        <!-- Top Controls -->
+        <div class="top-controls">
+            <!-- Download Button -->
+            <button class="control-btn" onclick="downloadImage()" title="İndir">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+            </button>
+
+            <!-- Fullscreen Button -->
+            <button class="control-btn" onclick="toggleFullscreen()" title="Tam ekran">
+                <svg id="fullscreenIcon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Navigation Arrows -->
+        <button id="prevBtn" class="nav-arrow left hidden" onclick="previousImage()" title="Önceki resim">‹</button>
+        <button id="nextBtn" class="nav-arrow right hidden" onclick="nextImage()" title="Sonraki resim">›</button>
+
+        <!-- Image Container -->
+        <div id="imageContainer" class="image-container">
+            <img id="modalImage" class="modal-image" src="" alt="">
+        </div>
+
+        <!-- Image Counter -->
+        <div id="imageCounter" class="image-counter hidden">1 / 1</div>
+    </div>
+
+    <script>
+        let currentImageIndex = 0;
+        let allImages = [];
+        let isFullscreen = false;
+
+        // Modal'ı kapat
+        function closeModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+            isFullscreen = false;
+            updateFullscreenUI();
+        }
+
+        // Resme tıklama handler'ı
+        function handleImageClick(imageSrc, imageList = []) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            
+            modalImage.src = imageSrc;
+            allImages = imageList.length > 0 ? imageList : [imageSrc];
+            currentImageIndex = allImages.indexOf(imageSrc) >= 0 ? allImages.indexOf(imageSrc) : 0;
+            
+            modal.classList.remove('hidden');
+            updateNavigationUI();
+        }
+
+        // Önceki resim
+        function previousImage() {
+            if (allImages.length > 1) {
+                currentImageIndex = currentImageIndex > 0 ? currentImageIndex - 1 : allImages.length - 1;
+                document.getElementById('modalImage').src = allImages[currentImageIndex];
+                updateNavigationUI();
+            }
+        }
+
+        // Sonraki resim
+        function nextImage() {
+            if (allImages.length > 1) {
+                currentImageIndex = currentImageIndex < allImages.length - 1 ? currentImageIndex + 1 : 0;
+                document.getElementById('modalImage').src = allImages[currentImageIndex];
+                updateNavigationUI();
+            }
+        }
+
+        // Tam ekran toggle
+        function toggleFullscreen() {
+            isFullscreen = !isFullscreen;
+            updateFullscreenUI();
+        }
+
+        // Tam ekran UI güncelle
+        function updateFullscreenUI() {
+            const modal = document.getElementById('imageModal');
+            const container = document.getElementById('imageContainer');
+            const icon = document.getElementById('fullscreenIcon');
+            
+            if (isFullscreen) {
+                modal.classList.add('fullscreen');
+                container.classList.add('fullscreen');
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>';
+            } else {
+                modal.classList.remove('fullscreen');
+                container.classList.remove('fullscreen');
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>';
+            }
+        }
+
+        // Navigasyon UI güncelle
+        function updateNavigationUI() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const counter = document.getElementById('imageCounter');
+            
+            if (allImages.length > 1) {
+                prevBtn.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+                counter.classList.remove('hidden');
+                counter.textContent = `${currentImageIndex + 1} / ${allImages.length}`;
+            } else {
+                prevBtn.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+                counter.classList.add('hidden');
+            }
+        }
+
+        // Resmi indir
+        function downloadImage() {
+            const modalImage = document.getElementById('modalImage');
+            if (modalImage.src) {
+                const link = document.createElement('a');
+                link.href = modalImage.src;
+                link.download = `image-${Date.now()}.jpg`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        // Keyboard event handler
+        document.addEventListener('keydown', function(event) {
+            const modal = document.getElementById('imageModal');
+            if (!modal.classList.contains('hidden')) {
+                switch (event.key) {
+                    case 'Escape':
+                        closeModal();
+                        break;
+                    case 'ArrowLeft':
+                        previousImage();
+                        break;
+                    case 'ArrowRight':
+                        nextImage();
+                        break;
+                    case 'f':
+                    case 'F':
+                        toggleFullscreen();
+                        break;
+                    case 'd':
+                    case 'D':
+                        downloadImage();
+                        break;
+                }
+            }
+        });
+
+        // Modal dışına tıklama ile kapatma
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Sayfa yüklendiğinde event listener'ları ekle
+        document.addEventListener('DOMContentLoaded', function() {
+            // Galeri resimlerini topla
+            const galleryImages = Array.from(document.querySelectorAll('[data-gallery="main"]')).map(img => img.src);
+            const contentImages = Array.from(document.querySelectorAll('[data-gallery="content"]')).map(img => img.src);
+            
+            // Galeri resimleri için event listener
+            document.querySelectorAll('[data-gallery="main"]').forEach(img => {
+                img.addEventListener('click', function() {
+                    handleImageClick(this.src, galleryImages);
+                });
+            });
+            
+            // İçerik resimleri için event listener
+            document.querySelectorAll('[data-gallery="content"]').forEach(img => {
+                img.addEventListener('click', function() {
+                    handleImageClick(this.src, contentImages);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+
+[
+  {
+    "title": "Gölkay Park Evleri (SEED)",
+    "slug": "golkay-park-evleri-seed",
+    "summary": "Göl kenarında modern ve huzurlu bir yaşam alanı.",
+    "content": "<p>Gölkay Park Evleri, doğa ile iç içe, eşsiz göl manzarasına sahip modern konutlardan oluşmaktadır. Projemiz, aileler için güvenli ve sosyal bir ortam sunmaktadır.</p>",
+    "status": "ONGOING",
+    "province": "Kocaeli",
+    "district": "İzmit",
+    "mediaId": "seed-media-proj-1",
+    "published": true
+  },
+  {
+    "title": "Körfez Kent 4. Etap (SEED)",
+    "slug": "korfez-kent-4-etap-seed",
+    "summary": "Şehrin merkezinde, ulaşım akslarına yakın prestijli bir proje.",
+    "content": "<p>Körfez Kent 4. Etap projemiz, tamamlanmış ve yaşamın başladığı, yüksek talep gören bir projedir. Kaliteli malzeme ve modern mimari anlayışı ile inşa edilmiştir.</p>",
+    "status": "COMPLETED",
+    "province": "Kocaeli",
+    "district": "Körfez",
+    "mediaId": "seed-media-proj-2",
+    "published": true
+  }
+]

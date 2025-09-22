@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Responsive Test - Banner System</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .test-title {
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .test-result {
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .device-frame {
+            border: 2px solid #333;
+            border-radius: 20px;
+            padding: 10px;
+            margin: 10px 0;
+            background: #000;
+        }
+        
+        .device-screen {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        iframe {
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>📱 Mobile Responsive Test - Banner System</h1>
+        <p>Bu test sayfası banner sisteminin mobil cihazlarda nasıl görüneceğini test eder.</p>
+        
+        <div class="test-section">
+            <div class="test-title">📊 Viewport Test</div>
+            <div id="viewport-info"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">📱 Mobile Device Simulation</div>
+            <p>Aşağıda farklı cihaz boyutlarında banner sisteminin görünümü:</p>
+            
+            <h4>iPhone (375x667)</h4>
+            <div class="device-frame" style="width: 375px; height: 300px;">
+                <div class="device-screen">
+                    <iframe src="http://localhost:3002" height="280"></iframe>
+                </div>
+            </div>
+            
+            <h4>iPad (768x1024)</h4>
+            <div class="device-frame" style="width: 768px; height: 400px;">
+                <div class="device-screen">
+                    <iframe src="http://localhost:3002" height="380"></iframe>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🖱️ Touch Events Test</div>
+            <div id="touch-test">
+                <p>Touch event desteğini test etmek için aşağıdaki alana dokunun:</p>
+                <div id="touch-area" style="width: 200px; height: 100px; background: #007bff; color: white; display: flex; align-items: center; justify-content: center; border-radius: 5px; cursor: pointer; user-select: none;">
+                    Touch Test Area
+                </div>
+                <div id="touch-result"></div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🔄 Swipe Gesture Test</div>
+            <div id="swipe-test">
+                <p>Swipe gesture desteğini test etmek için aşağıdaki alana swipe yapın:</p>
+                <div id="swipe-area" style="width: 300px; height: 150px; background: #28a745; color: white; display: flex; align-items: center; justify-content: center; border-radius: 5px; cursor: pointer; user-select: none;">
+                    Swipe Test Area<br>
+                    <small>← Swipe Left/Right →</small>
+                </div>
+                <div id="swipe-result"></div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">📐 CSS Media Queries Test</div>
+            <div id="media-query-test"></div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🌐 Banner API Test</div>
+            <div id="api-test">
+                <button onclick="testBannerAPI()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    Test Banner API
+                </button>
+                <div id="api-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Viewport bilgilerini göster
+        function updateViewportInfo() {
+            const viewport = document.getElementById('viewport-info');
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const devicePixelRatio = window.devicePixelRatio || 1;
+            
+            let deviceType = 'Desktop';
+            if (width <= 480) deviceType = 'Mobile';
+            else if (width <= 768) deviceType = 'Tablet';
+            else if (width <= 1024) deviceType = 'Small Desktop';
+            
+            viewport.innerHTML = `
+                <div class="test-result success">
+                    <strong>Viewport:</strong> ${width}x${height}<br>
+                    <strong>Device Type:</strong> ${deviceType}<br>
+                    <strong>Pixel Ratio:</strong> ${devicePixelRatio}<br>
+                    <strong>User Agent:</strong> ${navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop'}
+                </div>
+            `;
+        }
+        
+        // Touch events test
+        function setupTouchTest() {
+            const touchArea = document.getElementById('touch-area');
+            const touchResult = document.getElementById('touch-result');
+            
+            let touchSupported = false;
+            
+            touchArea.addEventListener('touchstart', function(e) {
+                touchSupported = true;
+                touchResult.innerHTML = '<div class="test-result success">✅ Touch Start Event Detected!</div>';
+            });
+            
+            touchArea.addEventListener('touchend', function(e) {
+                touchResult.innerHTML = '<div class="test-result success">✅ Touch End Event Detected!</div>';
+            });
+            
+            touchArea.addEventListener('click', function(e) {
+                if (!touchSupported) {
+                    touchResult.innerHTML = '<div class="test-result warning">⚠️ Click Event (No Touch Support)</div>';
+                }
+            });
+        }
+        
+        // Swipe gesture test
+        function setupSwipeTest() {
+            const swipeArea = document.getElementById('swipe-area');
+            const swipeResult = document.getElementById('swipe-result');
+            
+            let startX = 0;
+            let startY = 0;
+            
+            swipeArea.addEventListener('touchstart', function(e) {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            });
+            
+            swipeArea.addEventListener('touchend', function(e) {
+                const endX = e.changedTouches[0].clientX;
+                const endY = e.changedTouches[0].clientY;
+                
+                const deltaX = endX - startX;
+                const deltaY = endY - startY;
+                
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+                    const direction = deltaX > 0 ? 'Right' : 'Left';
+                    swipeResult.innerHTML = `<div class="test-result success">✅ Swipe ${direction} Detected! (${Math.abs(deltaX)}px)</div>`;
+                } else {
+                    swipeResult.innerHTML = '<div class="test-result warning">⚠️ No significant swipe detected</div>';
+                }
+            });
+        }
+        
+        // Media queries test
+        function testMediaQueries() {
+            const mediaTest = document.getElementById('media-query-test');
+            const queries = [
+                { query: '(max-width: 480px)', name: 'Mobile' },
+                { query: '(max-width: 768px)', name: 'Tablet' },
+                { query: '(max-width: 1024px)', name: 'Small Desktop' },
+                { query: '(min-width: 1025px)', name: 'Large Desktop' }
+            ];
+            
+            let results = '';
+            queries.forEach(q => {
+                const matches = window.matchMedia(q.query).matches;
+                const status = matches ? 'success' : 'warning';
+                const icon = matches ? '✅' : '❌';
+                results += `<div class="test-result ${status}">${icon} ${q.name}: ${q.query} - ${matches ? 'MATCHES' : 'NO MATCH'}</div>`;
+            });
+            
+            mediaTest.innerHTML = results;
+        }
+        
+        // Banner API test
+        async function testBannerAPI() {
+            const apiResult = document.getElementById('api-result');
+            apiResult.innerHTML = '<div class="test-result warning">🔄 Testing Banner API...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/public/banners');
+                if (response.ok) {
+                    const data = await response.json();
+                    apiResult.innerHTML = `
+                        <div class="test-result success">
+                            ✅ Banner API Success!<br>
+                            <strong>Groups:</strong> ${data.length}<br>
+                            <strong>Total Banners:</strong> ${data.reduce((sum, group) => sum + group.banners.length, 0)}
+                        </div>
+                    `;
+                } else {
+                    apiResult.innerHTML = `<div class="test-result error">❌ API Error: ${response.status}</div>`;
+                }
+            } catch (error) {
+                apiResult.innerHTML = `<div class="test-result error">❌ Network Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Initialize tests
+        window.addEventListener('load', function() {
+            updateViewportInfo();
+            setupTouchTest();
+            setupSwipeTest();
+            testMediaQueries();
+        });
+        
+        window.addEventListener('resize', function() {
+            updateViewportInfo();
+            testMediaQueries();
+        });
+    </script>
+</body>
+</html>

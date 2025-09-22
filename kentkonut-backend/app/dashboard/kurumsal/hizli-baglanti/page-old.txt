@@ -1,0 +1,355 @@
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { toast } from "sonner";
+import { Plus, Edit, Trash2, ExternalLink, Link as LinkIcon } from "lucide-react";
+import QuickLinkFormModal from "@/components/quick-links/QuickLinkFormModal";
+import { useQuickLinks } from "@/hooks/useCorporate";
+import CorporateTable, { StandardActions, ColumnRenderers } from "@/components/corporate/CorporateTable";
+import CorporateErrorBoundary from "@/components/corporate/CorporateErrorBoundary";
+import { QuickLink } from "@/types/corporate";
+
+interface QuickLink {
+  id: string;
+  title: string;
+  url: string;
+  description?: string;
+  icon?: string;
+  order: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export default function QuickLinksPage() {
+  const [quickLinks, setQuickLinks] = useState<QuickLink[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [linkToDelete, setLinkToDelete] = useState<string | null>(null);
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [linkToEdit, setLinkToEdit] = useState<QuickLink | null>(null);
+
+  // Fetch quick links data
+  const fetchQuickLinks = async () => {
+    try {
+      console.log('🔍 Frontend - fetchQuickLinks başlatıldı');
+      setIsLoading(true);
+        // Add cache-busting parameter to avoid Next.js caching
+      const cacheBuster = new Date().getTime();
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const quickLinksEndpoint = `${apiUrl}/api/quick-links?t=${cacheBuster}`;
+      
+      console.log('📡 Frontend - API request gönderiliyor:', quickLinksEndpoint);
+      const response = await fetch(quickLinksEndpoint, {
+        cache: 'no-cache',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      });
+      
+      console.log('📡 Frontend - API response status:', response.status);
+      console.log('📡 Frontend - API response ok:', response.ok);
+      
+      if (!response.ok) {
+        throw new Error('Hızlı erişim linkleri yüklenirken bir hata oluştu');
+      }
+      
+      const data = await response.json();
+      console.log('📊 Frontend - API dari gelen data:', data);
+      console.log('📊 Frontend - Data türü:', typeof data);
+      console.log('📊 Frontend - Data array mi?', Array.isArray(data));
+      console.log('📊 Frontend - Data uzunluk:', data?.length);
+      
+      if (Array.isArray(data)) {
+        setQuickLinks(data);
+        console.log('✅ Frontend - State güncellendi, quickLinks:', data);
+      } else {
+        console.error('❌ Frontend - API geçerli bir dizi döndürmedi');
+        setError('API geçerli bir veri döndürmedi');
+        setQuickLinks([]);
+      }
+      setError(null);
+    } catch (err) {
+      console.error('❌ Frontend - Quick Links fetch error:', err);
+      setError(err instanceof Error ? err.message : 'Bilinmeyen bir hata oluştu');
+      toast.error('Hızlı erişim linkleri yüklenemedi');
+      setQuickLinks([]);
+    } finally {
+      setIsLoading(false);
+      console.log('🏁 Frontend - fetchQuickLinks tamamlandı');    }
+  };
+
+  useEffect(() => {
+    console.log('🏁 Component mounted - calling fetchQuickLinks');
+    fetchQuickLinks();
+    
+    // Set up an interval to check if the state was populated (for debugging)
+    const intervalId = setInterval(() => {
+      console.log('⏱️ Periodic check - quickLinks length:', quickLinks.length);
+      if (quickLinks.length > 0) {
+        console.log('✅ quickLinks loaded successfully:', quickLinks.slice(0, 3));
+        clearInterval(intervalId);
+      }
+    }, 2000);
+    
+    // Clean up interval on unmount
+    return () => clearInterval(intervalId);
+    
+    // Log after every render to check the state
+    console.log('🔍 Current state - quickLinks:', quickLinks);
+  }, []);
+
+  const handleAddLink = () => {
+    console.log('➕ handleAddLink called');
+    setLinkToEdit(null);
+    setIsFormModalOpen(true);
+  };
+
+  const handleEditLink = (link: QuickLink) => {
+    setLinkToEdit(link);
+    setIsFormModalOpen(true);
+  };
+
+  const handleDeleteClick = (linkId: string) => {
+    setLinkToDelete(linkId);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!linkToDelete) return;
+
+    try {      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${apiUrl}/api/quick-links/${linkToDelete}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Link silinirken bir hata oluştu');
+      }
+
+      await fetchQuickLinks();
+      toast.success("Hızlı erişim linki başarıyla silindi");
+      setIsDeleteDialogOpen(false);
+      setLinkToDelete(null);    } catch (error) {
+      toast.error("Link silinirken bir hata oluştu");
+    }
+  };
+
+  const handleFormSuccess = async () => {
+    console.log('🔄 handleFormSuccess çağrıldı - fetching yeniden başlıyor');
+    try {
+      console.log('⏱️ Waiting before refetching...');
+      // Wait a longer delay to ensure the database operation completes
+      await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log('🔄 Now refetching with manual fetch call...');
+      // Try direct fetch first to see what the API returns
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${apiUrl}/api/quick-links?nocache=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      });
+      
+      const testData = await response.json();
+      console.log('🧪 Direct API test returned:', testData);
+      console.log('🧪 Test data length:', testData.length);
+      
+      // Now call the regular fetch function
+      console.log('🔄 Calling fetchQuickLinks...');
+      await fetchQuickLinks(); 
+      console.log('✅ handleFormSuccess içinde fetchQuickLinks tamamlandı');
+    } catch (err) {
+      console.error('❌ handleFormSuccess error:', err);
+      toast.error('Listenin yenilenmesi sırasında bir hata oluştu');
+    }
+  };
+  const getIconDisplay = (icon?: string) => {
+    return icon || 'link';
+  };
+
+  // Debug log ekleyelim
+  console.log('🎨 Frontend Render - quickLinks state:', quickLinks);
+  console.log('🎨 Frontend Render - quickLinks length:', quickLinks.length);
+  console.log('🎨 Frontend Render - isLoading:', isLoading);
+  console.log('🎨 Frontend Render - error:', error);
+  return (
+    <div className="container mx-auto py-10">
+      {/* Breadcrumb */}
+      <Breadcrumb 
+        className="mb-6"
+        segments={[
+          { name: "Dashboard", href: "/dashboard" },
+          { name: "Kurumsal", href: "/dashboard/corporate" },
+          { name: "Hızlı Erişim Linkleri", href: "/dashboard/corporate/quick-links" }
+        ]}
+      />
+
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">
+            Hızlı Erişim Linkleri
+          </h2>
+          <p className="text-muted-foreground">
+            Frontend'de gösterilecek hızlı erişim linklerini yönetin
+          </p>
+        </div>
+        <Button onClick={handleAddLink}>
+          <Plus className="mr-2 h-4 w-4" />
+          Yeni Link Ekle
+        </Button>
+      </div>
+
+      {/* İstatistik Kartları */}
+      <div className="grid gap-4 md:grid-cols-3 mb-8">
+        <div className="rounded-lg border p-3">
+          <div className="flex items-center">
+            <LinkIcon className="h-4 w-4 text-muted-foreground" />
+            <div className="ml-2">
+              <p className="text-sm font-medium">Toplam Link</p>
+              <p className="text-2xl font-bold">{quickLinks.length}</p>
+            </div>
+          </div>
+        </div>
+        <div className="rounded-lg border p-3">
+          <div className="flex items-center">
+            <ExternalLink className="h-4 w-4 text-green-600" />
+            <div className="ml-2">
+              <p className="text-sm font-medium">Aktif Linkler</p>
+              <p className="text-2xl font-bold">
+                {quickLinks.filter(link => link.isActive).length}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="rounded-lg border p-3">
+          <div className="flex items-center">
+            <Trash2 className="h-4 w-4 text-red-600" />
+            <div className="ml-2">
+              <p className="text-sm font-medium">Pasif Linkler</p>
+              <p className="text-2xl font-bold">
+                {quickLinks.filter(link => !link.isActive).length}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <LoadingSkeleton rows={6} />
+      ) : error ? (
+        <div className="bg-destructive/10 text-destructive p-4 rounded-md">
+          <p className="font-semibold">Hata:</p>
+          <p>{error}</p>
+          <p className="text-sm mt-2">Lütfen sayfayı yenileyin veya yöneticinize başvurun.</p>
+        </div>
+      ) : quickLinks.length === 0 ? (
+        <div className="bg-muted p-8 text-center rounded-md">
+          <p className="text-muted-foreground mb-4">Henüz hiç hızlı erişim linki bulunmuyor.</p>
+          <Button onClick={handleAddLink}>İlk Linki Ekle</Button>
+        </div>
+      ) : (        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Sıra</TableHead>
+                <TableHead>Başlık</TableHead>
+                <TableHead>URL</TableHead>
+                <TableHead>Açıklama</TableHead>
+                <TableHead>İkon</TableHead>
+                <TableHead>Durum</TableHead>
+                <TableHead className="text-right">İşlemler</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>{quickLinks.map((link) => (
+                <TableRow key={link.id}>
+                  <TableCell className="font-medium">{link.order}</TableCell>
+                  <TableCell className="font-medium">{link.title}</TableCell>
+                  <TableCell className="max-w-md truncate">
+                    <code className="text-xs bg-muted px-1 py-0.5 rounded">
+                      {link.url}
+                    </code>
+                  </TableCell>
+                  <TableCell className="max-w-xs truncate">
+                    {link.description || '-'}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">
+                      {getIconDisplay(link.icon)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={link.isActive ? "default" : "secondary"}>
+                      {link.isActive ? "Aktif" : "Pasif"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditLink(link)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteClick(link.id)}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>))}</TableBody>
+          </Table>
+        </div>
+      )}
+
+      {/* Quick Link Form Modal */}
+      <QuickLinkFormModal
+        isOpen={isFormModalOpen}
+        onOpenChange={setIsFormModalOpen}
+        quickLink={linkToEdit}
+        onSuccess={handleFormSuccess}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Hızlı Erişim Linkini Sil</DialogTitle>
+            <DialogDescription>
+              Bu hızlı erişim linkini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteDialogOpen(false)}
+            >
+              İptal
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteConfirm}>
+              Sil
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

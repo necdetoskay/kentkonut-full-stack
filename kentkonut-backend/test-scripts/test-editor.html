@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TipTap Editor Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-content {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .float-left {
+            float: left;
+            margin: 0 20px 10px 0;
+        }
+        .float-right {
+            float: right;
+            margin: 0 0 10px 20px;
+        }
+        .clear {
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+    <h1>TipTap Editor Floating Image Test</h1>
+    
+    <div class="test-content">
+        <h2>Test 1: Sol Float Resim</h2>
+        <img src="https://via.placeholder.com/300x200" alt="Test resim" class="float-left" data-float="left" style="width: 300px;">
+        <p>Bu bir test paragrafıdır. Resim sol tarafa float edilmiştir ve metin resmin etrafına sarılmalıdır. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <div class="clear"></div>
+    </div>
+
+    <div class="test-content">
+        <h2>Test 2: Sağ Float Resim</h2>
+        <img src="https://via.placeholder.com/250x150" alt="Test resim" class="float-right" data-float="right" style="width: 250px;">
+        <p>Bu test sağ float resim içindir. Resim sağ tarafa float edilmiştir. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+        <p>Nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <div class="clear"></div>
+    </div>
+
+    <div class="test-content">
+        <h2>Test 3: Merkez Resim</h2>
+        <img src="https://via.placeholder.com/400x200" alt="Test resim" data-float="none" style="width: 400px; display: block; margin: 16px auto;">
+        <p>Bu test merkez resim içindir. Resim merkeze hizalanmıştır ve blok element olarak davranır. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    </div>
+
+    <div class="test-content">
+        <h2>Test 4: Türkçe Karakter Testi</h2>
+        <p>Türkçe karakterler: ç, ğ, ı, ö, ş, ü, Ç, Ğ, İ, Ö, Ş, Ü</p>
+        <p>Örnek cümle: "Şişli'de güzel bir çiçek bahçesi gördük."</p>
+    </div>
+
+    <script>
+        console.log('TipTap Editor Test Page Loaded');
+        console.log('Testing floating image functionality...');
+        
+        // Test if images are properly positioned
+        const floatLeftImages = document.querySelectorAll('img[data-float="left"]');
+        const floatRightImages = document.querySelectorAll('img[data-float="right"]');
+        const centerImages = document.querySelectorAll('img[data-float="none"]');
+        
+        console.log('Float left images:', floatLeftImages.length);
+        console.log('Float right images:', floatRightImages.length);
+        console.log('Center images:', centerImages.length);
+        
+        // Test Turkish characters
+        const turkishText = document.body.textContent;
+        const hasTurkishChars = /[çğıöşüÇĞİÖŞÜ]/.test(turkishText);
+        console.log('Turkish characters detected:', hasTurkishChars);
+    </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Wrapping Test - Kent Konut Editor</title>
+    <link rel="stylesheet" href="components/editors/TipTapEditor/tiptap-styles.css">
+    <link rel="stylesheet" href="app/globals.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        .test-title {
+            color: #374151;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .ProseMirror {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 200px;
+        }
+
+        /* Apply the same classes as the actual editor */
+        .editor-test {
+            @apply prose prose-sm max-w-none focus:outline-none;
+        }
+
+        /* Test specific styles */
+        .debug-info {
+            background: #f3f4f6;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <h1>Kent Konut Editor - Text Wrapping Test</h1>
+    <p>Bu test sayfası, TipTap editöründeki resim etrafında metin sarma davranışını test etmek için oluşturulmuştur.</p>
+
+    <div class="test-section">
+        <h2 class="test-title">Test 1: Sol Float Resim - Metin Sarması (Prose Classes)</h2>
+        <div class="debug-info">
+            Bu test, gerçek editörde kullanılan prose classes ile yapılıyor: prose prose-sm max-w-none focus:outline-none
+        </div>
+        <div class="ProseMirror prose prose-sm max-w-none focus:outline-none">
+            <div class="image-wrapper float-left" style="width: 200px;">
+                <img src="https://via.placeholder.com/200x150/0070f3/ffffff?text=Sol+Float" alt="Sol float test resmi" style="width: 100%; height: auto;">
+            </div>
+            <p>Bu paragraf, sol tarafa float edilmiş bir resmin yanında yer alıyor. Metin doğal olarak resmin etrafına sarılmalı ve resmin altına geçmeden önce resmin sağ tarafındaki alanı doldurmalı.</p>
+            <p>İkinci paragraf da resmin yanında devam etmeli. Enter tuşuna basıldığında metin hemen resmin altına geçmemeli, önce resmin yanındaki alanı kullanmalı.</p>
+            <p>Üçüncü paragraf artık resmin altına geçebilir çünkü yeterli metin var.</p>
+            <p>Dördüncü paragraf tamamen resmin altında olmalı.</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">Test 2: Sağ Float Resim - Metin Sarması (Prose Classes)</h2>
+        <div class="debug-info">
+            Bu test, sağ float davranışını prose classes ile test ediyor
+        </div>
+        <div class="ProseMirror prose prose-sm max-w-none focus:outline-none">
+            <div class="image-wrapper float-right" style="width: 200px;">
+                <img src="https://via.placeholder.com/200x150/dc2626/ffffff?text=Sag+Float" alt="Sağ float test resmi" style="width: 100%; height: auto;">
+            </div>
+            <p>Bu paragraf, sağ tarafa float edilmiş bir resmin yanında yer alıyor. Metin resmin sol tarafındaki alanı doldurmalı ve doğal olarak akmalı.</p>
+            <p>Yeni paragraflar oluşturulduğunda (Enter tuşu ile), metin hemen resmin altına geçmemeli, önce resmin yanındaki boş alanı kullanmalı.</p>
+            <p>Bu davranış, kullanıcı deneyimini iyileştirir ve resim yanında gereksiz boşluk bırakmaz.</p>
+            <p>Dördüncü paragraf da resmin yanında kalmalı.</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">Test 3: Merkez Hizalı Resim</h2>
+        <div class="ProseMirror">
+            <p>Bu paragraf merkez hizalı resimden önce geliyor.</p>
+            <div class="image-wrapper text-center" style="width: 300px; margin: 1rem auto;">
+                <img src="https://via.placeholder.com/300x200/059669/ffffff?text=Merkez" alt="Merkez hizalı test resmi" style="width: 100%; height: auto;">
+            </div>
+            <p>Bu paragraf merkez hizalı resimden sonra geliyor. Merkez hizalı resimler blok seviyesinde davranır ve metin sarması yapmaz.</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">Test 4: Enter Tuşu Simülasyonu (Kritik Test)</h2>
+        <div class="debug-info">
+            Bu test, Enter tuşuna basıldığında oluşan yeni paragrafların davranışını test ediyor
+        </div>
+        <div class="ProseMirror prose prose-sm max-w-none focus:outline-none">
+            <div class="image-wrapper float-left" style="width: 180px;">
+                <img src="https://via.placeholder.com/180x120/7c3aed/ffffff?text=Enter+Test" alt="Enter test resmi" style="width: 100%; height: auto;">
+            </div>
+            <p>İlk paragraf - resmin yanında başlıyor.</p>
+            <p>İkinci paragraf - Enter tuşuna basıldığında bu paragraf resmin yanında kalmalı, altına geçmemeli.</p>
+            <p>Üçüncü paragraf - Bu da resmin yanında olmalı, hemen altına geçmemeli.</p>
+            <p>Dördüncü paragraf - Bu da resmin yanında kalmalı.</p>
+            <p>Beşinci paragraf - Artık resmin altına geçebilir çünkü yeterli metin var.</p>
+            <p>Altıncı paragraf - Tamamen resmin altında.</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 class="test-title">Test 5: Data-Align Attribute Test</h2>
+        <div class="debug-info">
+            Bu test, data-align attribute'u ile floating davranışını test ediyor
+        </div>
+        <div class="ProseMirror prose prose-sm max-w-none focus:outline-none">
+            <img src="https://via.placeholder.com/200x150/059669/ffffff?text=Data+Align" alt="Data align test" data-align="float-left" style="width: 200px;">
+            <p>Bu paragraf, data-align="float-left" attribute'u ile float edilmiş resmin yanında yer alıyor.</p>
+            <p>Enter tuşuna basıldığında oluşan bu paragraf resmin yanında kalmalı.</p>
+            <p>Üçüncü paragraf da resmin yanında devam etmeli.</p>
+            <p>Dördüncü paragraf artık resmin altına geçebilir.</p>
+        </div>
+    </div>
+
+    <script>
+        console.log('Text Wrapping Test Page Loaded');
+        console.log('Bu sayfa, TipTap editöründeki metin sarma davranışını test etmek için oluşturulmuştur.');
+        
+        // Test the CSS behavior
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('.image-wrapper');
+            console.log(`Found ${images.length} test images`);
+            
+            images.forEach((img, index) => {
+                const classes = img.className;
+                console.log(`Image ${index + 1}: ${classes}`);
+            });
+        });
+    </script>
+</body>
+</html>

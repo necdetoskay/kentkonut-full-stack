@@ -1,0 +1,4 @@
+[
+  { "id": 101, "name": "Projeler Seed", "icon": "Building2", "order": 101 },
+  { "id": 102, "name": "Haberler Seed", "icon": "Newspaper", "order": 102 }
+]

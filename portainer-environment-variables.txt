@@ -1,0 +1,51 @@
+# KentKonut Environment Variables for Portainer
+# Copy these key-value pairs into Portainer's Environment Variables section
+# Based on docker-compose.hub.yml configuration
+
+# ==============================================
+# REQUIRED - Database Security
+# ==============================================
+POSTGRES_PASSWORD=YourSecurePostgresPassword123!
+
+# ==============================================
+# REQUIRED - Authentication & Security
+# ==============================================
+NEXTAUTH_URL=http://172.41.42.51:3021
+NEXTAUTH_SECRET=c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6
+NEXTAUTH_URL_INTERNAL=http://kentkonut-backend:3021
+JWT_SECRET=c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6
+
+# ==============================================
+# REQUIRED - Application URLs
+# ==============================================
+API_BASE_URL=http://172.41.42.51:3021
+VITE_API_BASE_URL=http://172.41.42.51:3021
+
+# ==============================================
+# REQUIRED - CORS Configuration
+# ==============================================
+CORS_ORIGIN=http://172.41.42.51:3020,http://localhost:3020
+
+# ==============================================
+# OPTIONAL - Port Configuration
+# ==============================================
+FRONTEND_PORT=3020
+BACKEND_PORT=3021
+PORT=3021
+
+# ==============================================
+# OPTIONAL - Email Configuration
+# ==============================================
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+
+# ==============================================
+# PORTAINER DEPLOYMENT NOTES
+# ==============================================
+# 1. Replace all "YourSecure..." values with strong passwords
+# 2. Replace email settings with your actual SMTP configuration
+# 3. Ensure JWT_SECRET and NEXTAUTH_SECRET are at least 32 characters
+# 4. Do NOT use default passwords in production
+# 5. Keep these values secure and do not share them

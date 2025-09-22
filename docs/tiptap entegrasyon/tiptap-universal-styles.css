@@ -1,0 +1,237 @@
+/* tiptap-render.css - Evrensel Tiptap HTML Render Stilleri */
+/* Bu CSS dosyasını herhangi bir projede kullanabilirsiniz */
+
+.tiptap-render {
+  line-height: 1.6;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #374151;
+  overflow: hidden; /* Float clearfix için */
+}
+
+/* Clearfix - Float'ları temizler */
+.tiptap-render::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Temel metin stilleri */
+.tiptap-render p {
+  margin: 0 0 16px 0;
+  text-align: justify;
+  overflow: hidden; /* Float problemini çözer */
+}
+
+.tiptap-render h1 {
+  margin: 32px 0 20px 0;
+  font-size: 2em;
+  font-weight: 700;
+  clear: both; /* Başlıklar float'ı temizler */
+}
+
+.tiptap-render h2 {
+  margin: 24px 0 16px 0;
+  font-size: 1.5em;
+  font-weight: 600;
+  clear: both;
+}
+
+.tiptap-render h3 {
+  margin: 20px 0 12px 0;
+  font-size: 1.25em;
+  font-weight: 600;
+  clear: both;
+}
+
+.tiptap-render h4 {
+  margin: 16px 0 8px 0;
+  font-size: 1.125em;
+  font-weight: 600;
+  clear: both;
+}
+
+.tiptap-render h5 {
+  margin: 16px 0 8px 0;
+  font-size: 1em;
+  font-weight: 600;
+  clear: both;
+}
+
+.tiptap-render h6 {
+  margin: 16px 0 8px 0;
+  font-size: 0.875em;
+  font-weight: 600;
+  clear: both;
+}
+
+/* Liste stilleri */
+.tiptap-render ul,
+.tiptap-render ol {
+  margin: 0 0 16px 0;
+  padding-left: 24px;
+}
+
+.tiptap-render li {
+  margin: 4px 0;
+}
+
+/* Blockquote stilleri */
+.tiptap-render blockquote {
+  margin: 16px 0;
+  padding: 12px 20px;
+  border-left: 4px solid #e5e7eb;
+  background: #f9fafb;
+  font-style: italic;
+}
+
+/* Kod stilleri */
+.tiptap-render code {
+  background: #f3f4f6;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+.tiptap-render pre {
+  background: #f3f4f6;
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 16px 0;
+}
+
+.tiptap-render pre code {
+  background: none;
+  padding: 0;
+}
+
+/* Yatay çizgi */
+.tiptap-render hr {
+  margin: 24px 0;
+  border: none;
+  height: 1px;
+  background: #e5e7eb;
+}
+
+/* Link stilleri */
+.tiptap-render a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.tiptap-render a:hover {
+  text-decoration: underline;
+}
+
+/* Tablo stilleri */
+.tiptap-render table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0;
+}
+
+.tiptap-render th,
+.tiptap-render td {
+  border: 1px solid #e5e7eb;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.tiptap-render th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+/* KRİTİK: Float'lı resim stilleri */
+.tiptap-render img[data-float="left"] {
+  float: left;
+  margin: 0 20px 10px 0;
+  vertical-align: top;
+  height: auto;
+  border-radius: 4px;
+  max-width: 100%;
+}
+
+.tiptap-render img[data-float="right"] {
+  float: right;
+  margin: 0 0 10px 20px;
+  vertical-align: top;
+  height: auto;
+  border-radius: 4px;
+  max-width: 100%;
+}
+
+.tiptap-render img[data-float="none"] {
+  float: none;
+  margin: 16px auto;
+  display: block;
+  height: auto;
+  border-radius: 4px;
+  max-width: 100%;
+}
+
+/* Responsive resim stilleri */
+@media (max-width: 768px) {
+  .tiptap-render img[data-float="left"],
+  .tiptap-render img[data-float="right"] {
+    float: none;
+    display: block;
+    margin: 16px auto;
+    max-width: 100%;
+  }
+}
+
+/* Metin formatları */
+.tiptap-render strong {
+  font-weight: 600;
+}
+
+.tiptap-render em {
+  font-style: italic;
+}
+
+.tiptap-render u {
+  text-decoration: underline;
+}
+
+.tiptap-render s {
+  text-decoration: line-through;
+}
+
+/* Highlight (vurgu) */
+.tiptap-render mark {
+  background: #fef3c7;
+  padding: 1px 2px;
+  border-radius: 2px;
+}
+
+/* Subscript ve Superscript */
+.tiptap-render sub {
+  font-size: 0.8em;
+  vertical-align: sub;
+}
+
+.tiptap-render sup {
+  font-size: 0.8em;
+  vertical-align: super;
+}
+
+/* Boş paragraflar için min-height */
+.tiptap-render p:empty {
+  min-height: 1.2em;
+}
+
+/* Print stilleri */
+@media print {
+  .tiptap-render {
+    color: black;
+  }
+  
+  .tiptap-render img[data-float="left"],
+  .tiptap-render img[data-float="right"] {
+    float: none;
+    display: block;
+    margin: 16px auto;
+  }
+}

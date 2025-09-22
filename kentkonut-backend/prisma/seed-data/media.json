@@ -1,0 +1,30 @@
+
+[
+  {
+    "id": "seed-media-proj-1",
+    "filename": "project-placeholder-1.jpg",
+    "originalName": "Proje Placeholder 1",
+    "mimeType": "image/jpeg",
+    "path": "/media/seed/project-1.jpg",
+    "url": "/media/seed/project-1.jpg",
+    "categoryId": 101
+  },
+  {
+    "id": "seed-media-proj-2",
+    "filename": "project-placeholder-2.jpg",
+    "originalName": "Proje Placeholder 2",
+    "mimeType": "image/jpeg",
+    "path": "/media/seed/project-2.jpg",
+    "url": "/media/seed/project-2.jpg",
+    "categoryId": 101
+  },
+  {
+    "id": "seed-media-news-1",
+    "filename": "news-placeholder-1.jpg",
+    "originalName": "Haber Placeholder 1",
+    "mimeType": "image/jpeg",
+    "path": "/media/seed/news-1.jpg",
+    "url": "/media/seed/news-1.jpg",
+    "categoryId": 102
+  }
+]

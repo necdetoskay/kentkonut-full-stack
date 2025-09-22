@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kent Konut – Modern Tasarım Alternatifi</title>
+    <meta name="description" content="Kent Konut için modern, kurumsal ve animasyonlu landing page alternatifi.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --primary: #0056b3;
+        --primary-dark: #004494;
+        --secondary: #ff6b35;
+        --light: #f5f7fa;
+        --dark: #2d3748;
+        --gray: #718096;
+        --success: #38a169;
+        --warning: #e9b949;
+        --danger: #e53e3e;
+        --transition: all 0.3s ease;
+      }
+      
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        color: var(--dark);
+        background-color: var(--light);
+        overflow-x: hidden;
+      }
+      
+      .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+      
+      /* Header Styles */
+      header {
+        background-color: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        transition: var(--transition);
+      }
+      
+      .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 80px;
+      }
+      
+      .logo {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--primary);
+        text-decoration: none;
+      }
+      
+      .nav-menu {
+        display: flex;
+        list-style: none;
+      }
+      
+      .nav-item {
+        margin-left: 30px;
+      }
+      
+      .nav-link {
+        color: var(--dark);
+        text-decoration: none;
+        font-weight: 600;
+        transition: var(--transition);
+        position: relative;
+      }
+      
+      .nav-link:hover {
+        color: var(--primary);
+      }
+      
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -5px;
+        left: 0;
+        background-color: var(--primary);
+        transition: var(--transition);
+      }
+      
+      .nav-link:hover::after {
+        width: 100%;
+      }
+      
+      .mobile-toggle {
+        display: none;
+        cursor: pointer;
+      }
+      
+      /* Hero Section */
+      .hero {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(135deg, rgba(0,86,179,0.9) 0%, rgba(0,68,148,0.8) 100%);
+        color: white;
+        position: relative;
+        overflow: hidden;
+        margin-top: 80px;
+      }
+      
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 600px;
+      }
+      
+      .hero h1 {
+        font-size: 48px;
+        font-weight: 800;
+        margin-bottom: 20px;
+        line-height: 1.2;
+      }
+      
+      .hero p {
+        font-size: 18px;
+        margin-bottom: 30px;
+        opacity: 0.9;
+      }
+      
+      .btn {
+        display: inline-block;
+        padding: 12px 30px;
+        background-color: var(--secondary);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition);
+        cursor: pointer;
+      }
+      
+      .btn:hover {
+        background-color: #ff5a20;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(255,107,53,0.3);
+      }
+      
+      .hero-image {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50%;
+        height: 80%;
+        background-image: url('https://via.placeholder.com/800x600');
+        background-size: cover;
+        background-position: center;
+        border-radius: 10px 0 0 10px;
+        box-shadow: -10px 10px 30px rgba(0,0,0,0.2);
+        z-index: 1;
+      }
+      
+      .hero-shape {
+        position: absolute;
+        bottom: -100px;
+        left: -100px;
+        width: 300px;
+        height: 300px;
+        background-color: rgba(255,255,255,0.1);
+        border-radius: 50%;
+      }
+      
+      .hero-shape-2 {
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 200px;
+        height: 200px;
+        background-color: rgba(255,255,255,0.1);
+        border-radius: 50%;
+      }
+      
+      /* Features Section */
+      .features {
+        padding: 100px 0;
+        background-color: white;
+      }
+      
+      .section-title {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+      
+      .section-title h2 {
+        font-size: 36px;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 15px;
+      }
+      
+      .section-title p {
+        font-size: 18px;
+        color: var(--gray);
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+      }
+      
+      .feature-card {
+        background-color: var(--light);
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: var(--transition);
+      }
+      
+      .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+      }
+      
+      .feature-icon {
+        width: 60px;
+        height: 60px;
+        background-color: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        color: white;
+        font-size: 24px;
+      }
+      
+      .feature-card h3 {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 15px;
+      }
+      
+      .feature-card p {
+        color: var(--gray);
+      }
+      
+      /* Projects Section */
+      .projects {
+        padding: 100px 0;
+        background-color: var(--light);
+      }
+      
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+      }
+      
+      .project-card {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        background-color: white;
+        transition: var(--transition);
+      }
+      
+      .project-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+      }
+      
+      .project-image {
+        height: 250px;
+        background-image: url('https://via.placeholder.com/600x400');
+        background-size: cover;
+        background-position: center;
+      }
+      
+      .project-content {
+        padding: 25px;
+      }
+      
+      .project-content h3 {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+      
+      .project-content p {
+        color: var(--gray);
+        margin-bottom: 20px;
+      }
+      
+      .project-meta {
+        display: flex;
+        justify-content: space-between;
+        color: var(--gray);
+        font-size: 14px;
+      }
+      
+      .project-status {
+        display: inline-block;
+        padding: 5px 10px;
+        background-color: var(--success);
+        color: white;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      
+      .project-status.ongoing {
+        background-color: var(--warning);
+      }
+      
+      /* CTA Section */
+      .cta {
+        padding: 80px 0;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: white;
+        text-align: center;
+      }
+      
+      .cta h2 {
+        font-size: 36px;
+        font-weight: 800;
+        margin-bottom: 20px;
+      }
+      
+      .cta p {
+        font-size: 18px;
+        margin-bottom: 30px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        opacity: 0.9;
+      }
+      
+      .btn-light {
+        background-color: white;
+        color: var(--primary);
+      }
+      
+      .btn-light:hover {
+        background-color: #f0f0f0;
+        box-shadow: 0 10px 20px rgba(255,255,255,0.2);
+      }
+      
+      /* Footer */
+      footer {
+        background-color: var(--dark);
+        color: white;
+        padding: 60px 0 30px;
+      }
+      
+      .footer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+      
+      .footer-column h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        position: relative;
+      }
+      
+      .footer-column h3::after {
+        content: '';
+        position: absolute;
+        width: 40px;
+        height: 2px;
+        background-color: var(--secondary);
+        bottom: -10px;
+        left: 0;
+      }
+      
+      .footer-links {
+        list-style: none;
+      }
+      
+      .footer-links li {
+        margin-bottom: 10px;
+      }
+      
+      .footer-links a {
+        color: rgba(255,255,255,0.7);
+        text-decoration: none;
+        transition: var(--transition);
+      }
+      
+      .footer-links a:hover {
+        color: white;
+        padding-left: 5px;
+      }
+      
+      .footer-bottom {
+        border-top: 1px solid rgba(255,255,255,0.1);
+        padding-top: 20px;
+        text-align: center;
+        font-size: 14px;
+        color: rgba(255,255,255,0.5);
+      }
+      
+      /* Responsive Styles */
+      @media (max-width: 992px) {
+        .hero-image {
+          width: 45%;
+        }
+        
+        .hero h1 {
+          font-size: 40px;
+        }
+      }
+      
+      @media (max-width: 768px) {
+        .header-container {
+          height: 70px;
+        }
+        
+        .nav-menu {
+          position: fixed;
+          top: 70px;
+          left: -100%;
+          flex-direction: column;
+          background-color: white;
+          width: 100%;
+          text-align: center;
+          transition: var(--transition);
+          box-shadow: 0 10px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-menu.active {
+          left: 0;
+        }
+        
+        .nav-item {
+          margin: 0;
+          padding: 15px 0;
+          border-bottom: 1px solid #eee;
+        }
+        
+        .mobile-toggle {
+          display: block;
+        }
+        
+        .hero {
+          height: auto;
+          padding: 100px 0;
+        }
+        
+        .hero-content {
+          max-width: 100%;
+          text-align: center;
+        }
+        
+        .hero h1 {
+          font-size: 32px;
+        }
+        
+        .hero-image {
+          position: relative;
+          width: 100%;
+          height: 300px;
+          margin-top: 40px;
+          transform: none;
+          border-radius: 10px;
+          top: auto;
+        }
+        
+        .projects-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      
+      @media (max-width: 576px) {
+        .hero h1 {
+          font-size: 28px;
+        }
+        
+        .section-title h2 {
+          font-size: 28px;
+        }
+        
+        .feature-card {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container header-container">
+        <a href="#" class="logo">KENT KONUT</a>
+        <div class="mobile-toggle">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </div>
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="#" class="nav-link">Ana Sayfa</a></li>
+          <li class="nav-item"><a href="#" class="nav-link">Kurumsal</a></li>
+          <li class="nav-item"><a href="#" class="nav-link">Projeler</a></li>
+          <li class="nav-item"><a href="#" class="nav-link">Hafriyat</a></li>
+          <li class="nav-item"><a href="#" class="nav-link">Haberler</a></li>
+          <li class="nav-item"><a href="#" class="nav-link">İletişim</a></li>
+        </ul>
+      </div>
+    </header>
+    
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <h1>Kent Konut ile Geleceğin Yaşam Alanlarını Keşfedin</h1>
+          <p>Sürdürülebilir, modern ve konforlu yaşam alanları oluşturmak için 40 yılı aşkın tecrübemizle hizmetinizdeyiz.</p>
+          <a href="#" class="btn">Projelerimizi Keşfedin</a>
+        </div>
+      </div>
+      <div class="hero-image"></div>
+      <div class="hero-shape"></div>
+      <div class="hero-shape-2"></div>
+    </section>
+    
+    <section class="features">
+      <div class="container">
+        <div class="section-title">
+          <h2>Neden Kent Konut?</h2>
+          <p>Kaliteli yaşam alanları oluşturmak için tüm projelerimizde en yüksek standartları uyguluyoruz.</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </div>
+            <h3>Kaliteli Konutlar</h3>
+            <p>En kaliteli malzemeler ve en son teknolojilerle inşa edilmiş, uzun ömürlü ve konforlu yaşam alanları.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+            </div>
+            <h3>Stratejik Lokasyonlar</h3>
+            <p>Şehrin merkezi noktalarında, ulaşım ağlarına yakın ve sosyal imkanların çevresinde konumlandırılmış projeler.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+            <h3>Güvenli Yaşam</h3>
+            <p>7/24 güvenlik sistemleri, depreme dayanıklı yapılar ve modern güvenlik teknolojileriyle huzurlu bir yaşam.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section class="projects">
+      <div class="container">
+        <div class="section-title">
+          <h2>Öne Çıkan Projelerimiz</h2>
+          <p>Kent Konut'un en yeni ve en çok ilgi gören projelerini keşfedin.</p>
+        </div>
+        <div class="projects-grid">
+          <div class="project-card">
+            <div class="project-image" style="background-image: url('https://via.placeholder.com/600x400')"></div>
+            <div class="project-content">
+              <h3>Kent Panorama</h3>
+              <p>Şehir manzaralı, lüks ve konforlu yaşam alanları sunan prestijli konut projesi.</p>
+              <div class="project-meta">
+                <span>Konum: Merkez</span>
+                <span class="project-status">Tamamlandı</span>
+              </div>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="project-image" style="background-image: url('https://via.placeholder.com/600x400')"></div>
+            <div class="project-content">
+              <h3>Kent Bahçe</h3>
+              <p>Geniş yeşil alanları ve sosyal imkanlarıyla öne çıkan modern yaşam kompleksi.</p>
+              <div class="project-meta">
+                <span>Konum: Batıkent</span>
+                <span class="project-status ongoing">Devam Ediyor</span>
+              </div>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="project-image" style="background-image: url('https://via.placeholder.com/600x400')"></div>
+            <div class="project-content">
+              <h3>Kent Rezidans</h3>
+              <p>Şehrin merkezinde, lüks ve konfor odaklı rezidans projesi.</p>
+              <div class="project-meta">
+                <span>Konum: Çankaya</span>
+                <span class="project-status">Tamamlandı</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section class="cta">
+      <div class="container">
+        <h2>Hayalinizdeki Eve Bir Adım Uzaktasınız</h2>
+        <p>Size özel ödeme seçenekleri ve avantajlı fırsatlar için hemen bizimle iletişime geçin.</p>
+        <a href="#" class="btn btn-light">Bize Ulaşın</a>
+      </div>
+    </section>
+    
+    <footer>
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-column">
+            <h3>Kent Konut</h3>
+            <ul class="footer-links">
+              <li><a href="#">Hakkımızda</a></li>
+              <li><a href="#">Vizyon & Misyon</a></li>
+              <li><a href="#">Yönetim</a></li>
+              <li><a href="#">Kariyer</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Projelerimiz</h3>
+            <ul class="footer-links">
+              <li><a href="#">Tamamlanan Projeler</a></li>
+              <li><a href="#">Devam Eden Projeler</a></li>
+              <li><a href="#">Planlanan Projeler</a></li>
+              <li><a href="#">Referanslar</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Hizmetlerimiz</h3>
+            <ul class="footer-links">
+              <li><a href="#">Konut Projeleri</a></li>
+              <li><a href="#">Hafriyat İşleri</a></li>
+              <li><a href="#">Mimari Projeler</a></li>
+              <li><a href="#">Kentsel Dönüşüm</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>İletişim</h3>
+            <ul class="footer-links">
+              <li><a href="#">İletişim Formu</a></li>
+              <li><a href="#">Adres Bilgileri</a></li>
+              <li><a href="#">Telefon & E-posta</a></li>
+              <li><a href="#">Sosyal Medya</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 Kent Konut. Tüm Hakları Saklıdır.</p>
+        </div>
+      </div>
+    </footer>
+    
+    <script>
+      // Mobile Menu Toggle
+      const mobileToggle = document.querySelector('.mobile-toggle');
+      const navMenu = document.querySelector('.nav-menu');
+      
+      mobileToggle.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+      });
+      
+      // Scroll Header Effect
+      const header = document.querySelector('header');
+      
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 100) {
+          header.style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';
+          header.style.height = '70px';
+        } else {
+          header.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+          header.style.height = '80px';
+        }
+      });
+    </script>
+  </body>
+</html>

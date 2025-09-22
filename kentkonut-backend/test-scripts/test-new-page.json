@@ -1,0 +1,15 @@
+{
+  "title": "İletişim",
+  "slug": "iletisim",
+  "subtitle": "Bizimle İletişime Geçin",
+  "description": "Kent Konut ile iletişime geçmek için adres, telefon ve e-posta bilgilerimizi bulabilirsiniz.",
+  "pageType": "CONTACT",
+  "showInNavigation": true,
+  "order": 3,
+  "isActive": true,
+  "metaTitle": "İletişim - Kent Konut",
+  "metaDescription": "Kent Konut ile iletişime geçin. Adres, telefon ve e-posta bilgileri.",
+  "metaKeywords": "kent konut, iletişim, adres, telefon, e-posta",
+  "template": "CONTACT",
+  "headerType": "IMAGE"
+}
