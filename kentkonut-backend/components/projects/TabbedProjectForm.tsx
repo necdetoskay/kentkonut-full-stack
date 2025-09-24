@@ -28,7 +28,7 @@ import {
 import { ProjectStatus, PROJECT_STATUS_LABELS } from "@/types";
 import { GlobalMediaSelector, GlobalMediaFile } from "@/components/media/GlobalMediaSelector";
 import { MediaGallerySelector } from "@/components/media/MediaGallerySelector";
-import { ProjectGalleryManager } from "@/components/projects/ProjectGalleryManager";
+import { NewProjectGalleryManager } from "@/components/projects/NewProjectGalleryManager";
 import RichTextEditor from "@/components/ui/rich-text-editor-tiptap";
 import { QuickAccessLinksManager } from "@/components/quick-access/QuickAccessLinksManager";
 
@@ -653,28 +653,60 @@ export function TabbedProjectForm({
             </Card>
           </div>
 
-          {/* Media Gallery */}
-          <Card>
+        </TabsContent>
+
+        {/* Project Gallery Management - TAMAMEN FORM DIŞINDA */}
+        {console.log('[TABBED_FORM] projectId:', projectId, 'typeof:', typeof projectId)}
+        {projectId && (
+          <div className="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800">Proje Galerisi Yönetimi</h3>
+                <p className="text-sm text-gray-600">
+                  Galeri yönetimi için ayrı sayfaya yönlendiriliyorsunuz
+                </p>
+              </div>
+              <Button
+                onClick={() => {
+                  console.log('[GALLERY_REDIRECT] Redirecting to gallery management');
+                  window.open(`/dashboard/projects/${projectId}/gallery`, '_blank');
+                }}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <ImageIcon className="h-4 w-4 mr-2" />
+                Galeri Yönetimi
+              </Button>
+            </div>
+            <div className="text-sm text-gray-500">
+              <p>• Hiyerarşik galeri yapısı oluşturun</p>
+              <p>• Medyaları organize edin</p>
+              <p>• Alt galeriler ekleyin</p>
+            </div>
+          </div>
+        )}
+
+        {!projectId && (
+          <Card className="mt-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <ImageIcon className="h-5 w-5" />
-                Medya Galerisi
+                Proje Galerisi Yönetimi
                 <Badge variant="outline" className="ml-2">
-                  Opsiyonel
+                  Hiyerarşik Galeri
                 </Badge>
               </CardTitle>
               <p className="text-sm text-gray-600 mt-2">
-                Proje ile ilişkilendirilecek ek görselleri seçin
+                Proje için hiyerarşik galeri yapısı oluşturun ve medyaları organize edin
               </p>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="text-center py-8 text-gray-500">
-                <p>Galeri yönetimi şu anda kullanılamıyor.</p>
-                <p className="text-sm mt-2">Proje görselleri için ana medya seçimini kullanın.</p>
+                <p>Galeri yönetimi için önce projeyi kaydedin.</p>
+                <p className="text-sm mt-2">Proje kaydedildikten sonra galeri yönetimi aktif olacaktır.</p>
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        )}
 
         {/* Quick Access Tab */}
         {formData.hasQuickAccess && projectId && (

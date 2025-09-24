@@ -47,6 +47,39 @@ Kent Konut is a full-stack CMS solution designed for municipal and corporate con
 - **Type Safety**: Full TypeScript implementation
 - **Testing**: Comprehensive test coverage
 
+## 🔄 Seed Data Management
+
+KentKonut uygulaması kapsamlı bir seed data yönetim sistemi içerir:
+
+### 📊 Seed Verileri
+- **👤 Users**: Kullanıcı hesapları ve rolleri
+- **🏗️ Hafriyat**: Bölgeler, sahalar, belge kategorileri
+- **📰 News**: Haberler ve haber kategorileri
+- **🏢 Projects**: Projeler ve proje detayları
+- **🏷️ Tags**: Etiketler ve ilişkileri
+- **🖼️ Galleries**: Proje galerileri ve medya
+- **⚡ Quick Access**: Hızlı erişim linkleri
+- **💬 Comments**: Proje yorumları
+- **🏛️ Corporate**: Birimler, yöneticiler, personel
+- **📑 Menu**: Menü öğeleri
+
+### 🚀 Hızlı Başlangıç
+```bash
+# Seed verilerini yükle
+cd kentkonut-backend
+node prisma/consolidated-seed.js
+
+# Seed verilerini yedekle
+node backup-seed.js
+
+# Yedeklenen verileri geri yükle
+node restore-seed.js [filename]
+```
+
+### 📚 Detaylı Rehber
+- **Kapsamlı Rehber**: [`docs/SEED_DATA_BACKUP_GUIDE.md`](docs/SEED_DATA_BACKUP_GUIDE.md)
+- **Hızlı Referans**: [`docs/SEED_BACKUP_CHEAT_SHEET.md`](docs/SEED_BACKUP_CHEAT_SHEET.md)
+
 ## 🛠️ Technology Stack
 
 ### Core Technologies

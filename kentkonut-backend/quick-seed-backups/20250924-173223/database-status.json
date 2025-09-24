@@ -1,0 +1,21 @@
+﻿{
+  "users": 2,
+  "hafriyatBolgeler": 3,
+  "hafriyatSahalar": 6,
+  "hafriyatBelgeKategorileri": 5,
+  "newsCategories": 5,
+  "news": 15,
+  "projects": 20,
+  "departments": 9,
+  "executives": 7,
+  "personnel": 8,
+  "tags": 33,
+  "projectTags": 3,
+  "projectRelations": 2,
+  "projectGalleries": 80,
+  "projectGalleryMedia": 8,
+  "mediaCategories": 6,
+  "quickAccessLinks": 6,
+  "comments": 4,
+  "menuItems": 9
+}

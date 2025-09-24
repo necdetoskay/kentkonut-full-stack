@@ -4,9 +4,8 @@
 npm run snapshot
 npm run seed
 
-export-data.ts dosyasını güncelle 
-npx tsx scripts/export-data.ts çalıştırma
+node backup-seed.js
 
-Sonuç: prisma/seed-data.json
+node restore-seed.js seed-backup-2025-09-24T14-32-13-734Z.json
 
-geri yükleme: npx tsx scripts/seed-from-file.ts
+

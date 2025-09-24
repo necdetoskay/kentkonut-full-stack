@@ -1,0 +1,18 @@
+﻿KentKonut Quick Seed Backup - 20250924-173223
+========================================
+Date: 09/24/2025 17:32:23
+Backup Directory: ./quick-seed-backups/20250924-173223
+
+Files Included:
+- consolidated-seed.js (main seed script)
+- schema.prisma (database schema)
+- database-status.json (current database state)
+- quick-restore-seed.ps1 (restore script)
+
+Restore Instructions:
+1. Copy consolidated-seed.js to prisma/ folder
+2. Run: .\quick-restore-seed.ps1
+3. Or manually: node prisma/consolidated-seed.js
+
+This backup contains only the seed scripts and current database state.
+For full database backup, use backup-seed-data.ps1 instead.

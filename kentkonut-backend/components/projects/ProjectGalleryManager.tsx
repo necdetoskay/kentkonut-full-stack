@@ -25,58 +25,80 @@ import {
 } from "lucide-react";
 import { GlobalMediaSelector, GlobalMediaFile } from "@/components/media/GlobalMediaSelector";
 
-// Types
-interface ProjectGalleryItem {
+// Types - Updated for new API structure
+interface ProjectGallery {
   id: number;
   projectId: number;
-  mediaId?: string;
-  order: number;
+  parentId?: number;
   title: string;
   description?: string;
-  parentId?: number;
+  coverImage?: string;
+  order: number;
   isActive: boolean;
-  isFolder: boolean;
   createdAt: string;
   updatedAt: string;
-  media?: {
-    id: string;
-    url: string;
-    filename: string;
-    alt?: string;
-    type: string;
-    mimeType?: string;
+  children?: ProjectGallery[];
+  media?: ProjectGalleryMedia[];
+  _count?: {
+    children: number;
+    media: number;
   };
-  parent?: ProjectGalleryItem;
-  children?: ProjectGalleryItem[];
 }
 
-interface GalleryNode {
-  item: ProjectGalleryItem;
-  children: GalleryNode[];
-  level: number;
+interface ProjectGalleryMedia {
+  id: number;
+  galleryId: number;
+  fileName: string;
+  originalName: string;
+  fileSize: number;
+  mimeType: string;
+  fileUrl: string;
+  thumbnailUrl?: string;
+  title?: string;
+  description?: string;
+  alt?: string;
+  order: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface ProjectGalleryManagerProps {
   projectId: number;
-  onGalleryChange?: (items: ProjectGalleryItem[]) => void;
+  onGalleryChange?: (galleries: ProjectGallery[]) => void;
 }
 
 export function ProjectGalleryManager({ projectId, onGalleryChange }: ProjectGalleryManagerProps) {
-  const [galleryItems, setGalleryItems] = useState<ProjectGalleryItem[]>([]);
-  const [expandedFolders, setExpandedFolders] = useState<Set<number>>(new Set());
+  const [galleries, setGalleries] = useState<ProjectGallery[]>([]);
+  const [expandedGalleries, setExpandedGalleries] = useState<Set<number>>(new Set());
   const [isLoading, setIsLoading] = useState(false);
   
   // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<ProjectGalleryItem | null>(null);
+  const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
+  const [editingGallery, setEditingGallery] = useState<ProjectGallery | null>(null);
   const [selectedParent, setSelectedParent] = useState<number | null>(null);
+  const [selectedGallery, setSelectedGallery] = useState<ProjectGallery | null>(null);
   
   // Form states
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    mediaId: "",
+    parentId: null as number | null,
+    order: 0
+  });
+
+  const [mediaFormData, setMediaFormData] = useState({
+    fileName: "",
+    originalName: "",
+    fileSize: 0,
+    mimeType: "",
+    fileUrl: "",
+    thumbnailUrl: "",
+    title: "",
+    description: "",
+    alt: "",
     order: 0
   });
 
