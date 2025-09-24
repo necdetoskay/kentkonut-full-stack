@@ -1,0 +1,237 @@
+/* Hierarchical Gallery Styles */
+
+.gallery-container {
+  @apply w-full;
+}
+
+.gallery-filters {
+  @apply flex flex-wrap gap-2 mb-8;
+}
+
+.gallery-filters button {
+  @apply px-3 py-2 text-sm font-medium rounded-lg transition-colors;
+}
+
+.gallery-tree {
+  @apply space-y-2;
+}
+
+.gallery-node {
+  @apply w-full;
+}
+
+/* Level-based indentation */
+.gallery-node.level-0 {
+  @apply ml-0;
+}
+
+.gallery-node.level-1 {
+  @apply ml-4;
+}
+
+.gallery-node.level-2 {
+  @apply ml-8;
+}
+
+.gallery-node.level-3 {
+  @apply ml-12;
+}
+
+.gallery-node.level-4 {
+  @apply ml-16;
+}
+
+/* Node header styles */
+.gallery-node-header {
+  @apply flex items-center p-3 md:p-4 rounded-lg cursor-pointer transition-colors border;
+}
+
+.gallery-node-header.folder {
+  @apply bg-blue-50 border-blue-200 hover:bg-blue-100;
+}
+
+.gallery-node-header.image {
+  @apply bg-gray-50 border-gray-200 hover:bg-gray-100;
+}
+
+/* Node content */
+.gallery-node-content {
+  @apply flex-1 min-w-0;
+}
+
+.gallery-node-title {
+  @apply font-medium truncate;
+}
+
+.gallery-node-title.folder {
+  @apply text-blue-900;
+}
+
+.gallery-node-title.image {
+  @apply text-gray-900;
+}
+
+.gallery-node-description {
+  @apply text-sm text-gray-600 mt-1 line-clamp-2;
+}
+
+/* Image preview */
+.gallery-image-preview {
+  @apply relative w-32 h-24 md:w-40 md:h-32 rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow border;
+}
+
+.gallery-image-preview img {
+  @apply w-full h-full object-cover;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .gallery-filters {
+    @apply gap-1 mb-6;
+  }
+  
+  .gallery-filters button {
+    @apply px-2 py-1 text-xs;
+  }
+  
+  .gallery-node-header {
+    @apply p-2;
+  }
+  
+  .gallery-node-title {
+    @apply text-sm;
+  }
+  
+  .gallery-node-description {
+    @apply text-xs;
+  }
+  
+  .gallery-image-preview {
+    @apply w-24 h-18;
+  }
+  
+  /* Reduce indentation on mobile */
+  .gallery-node.level-1 {
+    @apply ml-2;
+  }
+  
+  .gallery-node.level-2 {
+    @apply ml-4;
+  }
+  
+  .gallery-node.level-3 {
+    @apply ml-6;
+  }
+  
+  .gallery-node.level-4 {
+    @apply ml-8;
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery-filters {
+    @apply flex-col gap-2;
+  }
+  
+  .gallery-filters button {
+    @apply w-full text-center;
+  }
+  
+  .gallery-node-header {
+    @apply flex-col items-start p-3;
+  }
+  
+  .gallery-node-content {
+    @apply w-full mt-2;
+  }
+  
+  .gallery-image-preview {
+    @apply w-full h-32 mt-2;
+  }
+}
+
+/* Lightbox responsive styles */
+.lightbox-modal {
+  @apply fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-2 md:p-4;
+}
+
+.lightbox-content {
+  @apply relative bg-white rounded-lg overflow-hidden shadow-2xl max-w-full max-h-full w-full;
+}
+
+.lightbox-image {
+  @apply block max-w-full max-h-[80vh] object-contain mx-auto;
+}
+
+.lightbox-info {
+  @apply bg-gray-50 p-3 md:p-4 border-t;
+}
+
+.lightbox-navigation {
+  @apply absolute top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-800 z-10 bg-white rounded-full p-2 shadow-md;
+}
+
+.lightbox-close {
+  @apply absolute top-2 right-2 text-gray-600 hover:text-gray-800 z-10 bg-white rounded-full p-2 shadow-md;
+}
+
+@media (max-width: 768px) {
+  .lightbox-content {
+    @apply max-h-[95vh];
+  }
+  
+  .lightbox-image {
+    @apply max-h-[70vh];
+  }
+  
+  .lightbox-navigation {
+    @apply p-1;
+  }
+  
+  .lightbox-close {
+    @apply p-1;
+  }
+}
+
+/* Animation classes */
+.gallery-node-enter {
+  @apply opacity-0 transform translate-y-2;
+}
+
+.gallery-node-enter-active {
+  @apply opacity-100 transform translate-y-0 transition-all duration-200;
+}
+
+.gallery-node-exit {
+  @apply opacity-100 transform translate-y-0;
+}
+
+.gallery-node-exit-active {
+  @apply opacity-0 transform translate-y-2 transition-all duration-200;
+}
+
+/* Loading states */
+.gallery-loading {
+  @apply flex items-center justify-center py-8;
+}
+
+.gallery-loading-spinner {
+  @apply animate-spin rounded-full h-8 w-8 border-b-2 border-kentblue;
+}
+
+/* Empty state */
+.gallery-empty {
+  @apply text-center py-8 text-gray-500;
+}
+
+.gallery-empty-icon {
+  @apply w-16 h-16 mx-auto mb-4 text-gray-300;
+}
+
+.gallery-empty-title {
+  @apply text-lg font-medium text-gray-700 mb-2;
+}
+
+.gallery-empty-description {
+  @apply text-sm text-gray-500;
+}

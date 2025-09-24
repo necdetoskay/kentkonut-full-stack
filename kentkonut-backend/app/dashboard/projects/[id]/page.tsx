@@ -73,10 +73,7 @@ interface ProjectData {
       slug: string;
     };
   }>;
-  galleryItems: Array<{
-    media: GlobalMediaFile;
-    order: number;
-  }>;
+  // galleryItems functionality removed - ProjectGalleryItem model no longer exists
   comments: Array<{
     id: number;
     content: string;
@@ -88,7 +85,7 @@ interface ProjectData {
       email: string;
     };
   }>;
-  relatedProjects: Array<{
+  relatedProjects?: Array<{
     relatedProject: {
       id: number;
       title: string;
@@ -305,51 +302,17 @@ export default function ProjectDetailPage() {
             </CardContent>
           </Card>
 
-          {/* Gallery */}
-          {project.galleryItems.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ImageIcon className="h-5 w-5" />
-                  Proje Galerisi ({project.galleryItems.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {project.galleryItems
-                    .sort((a, b) => a.order - b.order)
-                    .map((item, index) => (
-                      <div key={index} className="relative group">
-                        <img
-                          src={getMediaUrl(item.media.url)}
-                          alt={item.media.alt || `Gallery ${index + 1}`}
-                          className="w-full h-32 object-cover rounded border group-hover:opacity-75 transition-opacity"
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => window.open(item.media.url, '_blank')}
-                          >
-                            <ExternalLink className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          {/* Gallery functionality removed - ProjectGalleryItem model no longer exists */}
 
           {/* Related Projects */}
-          {project.relatedProjects.length > 0 && (
+          {(project.relatedProjects || []).length > 0 && (
             <Card>
               <CardHeader>
                 <CardTitle>İlgili Projeler</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {project.relatedProjects.map((relation) => (
+                  {(project.relatedProjects || []).map((relation) => (
                     <LoadingLink
                       key={relation.relatedProject.id}
                       href={`/dashboard/projects/${relation.relatedProject.id}`}

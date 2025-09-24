@@ -96,10 +96,8 @@ export default function EditProjectPage() {
             setSelectedMedia(projectData.media);
           }
 
-          // Set gallery items
-          if (projectData.galleryItems) {
-            setSelectedGalleryItems(projectData.galleryItems.map((item: any) => item.media));
-          }
+          // Gallery items functionality removed - ProjectGalleryItem model no longer exists
+          // setSelectedGalleryItems([]);
         } else {
           toast.error("Proje bulunamadı");
           router.push("/dashboard/projects");
@@ -133,12 +131,8 @@ export default function EditProjectPage() {
             .filter((tag: string) => tag.length > 0)
         : [];
 
-      // Extract gallery item IDs from the GlobalMediaFile objects
-      const galleryItemIds = (selectedGalleryItems || []).map(item => item.id);
-      
-      // Log for debugging
-      console.log("Selected gallery items:", selectedGalleryItems);
-      console.log("Gallery item IDs:", galleryItemIds);
+      // Gallery items functionality removed - ProjectGalleryItem model no longer exists
+      // const galleryItemIds = [];
 
       const projectData = {
         title: formData.title,
@@ -158,7 +152,7 @@ export default function EditProjectPage() {
         readingTime: formData.readingTime,
         hasQuickAccess: formData.hasQuickAccess || false, // Hızlı erişim aktif mi?
         tags: tagsArray,
-        galleryItems: galleryItemIds,
+        // galleryItems: [], // REMOVED - Gallery items are managed separately via ProjectGalleryManager
         yil: formData.yil || null,
         blokDaireSayisi: formData.blokDaireSayisi || null,
       };
@@ -187,9 +181,7 @@ export default function EditProjectPage() {
         if (selectedMedia?.id) {
           mediaIdsToUpdate.push(selectedMedia.id);
         }
-        if (galleryItemIds.length > 0) {
-          mediaIdsToUpdate.push(...galleryItemIds);
-        }
+        // Gallery items functionality removed - no galleryItemIds to process
         
         if (mediaIdsToUpdate.length > 0) {
           // Call our new API endpoint to update media categories
@@ -293,7 +285,7 @@ export default function EditProjectPage() {
           onSubmit={handleSubmit}
           submitLabel="Projeyi Güncelle"
           loading={loading}
-          projectId={project?.id}
+          projectId={Number(params.id)}
         />
       )}
     </div>

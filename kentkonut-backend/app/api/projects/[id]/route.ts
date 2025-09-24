@@ -22,9 +22,8 @@ const projectSchema = z.object({
   readingTime: z.number().default(3),
   hasQuickAccess: z.boolean().default(false), // Hızlı erişim aktif mi?
   tags: z.array(z.string()).optional().default([]),
-  galleryItems: z.array(z.string()).optional().default([]),
   yil: z.string().optional().nullable(),
-  blokDaireSayisi: z.string().optional().nullable(), // Gallery items mediaIds are also strings
+  blokDaireSayisi: z.string().optional().nullable()
 });
 
 // GET single project
@@ -33,11 +32,11 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-
-    if (!session) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
+    // AUTH KALDIRILDI: Proje detayı public (dashboard için)
+    // const session = await auth();
+    // if (!session) {
+    //   return new NextResponse("Unauthorized", { status: 401 });
+    // }
 
     const { id } = await params;
     console.log("🔍 [BACKEND GET] Fetching project with ID:", id);
@@ -60,14 +59,6 @@ export async function GET(
             tag: true
           }
         },
-        galleryItems: {
-          include: {
-            media: true
-          },
-          orderBy: {
-            order: 'asc'
-          }
-        },
         comments: {
           include: {
             user: {
@@ -82,22 +73,22 @@ export async function GET(
             createdAt: 'desc'
           }
         },
-        relatedProjects: {
-          include: {
-            relatedProject: {
-              include: {
-                media: true,
-                author: {
-                  select: {
-                    id: true,
-                    name: true,
-                    email: true
-                  }
-                }
-              }
-            }
-          }
-        }
+        // relatedProjects: {
+        //   include: {
+        //     relatedProject: {
+        //       include: {
+        //         media: true,
+        //         author: {
+        //           select: {
+        //             id: true,
+        //             name: true,
+        //             email: true
+        //           }
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
       }
     });
 
@@ -269,38 +260,8 @@ export async function PUT(
       }
     }
 
-    // Handle gallery items update - always update gallery items
-    try {
-      // Delete existing gallery items
-      await db.projectGalleryItem.deleteMany({
-        where: { projectId }
-      });
-
-      // Add new gallery items
-      const galleryItems = validatedData.galleryItems || [];
-      if (galleryItems.length > 0) {
-        for (let i = 0; i < galleryItems.length; i++) {
-          try {
-            // Handle both numeric IDs and string IDs
-            const mediaIdValue = galleryItems[i];
-            
-            await db.projectGalleryItem.create({
-              data: {
-                projectId,
-                mediaId: mediaIdValue,
-                order: i
-              }
-            });
-          } catch (itemError) {
-            console.error(`[PROJECT_PUT] Error creating gallery item ${i}:`, itemError);
-            // Continue with other items instead of failing the whole operation
-          }
-        }
-      }
-    } catch (galleryError) {
-      console.error("[PROJECT_PUT] Error handling gallery items:", galleryError);
-      // Continue execution - don't fail the whole request because of gallery items
-    }
+    // Gallery items functionality removed - ProjectGalleryItem model no longer exists
+    // This section is commented out to prevent errors
 
     console.log("🔍 [BACKEND PUT] About to return response");
     console.log("🔍 [BACKEND PUT] Final project hasQuickAccess:", project.hasQuickAccess);

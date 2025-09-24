@@ -528,39 +528,33 @@ async function seedExecutivesData() {
     {
       name: 'Dr. Mehmet Özkan',
       title: 'Genel Müdür',
-      position: 'Genel Müdür',
       biography: 'İnşaat mühendisliği alanında 25 yıllık deneyime sahip Dr. Mehmet Özkan, kentsel dönüşüm ve hafriyat yönetimi konularında uzman. İstanbul Teknik Üniversitesi İnşaat Mühendisliği bölümünden mezun, doktora derecesini kentsel planlama alanında almıştır.',
       imageUrl: '/media/kurumsal/yonetim/mehmet-ozkan.jpg',
       email: 'mehmet.ozkan@kentkonut.gov.tr',
       phone: '0262 317 1000',
       linkedIn: 'https://linkedin.com/in/mehmet-ozkan',
       order: 1,
-      type: 'GENERAL_MANAGER',
       slug: 'mehmet-ozkan'
     },
     {
       name: 'Mimar Ayşe Demir',
       title: 'Genel Müdür Yardımcısı',
-      position: 'Genel Müdür Yardımcısı',
       biography: 'Mimar Ayşe Demir, şehir plancılığı ve mimarlık alanında 20 yıllık deneyime sahiptir. Mimar Sinan Güzel Sanatlar Üniversitesi Mimarlık Fakültesi mezunu. Kentsel tasarım ve sürdürülebilir kalkınma projelerinde öncü çalışmalar yapmıştır.',
       imageUrl: '/media/kurumsal/yonetim/ayse-demir.jpg',
       email: 'ayse.demir@kentkonut.gov.tr',
       phone: '0262 317 1001',
       linkedIn: 'https://linkedin.com/in/ayse-demir',
       order: 2,
-      type: 'DIRECTOR',
       slug: 'ayse-demir'
     },
     {
       name: 'İnş. Müh. Hasan Kaya',
       title: 'Teknik İşler Müdürü',
-      position: 'Teknik İşler Müdürü',
       biography: 'İnşaat Mühendisi Hasan Kaya, hafriyat ve altyapı projeleri konusunda 18 yıllık deneyime sahiptir. Yıldız Teknik Üniversitesi İnşaat Mühendisliği bölümü mezunu. Büyük ölçekli hafriyat projelerinin yönetiminde uzmanlaşmıştır.',
       imageUrl: '/media/kurumsal/yonetim/hasan-kaya.jpg',
       email: 'hasan.kaya@kentkonut.gov.tr',
       phone: '0262 317 1002',
       order: 3,
-      type: 'MANAGER',
       slug: 'hasan-kaya'
     }
   ];

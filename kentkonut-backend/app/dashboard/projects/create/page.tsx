@@ -22,7 +22,8 @@ export default function CreateProjectPage() {
         .map((tag: string) => tag.trim())
         .filter((tag: string) => tag.length > 0);
 
-      const galleryItemIds = selectedGalleryItems.map(item => item.id);
+      // Gallery items functionality removed - ProjectGalleryItem model no longer exists
+      // const galleryItemIds = [];
 
       const projectData = {
         title: formData.title,
@@ -42,7 +43,6 @@ export default function CreateProjectPage() {
         readingTime: formData.readingTime,
         hasQuickAccess: formData.hasQuickAccess || false, // Hızlı erişim aktif mi?
         tags: tagsArray,
-        galleryItems: galleryItemIds,
         yil: formData.yil || undefined,
         blokDaireSayisi: formData.blokDaireSayisi || undefined,
       };
@@ -62,14 +62,12 @@ export default function CreateProjectPage() {
       if (response.ok) {
         const project = await response.json();
         
-        // If we have media or gallery items, update their category to Projects
+        // If we have media, update its category to Projects
         const mediaIdsToUpdate = [];
         if (selectedMedia?.id) {
           mediaIdsToUpdate.push(selectedMedia.id);
         }
-        if (galleryItemIds.length > 0) {
-          mediaIdsToUpdate.push(...galleryItemIds);
-        }
+        // Gallery items functionality removed - no galleryItemIds to process
         
         if (mediaIdsToUpdate.length > 0) {
           // Call our new API endpoint to update media categories

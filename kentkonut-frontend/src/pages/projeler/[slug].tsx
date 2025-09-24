@@ -6,6 +6,9 @@ import React, { Suspense, lazy } from 'react';
 import DOMPurify from 'dompurify';
 import { MapPin, Calendar, Users, Home, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import TabGalleryContainer from '@/components/gallery/prd/TabGalleryContainer';
+import '@/components/gallery/prd/gallery.css';
+import { ProjectGalleryItem } from '@/types/gallery';
 
 interface MediaItem {
   id: string;
@@ -24,7 +27,7 @@ interface ProjectDetail {
   summary?: string;
   publishedAt?: string;
   media?: { url: string };
-  galleryItems?: { media: MediaItem }[];
+  galleryItems?: ProjectGalleryItem[];
   slug: string;
   status: string;
   province?: string;
@@ -67,8 +70,6 @@ const ProjectDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [relatedProjects, setRelatedProjects] = useState<any[]>([]);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     if (!slug) return;
@@ -109,53 +110,6 @@ const ProjectDetail = () => {
     fetchProject();
   }, [slug]);
 
-  // Lightbox navigation functions
-  const openLightbox = (index: number) => {
-    setCurrentImageIndex(index);
-    setLightboxOpen(true);
-  };
-
-  const closeLightbox = () => {
-    setLightboxOpen(false);
-  };
-
-  const nextImage = () => {
-    if (project?.galleryItems) {
-      setCurrentImageIndex((prev) => 
-        prev === project.galleryItems!.length - 1 ? 0 : prev + 1
-      );
-    }
-  };
-
-  const prevImage = () => {
-    if (project?.galleryItems) {
-      setCurrentImageIndex((prev) => 
-        prev === 0 ? project.galleryItems!.length - 1 : prev - 1
-      );
-    }
-  };
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!lightboxOpen) return;
-      
-      switch (e.key) {
-        case 'Escape':
-          closeLightbox();
-          break;
-        case 'ArrowLeft':
-          prevImage();
-          break;
-        case 'ArrowRight':
-          nextImage();
-          break;
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [lightboxOpen, project?.galleryItems]);
 
   if (loading) {
     return (
@@ -265,100 +219,17 @@ const ProjectDetail = () => {
           </div>
         </div>
 
-        {/* Gallery Section */}
+        {/* PRD Tab-Based Gallery Section */}
         {project.galleryItems && project.galleryItems.length > 0 && (
-          <div className="kent-container max-w-4xl mx-auto mt-12">
+          <div className="kent-container max-w-7xl mx-auto mt-12">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Proje Galerisi</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {project.galleryItems.map((item, index) => (
-                <div 
-                  key={item.media.id} 
-                  className="relative group overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
-                  onClick={() => openLightbox(index)}
-                >
-                  <img
-                    src={getMediaUrl(item.media.url)}
-                    alt={item.media.alt || `Galeri resmi ${index + 1}`}
-                    className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = '/images/projelerimiz.png';
-                    }}
-                  />
-
-                </div>
-              ))}
-            </div>
+            <TabGalleryContainer 
+              projectSlug={project.slug}
+              projectTitle={project.title}
+            />
           </div>
         )}
 
-        {/* Lightbox Modal */}
-        {lightboxOpen && project?.galleryItems && (
-          <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
-            <div className="relative bg-white rounded-lg overflow-hidden shadow-2xl" style={{maxWidth: '90vw', maxHeight: '90vh'}}>
-              {/* Close Button */}
-              <button
-                onClick={closeLightbox}
-                className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 z-10 bg-white rounded-full p-1 shadow-md"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-
-              {/* Previous Button */}
-              {project.galleryItems.length > 1 && (
-                <button
-                  onClick={prevImage}
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-800 z-10 bg-white rounded-full p-2 shadow-md"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-              )}
-
-              {/* Next Button */}
-              {project.galleryItems.length > 1 && (
-                <button
-                  onClick={nextImage}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-800 z-10 bg-white rounded-full p-2 shadow-md"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              )}
-
-              {/* Main Image */}
-              <div className="relative">
-                <img
-                  src={getMediaUrl(project.galleryItems[currentImageIndex].media.url)}
-                  alt={project.galleryItems[currentImageIndex].media.alt || `Galeri resmi ${currentImageIndex + 1}`}
-                  className="block max-w-full max-h-[80vh] object-contain"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = '/images/projelerimiz.png';
-                  }}
-                />
-              </div>
-
-              {/* Image Info */}
-              <div className="bg-gray-50 p-4 border-t">
-                <div className="flex justify-between items-center">
-                  <div className="text-sm text-gray-600">
-                    {currentImageIndex + 1} / {project.galleryItems.length}
-                  </div>
-                  {project.galleryItems[currentImageIndex].media.alt && (
-                    <div className="text-sm text-gray-800 font-medium max-w-md text-right">
-                      {project.galleryItems[currentImageIndex].media.alt}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       

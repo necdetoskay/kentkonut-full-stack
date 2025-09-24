@@ -1,0 +1,362 @@
+/* PRD Gallery Styles */
+
+.tab-gallery-container {
+  @apply w-full;
+}
+
+/* Tab Navigation Styles */
+.tab-navigation {
+  @apply w-full;
+}
+
+.tab-container {
+  @apply w-full;
+}
+
+.tab-button {
+  @apply transition-all duration-200 ease-in-out;
+  min-width: fit-content;
+}
+
+.tab-button:hover {
+  @apply transform scale-105;
+}
+
+.tab-title {
+  @apply font-medium;
+}
+
+.tab-count {
+  @apply text-xs font-semibold;
+}
+
+.sub-tabs-container {
+  @apply w-full;
+}
+
+.sub-tab-button {
+  @apply transition-all duration-200 ease-in-out;
+  min-width: fit-content;
+}
+
+.sub-tab-button:hover {
+  @apply transform scale-105;
+}
+
+.sub-tab-title {
+  @apply font-medium;
+}
+
+.sub-tab-count {
+  @apply text-xs font-semibold;
+}
+
+.tab-info {
+  @apply transition-all duration-200;
+}
+
+/* Breadcrumb Styles */
+.breadcrumb-container {
+  @apply w-full;
+}
+
+/* Media Grid Styles */
+.media-grid {
+  @apply w-full;
+}
+
+.media-item {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+.media-item:hover {
+  @apply transform scale-105;
+}
+
+/* Grid Responsive Classes */
+.grid-cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* Search and Filters Styles */
+.search-and-filters {
+  @apply w-full;
+}
+
+.search-container {
+  @apply w-full;
+}
+
+.filters-container {
+  @apply w-full;
+}
+
+.filters-dropdown {
+  @apply z-10;
+}
+
+.filter-group {
+  @apply w-full;
+}
+
+.active-filters {
+  @apply w-full;
+}
+
+/* Lightbox Styles */
+.lightbox-modal {
+  @apply fixed inset-0 z-50;
+  background: rgba(0, 0, 0, 0.9);
+}
+
+/* Scrollbar Hide */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Line Clamp Utilities */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tab-button {
+    @apply px-3 py-2 text-sm;
+  }
+  
+  .sub-tab-button {
+    @apply px-2 py-1 text-xs;
+  }
+  
+  .media-item {
+    @apply transform-none;
+  }
+  
+  .media-item:hover {
+    @apply transform-none;
+  }
+  
+  .lightbox-modal {
+    @apply p-4;
+  }
+  
+  .lightbox-modal .absolute.top-4.left-4 {
+    @apply top-2 left-2 max-w-xs;
+  }
+  
+  .lightbox-modal .absolute.bottom-4 {
+    @apply bottom-2;
+  }
+}
+
+@media (max-width: 640px) {
+  .tab-button {
+    @apply px-2 py-1 text-xs;
+  }
+  
+  .sub-tab-button {
+    @apply px-1.5 py-1 text-xs;
+  }
+  
+  .filters-dropdown {
+    @apply p-3;
+  }
+  
+  .filters-dropdown .grid {
+    @apply grid-cols-1 gap-4;
+  }
+}
+
+/* Animation Classes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Loading States */
+.loading-skeleton {
+  @apply animate-pulse bg-gray-200 rounded;
+}
+
+.loading-spinner {
+  @apply animate-spin rounded-full border-2 border-gray-300 border-t-kentblue;
+}
+
+/* Error States */
+.error-state {
+  @apply text-center py-12;
+}
+
+.error-icon {
+  @apply w-12 h-12 text-red-500 mx-auto mb-4;
+}
+
+.error-title {
+  @apply text-lg font-semibold text-gray-900 mb-2;
+}
+
+.error-message {
+  @apply text-gray-600 mb-4;
+}
+
+/* Empty States */
+.empty-state {
+  @apply text-center py-12;
+}
+
+.empty-icon {
+  @apply w-12 h-12 text-gray-400 mx-auto mb-4;
+}
+
+.empty-title {
+  @apply text-lg font-semibold text-gray-900 mb-2;
+}
+
+.empty-message {
+  @apply text-gray-600;
+}
+
+/* Focus States */
+.focus-visible {
+  @apply focus:outline-none focus:ring-2 focus:ring-kentblue focus:ring-offset-2;
+}
+
+/* Hover States */
+.hover-lift {
+  @apply transition-transform duration-200 ease-in-out;
+}
+
+.hover-lift:hover {
+  @apply transform -translate-y-1;
+}
+
+/* Kent Blue Color */
+.kentblue {
+  color: #1e40af;
+}
+
+.bg-kentblue {
+  background-color: #1e40af;
+}
+
+.border-kentblue {
+  border-color: #1e40af;
+}
+
+.ring-kentblue {
+  --tw-ring-color: #1e40af;
+}
+
+/* Custom Scrollbar for Webkit */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Print Styles */
+@media print {
+  .tab-gallery-container {
+    @apply block;
+  }
+  
+  .tab-navigation {
+    @apply hidden;
+  }
+  
+  .search-and-filters {
+    @apply hidden;
+  }
+  
+  .media-grid {
+    @apply grid-cols-2 gap-2;
+  }
+  
+  .media-item {
+    @apply break-inside-avoid;
+  }
+}

@@ -28,22 +28,6 @@ async function handler(req: NextRequest, context: { params: { slug: string } }) 
         author: { select: { id: true, name: true, email: true } },
         media: true,
         tags: { include: { tag: true } },
-        galleryItems: { 
-          include: { 
-            media: {
-              select: {
-                id: true,
-                url: true,
-                filename: true,
-                alt: true,
-                type: true,
-                embedUrl: true,
-                mimeType: true
-              }
-            } 
-          }, 
-          orderBy: { order: 'asc' } 
-        },
         comments: {
           include: { user: { select: { id: true, name: true, email: true } } },
           orderBy: { createdAt: 'desc' }
@@ -64,7 +48,7 @@ async function handler(req: NextRequest, context: { params: { slug: string } }) 
             }
           }
         },
-        _count: { select: { comments: true, galleryItems: true } }
+        _count: { select: { comments: true } }
       }
     });
 

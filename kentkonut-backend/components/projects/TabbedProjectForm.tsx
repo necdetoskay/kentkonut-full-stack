@@ -28,6 +28,7 @@ import {
 import { ProjectStatus, PROJECT_STATUS_LABELS } from "@/types";
 import { GlobalMediaSelector, GlobalMediaFile } from "@/components/media/GlobalMediaSelector";
 import { MediaGallerySelector } from "@/components/media/MediaGallerySelector";
+import { ProjectGalleryManager } from "@/components/projects/ProjectGalleryManager";
 import RichTextEditor from "@/components/ui/rich-text-editor-tiptap";
 import { QuickAccessLinksManager } from "@/components/quick-access/QuickAccessLinksManager";
 
@@ -175,7 +176,18 @@ export function TabbedProjectForm({
       return;
     }
 
-    await onSubmit(formData, selectedMedia, selectedGalleryItems);
+    // Convert gallery items to the correct format
+    const galleryItemsForSubmit = selectedGalleryItems.map((item: any) => ({
+      id: item.id,
+      mediaId: item.mediaId,
+      title: item.title,
+      description: item.description,
+      parentId: item.parentId,
+      order: item.order,
+      isFolder: item.isFolder
+    }));
+
+    await onSubmit(formData, selectedMedia, galleryItemsForSubmit);
   };
 
   const getTabIcon = (tabKey: keyof TabValidation, defaultIcon: any) => {
@@ -656,16 +668,10 @@ export function TabbedProjectForm({
               </p>
             </CardHeader>
             <CardContent className="space-y-4">
-              <MediaGallerySelector
-                selectedItems={selectedGalleryItems}
-                onSelectionChange={setSelectedGalleryItems}
-                categoryId={3} // Proje Görselleri kategorisi
-                customFolder="media/projeler"
-                title="Proje Görselleri Seç"
-                buttonText="Proje Görselleri Seç"
-                addButtonText="Görsel Ekle"
-                replaceButtonText="Değiştir"
-              />
+              <div className="text-center py-8 text-gray-500">
+                <p>Galeri yönetimi şu anda kullanılamıyor.</p>
+                <p className="text-sm mt-2">Proje görselleri için ana medya seçimini kullanın.</p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

@@ -26,7 +26,9 @@ export async function POST(req: Request) {
     
     if (!body.mediaIds || !Array.isArray(body.mediaIds) || body.mediaIds.length === 0) {
       return new NextResponse("Invalid request body. Expected mediaIds array.", { status: 400 });
-    }    // Get the Projects category (ID 3 as per MEDIA_CATEGORIES.PROJECT_IMAGES.id)
+    }
+    
+    // Get the Projects category (ID 3 as per MEDIA_CATEGORIES.PROJECT_IMAGES.id)
     const projectCategoryId = 3; // This hardcoded value matches MEDIA_CATEGORIES.PROJECT_IMAGES.id
     const projectsCategory = await db.mediaCategory.findUnique({
       where: { id: projectCategoryId }
@@ -34,7 +36,9 @@ export async function POST(req: Request) {
 
     if (!projectsCategory) {
       return new NextResponse("Projects category not found", { status: 404 });
-    }    // Update each media item to assign it to the Projects category
+    }
+    
+    // Update each media item to assign it to the Projects category
     const updates = await Promise.all(
       body.mediaIds.map((mediaId: string) =>
         db.media.update({

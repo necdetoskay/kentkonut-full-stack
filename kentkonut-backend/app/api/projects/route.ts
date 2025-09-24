@@ -22,7 +22,6 @@ const projectSchema = z.object({
   publishedAt: z.string().optional(),
   readingTime: z.number().default(3),
   tags: z.array(z.string()).optional(),
-  galleryItems: z.array(z.string()).optional(),
   hasQuickAccess: z.boolean().default(false), // Hızlı erişim aktif mi?
 });
 
@@ -107,7 +106,6 @@ export const GET = withCors(async (req: NextRequest) => {
           _count: {
             select: {
               comments: true,
-              galleryItems: true,
               quickAccessLinks: true
             }
           }
@@ -213,19 +211,6 @@ export const POST = withCors(async (req: NextRequest) => {
           data: {
             projectId: project.id,
             tagId: tag.id
-          }
-        });
-      }
-    }
-
-    // Handle gallery items if provided
-    if (validatedData.galleryItems && validatedData.galleryItems.length > 0) {
-      for (let i = 0; i < validatedData.galleryItems.length; i++) {
-        await db.projectGalleryItem.create({
-          data: {
-            projectId: project.id,
-            mediaId: validatedData.galleryItems[i],
-            order: i
           }
         });
       }

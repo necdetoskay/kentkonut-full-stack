@@ -80,7 +80,6 @@ interface ProjectItem {
   }>;
   _count: {
     comments: number;
-    galleryItems: number;
   };
 }
 
@@ -162,15 +161,15 @@ export default function ProjectsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Projeler</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Projeler</h1>
           <p className="text-muted-foreground">
             Proje içeriklerini yönetin
           </p>
         </div>
         <LoadingLink href="/dashboard/projects/create">
-          <Button>
+          <Button className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
             Yeni Proje
           </Button>
@@ -241,19 +240,22 @@ export default function ProjectsPage() {
               </LoadingLink>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Proje</TableHead>
-                    <TableHead>Durum</TableHead>
-                    <TableHead>Konum</TableHead>
-                    <TableHead>Yazar</TableHead>
-                    <TableHead>Tarih</TableHead>
-                    <TableHead>İstatistikler</TableHead>
-                    <TableHead className="text-right">İşlemler</TableHead></TableRow>
-                </TableHeader>
-                <TableBody>
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden lg:block overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Proje</TableHead>
+                      <TableHead>Durum</TableHead>
+                      <TableHead>Konum</TableHead>
+                      <TableHead>Yazar</TableHead>
+                      <TableHead>Tarih</TableHead>
+                      <TableHead>İstatistikler</TableHead>
+                      <TableHead className="text-right">İşlemler</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                   {projects.map((project) => (
                     <TableRow key={project.id}>
                       <TableCell>
@@ -335,7 +337,6 @@ export default function ProjectsPage() {
                         <div className="text-sm text-gray-500">
                           <div>{project.viewCount} görüntülenme</div>
                           <div>{project._count.comments} yorum</div>
-                          <div>{project._count.galleryItems} medya</div>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
@@ -366,7 +367,104 @@ export default function ProjectsPage() {
                   ))}
                 </TableBody>
               </Table>
-            </div>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="lg:hidden space-y-4">
+                {projects.map((project) => (
+                  <Card key={project.id} className="p-4">
+                    <div className="flex items-start space-x-3 mb-3">
+                      {project.media ? (
+                        <img
+                          src={project.media.url}
+                          alt={project.media.alt || project.title}
+                          className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <ImageIcon className="h-6 w-6 text-gray-400" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-gray-900 truncate mb-1">
+                          {project.title}
+                        </h3>
+                        {project.summary && (
+                          <p className="text-sm text-gray-500 line-clamp-2 mb-2">
+                            {project.summary}
+                          </p>
+                        )}
+                        <div className="flex flex-wrap gap-1 mb-2">
+                          {getStatusBadge(project.status)}
+                          {!project.published && (
+                            <Badge variant="outline" className="text-xs">Taslak</Badge>
+                          )}
+                          {project.tags.slice(0, 2).map((tag) => (
+                            <Badge key={tag.tag.id} variant="secondary" className="text-xs">
+                              {tag.tag.name}
+                            </Badge>
+                          ))}
+                          {project.tags.length > 2 && (
+                            <Badge variant="secondary" className="text-xs">
+                              +{project.tags.length - 2}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Mobile Info Grid */}
+                    <div className="grid grid-cols-2 gap-3 text-sm mb-3">
+                      <div className="flex items-center gap-1">
+                        <MapPin className="h-4 w-4 text-gray-400" />
+                        <span className="text-gray-600">
+                          {project.province && project.district 
+                            ? `${project.district}, ${project.province}`
+                            : project.locationName || '-'
+                          }
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <User className="h-4 w-4 text-gray-400" />
+                        <span className="text-gray-600">{project.author.name}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-4 w-4 text-gray-400" />
+                        <span className="text-gray-600">{formatDate(project.createdAt)}</span>
+                      </div>
+                      <div className="text-gray-600">
+                        <div>{project.viewCount} görüntülenme</div>
+                        <div>{project._count.comments} yorum</div>
+                      </div>
+                    </div>
+
+                    {/* Mobile Actions */}
+                    <div className="flex justify-end gap-2 pt-2 border-t">
+                      <LoadingLink href={`/dashboard/projects/${project.id}`}>
+                        <Button variant="ghost" size="sm">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </LoadingLink>
+                      <LoadingLink href={`/dashboard/projects/${project.id}/edit`}>
+                        <Button variant="ghost" size="sm">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </LoadingLink>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setProjectToDelete(project);
+                          setDeleteDialogOpen(true);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </>
           )}
         </CardContent>
       </Card>
