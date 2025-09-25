@@ -11,7 +11,6 @@ const LinkSection: React.FC<LinkSectionProps> = ({ section }) => {
   if (isHorizontal) {
     return (
       <div>
-        {section.title && <h3 className="font-bold text-lg mb-3">{section.title}</h3>}
         <ul className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
           {section.items.map((item, idx) => (
             <li key={item.id} className="flex items-center">
@@ -36,7 +35,6 @@ const LinkSection: React.FC<LinkSectionProps> = ({ section }) => {
   // Vertical (default)
   return (
     <div>
-      {section.title && <h3 className="font-bold text-lg mb-4">{section.title}</h3>}
       <ul className="space-y-2">
         {section.items.map((item) => (
           <li key={item.id}>

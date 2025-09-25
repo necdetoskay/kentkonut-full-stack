@@ -147,7 +147,8 @@ export async function PUT(
         },
         create: {
           positionUUID: body.positionUUID,
-          name: `Banner Position ${body.positionUUID}`,
+          name: 'Ana Sayfa Üst Banner',
+          description: 'Ana sayfa hero banner pozisyonu',
           bannerGroupId: updatedGroup.id,
           fallbackGroupId: body.fallbackGroupId || null,
           isActive: true,

@@ -120,7 +120,8 @@ export async function POST(request: NextRequest) {
         },
         create: {
           positionUUID: body.positionUUID,
-          name: `Banner Position ${body.positionUUID}`,
+          name: 'Ana Sayfa Üst Banner',
+          description: 'Ana sayfa hero banner pozisyonu',
           bannerGroupId: bannerGroup.id,
           fallbackGroupId: body.fallbackGroupId || null,
           isActive: true,

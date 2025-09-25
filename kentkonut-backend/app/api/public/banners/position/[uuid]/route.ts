@@ -35,18 +35,6 @@ export const GET = withCors(async (request: NextRequest) => {
               }
             }
           }
-        },
-        fallbackGroup: {
-          include: {
-            banners: {
-              where: {
-                isActive: true
-              },
-              orderBy: {
-                order: 'asc'
-              }
-            }
-          }
         }
       }
     })
@@ -59,14 +47,8 @@ export const GET = withCors(async (request: NextRequest) => {
       )
     }
 
-    // Önce ana banner grubunu kontrol et
+    // Banner grubunu kontrol et
     let bannerGroup = bannerPosition.bannerGroup
-
-    // Ana grup yoksa veya aktif değilse fallback grubu kullan
-    if (!bannerGroup || !bannerGroup.isActive) {
-      bannerGroup = bannerPosition.fallbackGroup
-      console.log(`[BANNER_POSITION_GET] Using fallback group for position: ${uuid}`)
-    }
 
     if (!bannerGroup || !bannerGroup.isActive) {
       console.log(`[BANNER_POSITION_GET] No active banner group found for position: ${uuid}`)

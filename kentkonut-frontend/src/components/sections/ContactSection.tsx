@@ -21,7 +21,6 @@ const iconFor = (type: string, iconKey?: string | null) => {
 const ContactSection: React.FC<ContactSectionProps> = ({ section }) => {
   return (
     <div className="col-span-12 md:col-span-4">
-      {section.title && <h3 className="font-bold text-lg mb-4">{section.title}</h3>}
       <div className="space-y-4">
         {section.items.map((item) => {
           const iconEl = iconFor(item.type, item.icon || undefined);
