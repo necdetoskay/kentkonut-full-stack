@@ -62,6 +62,7 @@ export default function EditProjectPage() {
           console.log("🔍 [FRONTEND] Received project data:", JSON.stringify(projectData, null, 2));
           console.log("🔍 [FRONTEND] hasQuickAccess in received data:", projectData.hasQuickAccess);
           console.log("🔍 [FRONTEND] Type of hasQuickAccess in received data:", typeof projectData.hasQuickAccess);
+          console.log("🔍 [FRONTEND] bannerUrl in received data:", projectData.bannerUrl);
           setProject(projectData);
 
           // Populate form data
@@ -84,11 +85,13 @@ export default function EditProjectPage() {
             tags: projectData.tags.map((t: any) => t.tag.name).join(", "),
             yil: projectData.yil || "",
             blokDaireSayisi: projectData.blokDaireSayisi || "",
+            bannerUrl: projectData.bannerUrl || "", // CRITICAL FIX: Include bannerUrl
           };
 
           console.log("🔍 [FRONTEND] Constructed form data:", JSON.stringify(formData, null, 2));
           console.log("🔍 [FRONTEND] hasQuickAccess in form data:", formData.hasQuickAccess);
           console.log("🔍 [FRONTEND] Type of hasQuickAccess in form data:", typeof formData.hasQuickAccess);
+          console.log("🔍 [FRONTEND] bannerUrl in form data:", formData.bannerUrl);
 
           setInitialFormData(formData);
 

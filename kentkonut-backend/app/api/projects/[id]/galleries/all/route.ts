@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import prisma from "@/lib/prisma";
 
 // GET: Projeye ait TÜM galeri itemlarını (galeriler + medyalar) hiyerarşik olarak döndür
 export async function GET(
@@ -16,7 +16,7 @@ export async function GET(
     console.log(`[API_HIERARCHICAL_GALLERIES] Getting ALL gallery items for project: ${projectId}`);
 
     // Tüm galerileri ve medyalarını hiyerarşik olarak getir
-    const allGalleries = await db.projectGallery.findMany({
+    const allGalleries = await prisma.projectGallery.findMany({
       where: { 
         projectId,
         isActive: true

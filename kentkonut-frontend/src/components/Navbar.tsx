@@ -30,9 +30,9 @@ const Navbar = ({ className, backgroundImage: propBackgroundImage }: NavbarProps
     fetchBackground();
   }, [location.pathname]);
 
-  const backgroundImage = location.pathname !== '/' 
+  const backgroundImage = propBackgroundImage || (location.pathname !== '/' 
     ? (dynamicBackground || defaultBackground) 
-    : propBackgroundImage;
+    : null);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -127,7 +127,7 @@ const Navbar = ({ className, backgroundImage: propBackgroundImage }: NavbarProps
     const linkProps = {
       target: isExternal ? target : undefined,
       rel: isExternal ? 'noopener noreferrer' : undefined,
-      className: isMobile ? `flex items-center justify-between py-3 px-4 text-gray-800 hover:bg-gray-100 hover:text-[#0b244c] rounded-md transition-colors font-medium ${item.cssClass || ''}` : `navbar-menu-link text-white text-xl font-medium uppercase hover:opacity-80 drop-shadow-md transition-all flex items-center ${item.cssClass || ''}`,
+      className: isMobile ? `flex items-center justify-between py-3 px-4 text-gray-800 hover:bg-gray-100 hover:text-[#0b244c] rounded-md transition-colors font-medium ${item.cssClass || ''}` : `navbar-menu-link text-white text-lg font-medium uppercase hover:opacity-80 drop-shadow-md transition-all flex items-center ${item.cssClass || ''}`,
       title: item.description || item.title,
       onClick: (e: React.MouseEvent) => {
         if (isMobile) {
@@ -162,16 +162,16 @@ const Navbar = ({ className, backgroundImage: propBackgroundImage }: NavbarProps
   };
 
   return (
-    <header className="w-full z-50 top-0 left-0 right-0 absolute bg-transparent" style={backgroundImage ? { backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' } : {}}>
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-transparent h-[140px]"></div>
+    <header className="w-full z-50 top-0 left-0 right-0 absolute bg-transparent">
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-transparent h-[120px]"></div>
       <div className="flex relative">
-        <div className="bg-transparent h-[140px] flex items-center justify-center">
+        <div className="bg-transparent h-[120px] flex items-center justify-center">
           <Link to="/" className="block">
-            <img src="/images/logo.png" alt="Kent Konut Logo" className="logo-img" />
+            <img src="/images/logo.png" alt="Kent Konut Logo" className="logo-img h-24" />
           </Link>
         </div>
-        <div className="flex-1 flex-col h-[140px] hidden md:flex">
-          <div className="h-[100px] bg-transparent flex items-center pt-3">
+        <div className="flex-1 flex-col h-[120px] hidden md:flex">
+          <div className="h-[100px] bg-transparent flex items-center pt-2">
             <div className="flex-1 pl-12">
               <div className="flex justify-between items-center">
                 <nav className="flex">
