@@ -85,6 +85,10 @@ export default function EditProjectPage() {
             tags: projectData.tags.map((t: any) => t.tag.name).join(", "),
             yil: projectData.yil || "",
             blokDaireSayisi: projectData.blokDaireSayisi || "",
+            // Yeni eklenen alanlar
+            konutSayisi: projectData.konutSayisi || undefined,
+            ticariUnite: projectData.ticariUnite || undefined,
+            toplamBolum: projectData.toplamBolum || undefined,
             bannerUrl: projectData.bannerUrl || "", // CRITICAL FIX: Include bannerUrl
           };
 
@@ -160,6 +164,10 @@ export default function EditProjectPage() {
         // galleryItems: [], // REMOVED - Gallery items are managed separately via ProjectGalleryManager
         yil: formData.yil || null,
         blokDaireSayisi: formData.blokDaireSayisi || null,
+        // Yeni eklenen alanlar
+        konutSayisi: formData.konutSayisi || null,
+        ticariUnite: formData.ticariUnite || null,
+        toplamBolum: formData.toplamBolum || null,
       };
 
       // DEBUGGING: Log the constructed project data

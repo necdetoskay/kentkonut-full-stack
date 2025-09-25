@@ -24,7 +24,11 @@ const projectSchema = z.object({
   hasQuickAccess: z.boolean().default(false), // Hızlı erişim aktif mi?
   tags: z.array(z.string()).optional().default([]),
   yil: z.string().optional().nullable(),
-  blokDaireSayisi: z.string().optional().nullable()
+  blokDaireSayisi: z.string().optional().nullable(),
+  // Yeni eklenen alanlar
+  konutSayisi: z.number().optional().nullable(),
+  ticariUnite: z.number().optional().nullable(),
+  toplamBolum: z.number().optional().nullable()
 });
 
 // GET single project
@@ -196,6 +200,10 @@ export async function PUT(
       hasQuickAccess: validatedData.hasQuickAccess, // Hızlı erişim aktif mi?
       yil: validatedData.yil,
       blokDaireSayisi: validatedData.blokDaireSayisi,
+      // Yeni eklenen alanlar
+      konutSayisi: validatedData.konutSayisi,
+      ticariUnite: validatedData.ticariUnite,
+      toplamBolum: validatedData.toplamBolum,
     };
 
     console.log("🔍 [BACKEND PUT] Project data to update:", JSON.stringify(projectData, null, 2));

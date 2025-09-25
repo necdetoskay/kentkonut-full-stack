@@ -22,6 +22,10 @@ interface ProjectData {
   updatedAt: string;
   yil?: string;
   blokDaireSayisi?: string;
+  // Yeni eklenen alanlar
+  konutSayisi?: number;
+  ticariUnite?: number;
+  toplamBolum?: number;
   latitude?: number;
   longitude?: number;
   locationName?: string;
@@ -74,6 +78,44 @@ const ProjectDetailPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeGalleryTab, setActiveGalleryTab] = useState('');
   const [activeChildTab, setActiveChildTab] = useState('');
+  const [selectedEmbedVideo, setSelectedEmbedVideo] = useState<string | null>(null);
+  const [activeMediaTab, setActiveMediaTab] = useState<'root' | 'child'>('root');
+
+  // Embed video thumbnail URL'i oluştur
+  const getEmbedVideoThumbnail = (fileUrl: string) => {
+    try {
+      // YouTube URL'leri için
+      if (fileUrl.includes('youtube.com') || fileUrl.includes('youtu.be')) {
+        let videoId = '';
+        
+        if (fileUrl.includes('youtu.be/')) {
+          videoId = fileUrl.split('youtu.be/')[1].split('?')[0];
+        } else if (fileUrl.includes('youtube.com/watch')) {
+          videoId = fileUrl.split('v=')[1].split('&')[0];
+        } else if (fileUrl.includes('youtube.com/embed/')) {
+          videoId = fileUrl.split('embed/')[1].split('?')[0];
+        }
+        
+        if (videoId) {
+          return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+        }
+      }
+      
+      // Vimeo URL'leri için
+      if (fileUrl.includes('vimeo.com')) {
+        const videoId = fileUrl.split('vimeo.com/')[1].split('?')[0];
+        if (videoId) {
+          // Vimeo için oEmbed API kullanarak thumbnail alabiliriz
+          return `https://vumbnail.com/${videoId}.jpg`;
+        }
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Error getting video thumbnail:', error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     if (slug) {
@@ -94,8 +136,19 @@ const ProjectDetailPage = () => {
       const firstGallery = galleries[0];
       setActiveGalleryTab(firstGallery.id.toString());
       
-      if (firstGallery.children && firstGallery.children.length > 0) {
+      const hasRootMedia = firstGallery.media && firstGallery.media.length > 0;
+      const hasChildGalleries = firstGallery.children && firstGallery.children.length > 0;
+      
+      if (hasChildGalleries) {
         setActiveChildTab(firstGallery.children[0].id.toString());
+        // Eğer hem root medya hem child galeri varsa, root tab'ı aktif yap
+        if (hasRootMedia) {
+          setActiveMediaTab('root');
+        } else {
+          setActiveMediaTab('child');
+        }
+      } else if (hasRootMedia) {
+        setActiveMediaTab('root');
       }
     }
   }, [galleries, activeGalleryTab]);
@@ -228,14 +281,6 @@ const ProjectDetailPage = () => {
         {/* Navbar Overlay */}
         <Navbar />
         
-        {/* Debug info */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="absolute top-4 left-4 bg-black/70 text-white p-2 rounded text-xs z-20">
-            Banner URL: {project?.bannerUrl ? 
-              (project.bannerUrl.startsWith('http') ? project.bannerUrl : `${API_BASE_URL}${project.bannerUrl}`) 
-              : 'YOK'}
-          </div>
-        )}
         
         {/* Content */}
         <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-6 pt-24">
@@ -276,19 +321,19 @@ const ProjectDetailPage = () => {
             <div className="text-center flex-1 min-w-[150px]">
               <div className="text-sm text-gray-600 mb-1">Konut Sayısı</div>
               <div className="font-bold text-blue-600">
-                {project.blokDaireSayisi || 'Belirtilmemiş'}
+                {project.konutSayisi ? project.konutSayisi.toLocaleString() : 'Belirtilmemiş'}
               </div>
             </div>
             <div className="text-center flex-1 min-w-[150px]">
               <div className="text-sm text-gray-600 mb-1">Ticari Ünite</div>
               <div className="font-bold text-blue-600">
-                {project.yil || 'Belirtilmemiş'}
+                {project.ticariUnite ? project.ticariUnite.toLocaleString() : 'Belirtilmemiş'}
               </div>
             </div>
             <div className="text-center flex-1 min-w-[150px]">
               <div className="text-sm text-gray-600 mb-1">Toplam Bölüm</div>
               <div className="font-bold text-blue-600">
-                {project.viewCount?.toLocaleString() || 0}
+                {project.toplamBolum ? project.toplamBolum.toLocaleString() : '0'}
               </div>
             </div>
           </div>
@@ -353,10 +398,10 @@ const ProjectDetailPage = () => {
         </div>
       </div>
 
-      {/* Photo Gallery Section */}
+      {/* Media Gallery Section */}
       <div className="bg-gray-50 py-8">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-8">Fotoğraflar</h2>
+          <h2 className="text-3xl font-bold text-center mb-8">Proje Medyaları</h2>
           
           {/* Gallery Tabs */}
           <div className="flex justify-center gap-4 mb-8">
@@ -367,9 +412,20 @@ const ProjectDetailPage = () => {
                 className="px-8 py-3 text-lg"
                 onClick={() => {
                   setActiveGalleryTab(gallery.id.toString());
-                  // Set first child as active if available
-                  if (gallery.children && gallery.children.length > 0) {
+                  
+                  const hasRootMedia = gallery.media && gallery.media.length > 0;
+                  const hasChildGalleries = gallery.children && gallery.children.length > 0;
+                  
+                  if (hasChildGalleries) {
                     setActiveChildTab(gallery.children[0].id.toString());
+                    // Eğer hem root medya hem child galeri varsa, root tab'ı aktif yap
+                    if (hasRootMedia) {
+                      setActiveMediaTab('root');
+                    } else {
+                      setActiveMediaTab('child');
+                    }
+                  } else if (hasRootMedia) {
+                    setActiveMediaTab('root');
                   }
                 }}
               >
@@ -390,58 +446,295 @@ const ProjectDetailPage = () => {
               </h3>
             </div>
             
-            {/* Child Gallery Tabs */}
-            <div className="flex gap-2 mb-6 pl-8 border-l-2 border-gray-200 flex-wrap">
-              {getChildGalleryContent().map((child) => (
-                <Button 
-                  key={child.id}
-                  variant={activeChildTab === child.id.toString() ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setActiveChildTab(child.id.toString())}
-                >
-                  {child.title}
-                </Button>
-              ))}
-            </div>
+            {/* Media Tabs - Root ve Child Gallery için */}
+            {(() => {
+              const currentGallery = galleries.find(gallery => gallery.id.toString() === activeGalleryTab);
+              const hasRootMedia = currentGallery && currentGallery.media && currentGallery.media.length > 0;
+              const hasChildGalleries = getChildGalleryContent().length > 0;
+              
+              // Eğer hem root medya hem child galeri varsa, 2 tab göster
+              if (hasRootMedia && hasChildGalleries) {
+                return (
+                  <div className="flex gap-2 mb-6 pl-8 border-l-2 border-gray-200 flex-wrap">
+                    <Button 
+                      variant={activeMediaTab === 'root' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setActiveMediaTab('root')}
+                    >
+                      {currentGallery?.title} - Ana Medyalar
+                    </Button>
+                    {getChildGalleryContent().map((child) => (
+                      <Button 
+                        key={child.id}
+                        variant={activeMediaTab === 'child' && activeChildTab === child.id.toString() ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => {
+                          setActiveMediaTab('child');
+                          setActiveChildTab(child.id.toString());
+                        }}
+                      >
+                        {child.title}
+                      </Button>
+                    ))}
+                  </div>
+                );
+              }
+              
+              // Sadece child galeriler varsa, child tab'ları göster
+              if (hasChildGalleries && !hasRootMedia) {
+                return (
+                  <div className="flex gap-2 mb-6 pl-8 border-l-2 border-gray-200 flex-wrap">
+                    {getChildGalleryContent().map((child) => (
+                      <Button 
+                        key={child.id}
+                        variant={activeChildTab === child.id.toString() ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setActiveChildTab(child.id.toString())}
+                      >
+                        {child.title}
+                      </Button>
+                    ))}
+                  </div>
+                );
+              }
+              
+              // Sadece root medya varsa, tab gösterme
+              return null;
+            })()}
             
-            {/* Gallery Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pl-8">
-              {getChildGalleryContent().map((item) => (
-                <div 
-                  key={item.id}
-                  className="aspect-square bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-blue-400 transition-colors"
-                  onClick={() => {
-                    // Open gallery in lightbox
-                    console.log('Gallery clicked:', item.title);
-                  }}
-                >
-                  <div className="text-center">
-                    <span className="text-gray-500 text-sm">
-                      {item.title}
-                    </span>
-                    {item._count && (
-                      <div className="text-xs text-gray-400 mt-1">
-                        {item._count.media} fotoğraf
+            
+            {/* Media Content Based on Active Tab */}
+            {(() => {
+              const currentGallery = galleries.find(gallery => gallery.id.toString() === activeGalleryTab);
+              const hasRootMedia = currentGallery && currentGallery.media && currentGallery.media.length > 0;
+              const hasChildGalleries = getChildGalleryContent().length > 0;
+              
+              // Medya render fonksiyonu
+              const renderMediaItem = (mediaItem: any) => (
+                <div key={mediaItem.id} className="relative group">
+                  {mediaItem.mimeType?.startsWith('image/') ? (
+                    <img
+                      src={mediaItem.fileUrl.startsWith('http') ? mediaItem.fileUrl : `${API_BASE_URL}${mediaItem.fileUrl}`}
+                      alt={mediaItem.title || mediaItem.originalName}
+                      className="w-full h-48 object-cover rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-shadow"
+                      onClick={() => {
+                        console.log('Image clicked:', mediaItem);
+                      }}
+                    />
+                  ) : mediaItem.mimeType === 'video/embed' || mediaItem.type === 'EMBED' ? (
+                    <div 
+                      className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center relative overflow-hidden cursor-pointer hover:bg-gray-300 transition-colors"
+                      onClick={() => {
+                        if (mediaItem.fileUrl) {
+                          setSelectedEmbedVideo(mediaItem.fileUrl);
+                        }
+                      }}
+                    >
+                      {(() => {
+                        const thumbnailUrl = getEmbedVideoThumbnail(mediaItem.fileUrl);
+                        if (thumbnailUrl) {
+                          return (
+                            <>
+                              <img
+                                src={thumbnailUrl}
+                                alt={mediaItem.title || mediaItem.originalName}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  // Thumbnail yüklenemezse fallback göster
+                                  e.currentTarget.style.display = 'none';
+                                  e.currentTarget.nextElementSibling.style.display = 'flex';
+                                }}
+                              />
+                              <div className="absolute inset-0 bg-black/20 flex items-center justify-center" style={{display: 'none'}}>
+                                <div className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                                  ▶ Play Video
+                                </div>
+                              </div>
+                            </>
+                          );
+                        } else {
+                          return (
+                            <>
+                              <div className="text-center">
+                                <div className="text-4xl mb-2">🎥</div>
+                                <p className="text-sm text-gray-600">Embed Video</p>
+                                <p className="text-xs text-gray-500">{mediaItem.title || mediaItem.originalName}</p>
+                              </div>
+                              <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                                <div className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                                  ▶ Play Video
+                                </div>
+                              </div>
+                            </>
+                          );
+                        }
+                      })()}
+                    </div>
+                  ) : mediaItem.mimeType?.startsWith('video/') || mediaItem.mimeType === 'video/mp4' ? (
+                    <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-4xl mb-2">🎥</div>
+                        <p className="text-sm text-gray-600">Video</p>
+                        <p className="text-xs text-gray-500">{mediaItem.originalName}</p>
                       </div>
-                    )}
+                    </div>
+                  ) : (
+                    <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-4xl mb-2">📄</div>
+                        <p className="text-sm text-gray-600">Dosya</p>
+                        <p className="text-xs text-gray-500">{mediaItem.originalName}</p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="absolute bottom-2 left-2 right-2 bg-black/70 text-white text-xs p-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                    {mediaItem.title || mediaItem.originalName}
                   </div>
                 </div>
-              ))}
-            </div>
+              );
+              
+              // Hem root medya hem child galeri varsa, activeMediaTab'a göre göster
+              if (hasRootMedia && hasChildGalleries) {
+                if (activeMediaTab === 'root') {
+                  return (
+                    <div className="mt-6 pl-8">
+                      <h4 className="text-lg font-semibold mb-4 text-gray-700">
+                        {currentGallery.title} - Ana Medyalar
+                      </h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {currentGallery.media.map(renderMediaItem)}
+                      </div>
+                    </div>
+                  );
+                } else if (activeMediaTab === 'child') {
+                  const activeChildGallery = getChildGalleryContent().find(child => child.id.toString() === activeChildTab);
+                  if (activeChildGallery && activeChildGallery.media && activeChildGallery.media.length > 0) {
+                    return (
+                      <div className="mt-6 pl-8">
+                        <h4 className="text-lg font-semibold mb-4 text-gray-700">
+                          {activeChildGallery.title} - Medyalar
+                        </h4>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                          {activeChildGallery.media.map(renderMediaItem)}
+                        </div>
+                      </div>
+                    );
+                  }
+                }
+              }
+              
+              // Sadece child galeriler varsa
+              else if (hasChildGalleries && !hasRootMedia) {
+                const activeChildGallery = getChildGalleryContent().find(child => child.id.toString() === activeChildTab);
+                if (activeChildGallery && activeChildGallery.media && activeChildGallery.media.length > 0) {
+                  return (
+                    <div className="mt-6 pl-8">
+                      <h4 className="text-lg font-semibold mb-4 text-gray-700">
+                        {activeChildGallery.title} - Medyalar
+                      </h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {activeChildGallery.media.map(renderMediaItem)}
+                      </div>
+                    </div>
+                  );
+                }
+              }
+              
+              // Sadece root medya varsa
+              else if (hasRootMedia && !hasChildGalleries) {
+                return (
+                  <div className="mt-6 pl-8">
+                    <h4 className="text-lg font-semibold mb-4 text-gray-700">
+                      {currentGallery.title} - Medyalar
+                    </h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {currentGallery.media.map(renderMediaItem)}
+                    </div>
+                  </div>
+                );
+              }
+              
+              return null;
+            })()}
             
-            {/* Pagination */}
-            <div className="flex justify-center items-center gap-4 mt-6">
-              <Button variant="outline" size="sm">
-                ← Önceki
-              </Button>
-              <span className="text-sm text-gray-600">1 / 4</span>
-              <Button variant="outline" size="sm">
-                Sonraki →
-              </Button>
-            </div>
+            {/* Pagination - Sadece medya varsa göster */}
+            {(() => {
+              const currentGallery = galleries.find(gallery => gallery.id.toString() === activeGalleryTab);
+              const hasRootMedia = currentGallery && currentGallery.media && currentGallery.media.length > 0;
+              const hasChildGalleries = getChildGalleryContent().length > 0;
+              
+              let totalMediaCount = 0;
+              
+              if (hasRootMedia && hasChildGalleries) {
+                if (activeMediaTab === 'root') {
+                  totalMediaCount = currentGallery.media.length;
+                } else if (activeMediaTab === 'child') {
+                  const activeChildGallery = getChildGalleryContent().find(child => child.id.toString() === activeChildTab);
+                  totalMediaCount = activeChildGallery?.media?.length || 0;
+                }
+              } else if (hasChildGalleries && !hasRootMedia) {
+                const activeChildGallery = getChildGalleryContent().find(child => child.id.toString() === activeChildTab);
+                totalMediaCount = activeChildGallery?.media?.length || 0;
+              } else if (hasRootMedia && !hasChildGalleries) {
+                totalMediaCount = currentGallery.media.length;
+              }
+              
+              // Eğer medya yoksa pagination gösterme
+              if (totalMediaCount === 0) {
+                return null;
+              }
+              
+              // Şu anda 12'li sayfalama kullanıyoruz, bu yüzden sayfa sayısını hesapla
+              const itemsPerPage = 12;
+              const totalPages = Math.ceil(totalMediaCount / itemsPerPage);
+              
+              // Eğer tek sayfa varsa pagination gösterme
+              if (totalPages <= 1) {
+                return null;
+              }
+              
+              return (
+                <div className="flex justify-center items-center gap-4 mt-6">
+                  <Button variant="outline" size="sm" disabled>
+                    ← Önceki
+                  </Button>
+                  <span className="text-sm text-gray-600">1 / {totalPages}</span>
+                  <Button variant="outline" size="sm" disabled>
+                    Sonraki →
+                  </Button>
+                </div>
+              );
+            })()}
           </div>
         </div>
       </div>
+
+      {/* Embed Video Modal */}
+      {selectedEmbedVideo && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex justify-between items-center p-4 border-b">
+              <h3 className="text-lg font-semibold">Video İzle</h3>
+              <button
+                onClick={() => setSelectedEmbedVideo(null)}
+                className="text-gray-500 hover:text-gray-700 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-4">
+              <div className="aspect-video w-full">
+                <iframe
+                  src={selectedEmbedVideo}
+                  className="w-full h-full rounded-lg"
+                  allowFullScreen
+                  title="Embed Video"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <Footer />

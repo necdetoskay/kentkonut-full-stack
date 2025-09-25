@@ -52,6 +52,10 @@ interface ProjectFormData {
   hasQuickAccess?: boolean; // Hızlı erişim aktif mi?
   yil?: string;
   blokDaireSayisi?: string;
+  // Yeni eklenen alanlar
+  konutSayisi?: number;
+  ticariUnite?: number;
+  toplamBolum?: number;
 }
 
 interface TabbedProjectFormProps {
@@ -102,6 +106,10 @@ export function TabbedProjectForm({
       hasQuickAccess: false, // Hızlı erişim aktif mi?
       yil: "",
       blokDaireSayisi: "",
+      // Yeni eklenen alanlar
+      konutSayisi: undefined,
+      ticariUnite: undefined,
+      toplamBolum: undefined,
     }
   );
   const [selectedMedia, setSelectedMedia] = useState<GlobalMediaFile | null>(initialSelectedMedia || null);
@@ -392,6 +400,43 @@ export function TabbedProjectForm({
                     value={formData.blokDaireSayisi || ''}
                     onChange={(e) => handleInputChange("blokDaireSayisi", e.target.value)}
                     placeholder="Örn: 5 Blok, 150 Daire"
+                  />
+                </div>
+              </div>
+
+              {/* Yeni Eklenen Alanlar */}
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="konutSayisi">Konut Sayısı</Label>
+                  <Input
+                    id="konutSayisi"
+                    type="number"
+                    min="0"
+                    value={formData.konutSayisi || ''}
+                    onChange={(e) => handleInputChange("konutSayisi", e.target.value ? parseInt(e.target.value) : undefined)}
+                    placeholder="Örn: 150"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="ticariUnite">Ticari Ünite</Label>
+                  <Input
+                    id="ticariUnite"
+                    type="number"
+                    min="0"
+                    value={formData.ticariUnite || ''}
+                    onChange={(e) => handleInputChange("ticariUnite", e.target.value ? parseInt(e.target.value) : undefined)}
+                    placeholder="Örn: 25"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="toplamBolum">Toplam Bölüm</Label>
+                  <Input
+                    id="toplamBolum"
+                    type="number"
+                    min="0"
+                    value={formData.toplamBolum || ''}
+                    onChange={(e) => handleInputChange("toplamBolum", e.target.value ? parseInt(e.target.value) : undefined)}
+                    placeholder="Örn: 5"
                   />
                 </div>
               </div>
