@@ -101,6 +101,7 @@ export async function GET(
     console.log("🔍 [BACKEND GET] Project found successfully");
     console.log("🔍 [BACKEND GET] Project hasQuickAccess from DB:", project.hasQuickAccess);
     console.log("🔍 [BACKEND GET] Type of hasQuickAccess from DB:", typeof project.hasQuickAccess);
+    console.log("🔍 [BACKEND GET] Project bannerUrl from DB:", project.bannerUrl);
     console.log("🔍 [BACKEND GET] Project keys from DB:", Object.keys(project));
 
     // Invalidate caches related to projects
