@@ -616,6 +616,9 @@ model BannerPosition {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
+  // Relations
+  bannerGroup     BannerGroup? @relation(fields: [bannerGroupId], references: [id])
+
   @@index([positionUUID])
   @@index([isActive])
   @@map("banner_positions")
@@ -639,7 +642,10 @@ model BannerGroup {
   tabletWidth        Int                 @default(800)
   usageType          String?
   animationType      BannerAnimasyonTipi @default(SOLUKLESTIR)
+  
+  // Relations
   banners            Banner[]
+  primaryPositions   BannerPosition[]
 
   @@index([isActive])
   @@index([usageType])
@@ -911,6 +917,9 @@ model FooterSection {
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
 
+  // Relations
+  items        FooterItem[]
+
   @@index([order])
   @@map("footer_sections")
 }
@@ -930,6 +939,9 @@ model FooterItem {
   metadata   Json?
   createdAt  DateTime       @default(now())
   updatedAt  DateTime       @updatedAt
+
+  // Relations
+  section    FooterSection  @relation(fields: [sectionId], references: [id], onDelete: Cascade)
 
   @@index([sectionId, order])
   @@map("footer_items")

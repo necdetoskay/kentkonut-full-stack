@@ -80,6 +80,28 @@ node restore-seed.js [filename]
 - **Kapsamlı Rehber**: [`docs/SEED_DATA_BACKUP_GUIDE.md`](docs/SEED_DATA_BACKUP_GUIDE.md)
 - **Hızlı Referans**: [`docs/SEED_BACKUP_CHEAT_SHEET.md`](docs/SEED_BACKUP_CHEAT_SHEET.md)
 
+### 🔄 Mevcut Veri → Seed Dönüşümü
+KentKonut uygulamasının mevcut verilerini seed formatına çevirme sistemi:
+
+#### 🚀 Hızlı Kullanım
+```bash
+# Mevcut verileri seed'e çevir
+node convert-current-data-to-seed.js
+
+# Yedeklenen verileri geri yükle
+node restore-seed.js current-data-backup-[timestamp].json
+```
+
+#### 📊 Özellikler
+- ✅ **42 Tablo**: Tüm database tablolarını kapsar
+- ✅ **Güvenli**: Şifreler hash'lenmiş olarak korunur
+- ✅ **İlişkisel**: Foreign key ilişkileri korunur
+- ✅ **Taşınabilir**: JSON formatında yedekleme
+
+#### 📚 Rehberler
+- **Kapsamlı Rehber**: [`docs/CURRENT_DATA_TO_SEED_GUIDE.md`](docs/CURRENT_DATA_TO_SEED_GUIDE.md)
+- **Hızlı Referans**: [`docs/CURRENT_DATA_TO_SEED_CHEAT_SHEET.md`](docs/CURRENT_DATA_TO_SEED_CHEAT_SHEET.md)
+
 ## 🛠️ Technology Stack
 
 ### Core Technologies

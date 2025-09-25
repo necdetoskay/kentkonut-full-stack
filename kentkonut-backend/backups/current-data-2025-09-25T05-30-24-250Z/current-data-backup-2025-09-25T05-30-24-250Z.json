@@ -1,0 +1,457 @@
+{
+  "metadata": {
+    "timestamp": "2025-09-25T05:30:24.255Z",
+    "description": "Mevcut uygulama verilerinden oluşturulan seed (Tüm Tablolar)",
+    "version": "2.0",
+    "totalRecords": 30,
+    "tablesProcessed": 10
+  },
+  "tables": {
+    "user": [
+      {
+        "name": "Admin User",
+        "email": "admin@example.com",
+        "password": "$2b$10$TRnkvZRAfujdhrnCXAqBjejVW4WzlMKqUZjbokGsgwe3Ifg4QnAO6",
+        "role": "ADMIN",
+        "emailVerified": null,
+        "image": null
+      },
+      {
+        "name": "System User",
+        "email": "system@kentkonut.local",
+        "password": null,
+        "role": "admin",
+        "emailVerified": null,
+        "image": null
+      }
+    ],
+    "account": [],
+    "session": [],
+    "verificationToken": [],
+    "mediaCategory": [
+      {
+        "name": "Bannerlar",
+        "icon": "Images",
+        "order": 0,
+        "isBuiltIn": true
+      },
+      {
+        "name": "Haberler",
+        "icon": "Newspaper",
+        "order": 1,
+        "isBuiltIn": true
+      },
+      {
+        "name": "Projeler",
+        "icon": "Building2",
+        "order": 2,
+        "isBuiltIn": true
+      },
+      {
+        "name": "Birimler",
+        "icon": "Building2",
+        "order": 3,
+        "isBuiltIn": true
+      },
+      {
+        "name": "İçerik Resimleri",
+        "icon": "FileImage",
+        "order": 4,
+        "isBuiltIn": true
+      },
+      {
+        "name": "Kurumsal",
+        "icon": "UserCheck",
+        "order": 5,
+        "isBuiltIn": true
+      }
+    ],
+    "media": [
+      {
+        "filename": "1758029653468_i3y64j9w6i.png",
+        "originalName": "tahir.png",
+        "mimeType": "image/png",
+        "size": 162866,
+        "path": "E:\\Projeler\\Proje Source\\kentkonut-full-stack\\kentkonut-backend\\public\\media\\1758029653468_i3y64j9w6i.png",
+        "alt": null,
+        "caption": null,
+        "categoryId": 1,
+        "isActive": true,
+        "uploadedBy": null,
+        "url": "/media/1758029653468_i3y64j9w6i.png",
+        "embedUrl": null,
+        "type": "IMAGE"
+      },
+      {
+        "filename": "1758029678570_942evjcf8e.jpg",
+        "originalName": "mudur_25032021172811_350_350.jpg",
+        "mimeType": "image/jpeg",
+        "size": 26224,
+        "path": "E:\\Projeler\\Proje Source\\kentkonut-full-stack\\kentkonut-backend\\public\\media\\1758029678570_942evjcf8e.jpg",
+        "alt": null,
+        "caption": null,
+        "categoryId": 1,
+        "isActive": true,
+        "uploadedBy": null,
+        "url": "/media/1758029678570_942evjcf8e.jpg",
+        "embedUrl": null,
+        "type": "IMAGE"
+      },
+      {
+        "filename": "1758029703674_dkyt32y07b4.jpg",
+        "originalName": "mudurluk_25032021172827_350_350.jpg",
+        "mimeType": "image/jpeg",
+        "size": 11080,
+        "path": "E:\\Projeler\\Proje Source\\kentkonut-full-stack\\kentkonut-backend\\public\\media\\1758029703674_dkyt32y07b4.jpg",
+        "alt": null,
+        "caption": null,
+        "categoryId": 1,
+        "isActive": true,
+        "uploadedBy": null,
+        "url": "/media/1758029703674_dkyt32y07b4.jpg",
+        "embedUrl": null,
+        "type": "IMAGE"
+      },
+      {
+        "filename": "1758705851110_s65vwjt9bxn.jpg",
+        "originalName": "haber 3.jpg",
+        "mimeType": "image/jpeg",
+        "size": 25165,
+        "path": "E:\\Projeler\\Proje Source\\kentkonut-full-stack\\kentkonut-backend\\public\\media\\projeler\\1758705851110_s65vwjt9bxn.jpg",
+        "alt": null,
+        "caption": null,
+        "categoryId": 3,
+        "isActive": true,
+        "uploadedBy": null,
+        "url": "/media/projeler/1758705851110_s65vwjt9bxn.jpg",
+        "embedUrl": null,
+        "type": "IMAGE"
+      },
+      {
+        "filename": "1758710494837_n3qyzl4xzeh.jpg",
+        "originalName": "misyon_25032021172844_350_350.jpg",
+        "mimeType": "image/jpeg",
+        "size": 16753,
+        "path": "E:\\Projeler\\Proje Source\\kentkonut-full-stack\\kentkonut-backend\\public\\media\\projeler\\1758710494837_n3qyzl4xzeh.jpg",
+        "alt": null,
+        "caption": null,
+        "categoryId": 3,
+        "isActive": true,
+        "uploadedBy": null,
+        "url": "/media/projeler/1758710494837_n3qyzl4xzeh.jpg",
+        "embedUrl": null,
+        "type": "IMAGE"
+      },
+      {
+        "filename": "1758712419515_yu50cwk7c7.jpg",
+        "originalName": "mudurluk_25032021172827_350_350.jpg",
+        "mimeType": "image/jpeg",
+        "size": 11080,
+        "path": "E:\\Projeler\\Proje Source\\kentkonut-full-stack\\kentkonut-backend\\public\\media\\projeler\\1758712419515_yu50cwk7c7.jpg",
+        "alt": null,
+        "caption": null,
+        "categoryId": 3,
+        "isActive": true,
+        "uploadedBy": null,
+        "url": "/media/projeler/1758712419515_yu50cwk7c7.jpg",
+        "embedUrl": null,
+        "type": "IMAGE"
+      },
+      {
+        "filename": "1758712468327_uzuvbni79f.jpg",
+        "originalName": "hakkımızda.jpg",
+        "mimeType": "image/jpeg",
+        "size": 214051,
+        "path": "E:\\Projeler\\Proje Source\\kentkonut-full-stack\\kentkonut-backend\\public\\media\\projeler\\1758712468327_uzuvbni79f.jpg",
+        "alt": null,
+        "caption": null,
+        "categoryId": 3,
+        "isActive": true,
+        "uploadedBy": null,
+        "url": "/media/projeler/1758712468327_uzuvbni79f.jpg",
+        "embedUrl": null,
+        "type": "IMAGE"
+      },
+      {
+        "filename": "1758720898955_tvpo6gnhqb.png",
+        "originalName": "haberler detay.png",
+        "mimeType": "image/png",
+        "size": 1928508,
+        "path": "E:\\Projeler\\Proje Source\\kentkonut-full-stack\\kentkonut-backend\\public\\media\\projeler\\1758720898955_tvpo6gnhqb.png",
+        "alt": null,
+        "caption": null,
+        "categoryId": 3,
+        "isActive": true,
+        "uploadedBy": null,
+        "url": "/media/projeler/1758720898955_tvpo6gnhqb.png",
+        "embedUrl": null,
+        "type": "IMAGE"
+      }
+    ],
+    "pageCategory": [],
+    "page": [
+      {
+        "slug": "hakkimizda",
+        "title": "Hakkımızda",
+        "metaTitle": "Hakkımızda | Kent Konut",
+        "metaDescription": "Kent Konut hakkında bilgi edinin. Kocaeli Büyükşehir Belediyesi'nin Kocaeli halkına modern ve kaliteli konut sunduğu kurum.",
+        "isActive": true,
+        "isDeletable": true,
+        "order": 1,
+        "publishedAt": null,
+        "categoryId": null,
+        "content": "\n          <h2>Kent Konut Hakkında</h2>\n          <p>24 Şubat 2006'da faaliyete geçirilen Kent Konut, Kocaeli Büyükşehir Belediyesi'nin bir iktisadi teşekkülüdür.</p>\n          <p>Kocaeli halkına modern ve kaliteli konut sunma misyonuyla kurulan Kent Konut, yıllar içinde güvenilir bir marka haline gelmiştir.</p>\n          <h3>Misyonumuz</h3>\n          <p>Kocaeli'de yaşayan vatandaşlarımıza uygun fiyatlı, kaliteli ve modern konutlar sunarak şehrimizin gelişimine katkıda bulunmak.</p>\n          <h3>Vizyonumuz</h3>\n          <p>Türkiye'nin önde gelen belediye iktisadi teşekküllerinden biri olmak ve sürdürülebilir kentsel dönüşümde öncü rol oynamak.</p>\n        ",
+        "excerpt": "Kent Konut hakkında bilgi edinin. Kocaeli Büyükşehir Belediyesi'nin Kocaeli halkına modern ve kaliteli konut sunduğu kurum.",
+        "imageUrl": null,
+        "metaKeywords": [
+          "kent konut",
+          "hakkımızda",
+          "kocaeli",
+          "belediye",
+          "konut"
+        ],
+        "hasQuickAccess": false
+      },
+      {
+        "slug": "iletisim",
+        "title": "İletişim",
+        "metaTitle": "İletişim | Kent Konut",
+        "metaDescription": "Kent Konut ile iletişime geçin. Adres, telefon ve e-posta bilgilerimiz.",
+        "isActive": true,
+        "isDeletable": true,
+        "order": 2,
+        "publishedAt": null,
+        "categoryId": null,
+        "content": "\n          <h2>Bizimle İletişime Geçin</h2>\n          <p>Kent Konut ile ilgili tüm sorularınız için bizimle iletişime geçebilirsiniz.</p>\n          <h3>Adres</h3>\n          <p>Kocaeli Büyükşehir Belediyesi<br>\n          Kent Konut İktisadi İşletmesi<br>\n          İzmit / Kocaeli</p>\n          <h3>Telefon</h3>\n          <p>+90 (262) 000 00 00</p>\n          <h3>E-posta</h3>\n          <p>info@kentkonut.com</p>\n          <h3>Çalışma Saatleri</h3>\n          <p>Pazartesi - Cuma: 08:30 - 17:30<br>\n          Cumartesi - Pazar: Kapalı</p>\n        ",
+        "excerpt": "Kent Konut ile iletişime geçin. Adres, telefon ve e-posta bilgilerimiz.",
+        "imageUrl": null,
+        "metaKeywords": [
+          "iletişim",
+          "adres",
+          "telefon",
+          "kent konut"
+        ],
+        "hasQuickAccess": true
+      },
+      {
+        "slug": "gizlilik-politikasi",
+        "title": "Gizlilik Politikası",
+        "metaTitle": "Gizlilik Politikası | Kent Konut",
+        "metaDescription": "Kent Konut gizlilik politikası. Kişisel verilerinizin nasıl korunduğu hakkında bilgi.",
+        "isActive": true,
+        "isDeletable": true,
+        "order": 3,
+        "publishedAt": null,
+        "categoryId": null,
+        "content": "\n          <h2>Gizlilik Politikası</h2>\n          <p>Kent Konut olarak kişisel verilerinizin korunması konusunda hassasiyetle hareket etmekteyiz.</p>\n          <h3>Toplanan Bilgiler</h3>\n          <p>Web sitemizi ziyaret ettiğinizde, hizmetlerimizi kullanırken bazı kişisel bilgilerinizi toplayabiliriz.</p>\n          <h3>Bilgilerin Kullanımı</h3>\n          <p>Toplanan bilgiler sadece hizmet kalitemizi artırmak ve size daha iyi hizmet sunmak amacıyla kullanılır.</p>\n          <h3>Bilgi Güvenliği</h3>\n          <p>Kişisel verileriniz güvenli sunucularda saklanır ve yetkisiz erişimlere karşı korunur.</p>\n          <h3>İletişim</h3>\n          <p>Gizlilik politikamız hakkında sorularınız için bizimle iletişime geçebilirsiniz.</p>\n        ",
+        "excerpt": "Kent Konut gizlilik politikası. Kişisel verilerinizin nasıl korunduğu hakkında bilgi.",
+        "imageUrl": null,
+        "metaKeywords": [
+          "gizlilik",
+          "politika",
+          "kişisel veri",
+          "güvenlik"
+        ],
+        "hasQuickAccess": false
+      },
+      {
+        "slug": "kullanim-kosullari",
+        "title": "Kullanım Koşulları",
+        "metaTitle": "Kullanım Koşulları | Kent Konut",
+        "metaDescription": "Kent Konut web sitesi kullanım koşulları ve kuralları.",
+        "isActive": true,
+        "isDeletable": true,
+        "order": 4,
+        "publishedAt": null,
+        "categoryId": null,
+        "content": "\n          <h2>Kullanım Koşulları</h2>\n          <p>Bu web sitesini kullanarak aşağıdaki koşulları kabul etmiş sayılırsınız.</p>\n          <h3>Genel Koşullar</h3>\n          <p>Web sitemizde yer alan tüm içerikler Kent Konut'a aittir ve telif hakları ile korunmaktadır.</p>\n          <h3>Kullanıcı Sorumlulukları</h3>\n          <p>Kullanıcılar web sitesini yasalara uygun şekilde kullanmakla yükümlüdür.</p>\n          <h3>Sorumluluk Reddi</h3>\n          <p>Web sitesinde yer alan bilgilerin doğruluğu için azami özen gösterilmekle birlikte, değişiklik yapma hakkı saklıdır.</p>\n          <h3>Değişiklikler</h3>\n          <p>Bu koşullar önceden haber verilmeksizin değiştirilebilir.</p>\n        ",
+        "excerpt": "Kent Konut web sitesi kullanım koşulları ve kuralları.",
+        "imageUrl": null,
+        "metaKeywords": [
+          "kullanım koşulları",
+          "şartlar",
+          "kurallar"
+        ],
+        "hasQuickAccess": false
+      },
+      {
+        "slug": "sss",
+        "title": "Sıkça Sorulan Sorular",
+        "metaTitle": "Sıkça Sorulan Sorular | Kent Konut",
+        "metaDescription": "Kent Konut hakkında sıkça sorulan sorular ve cevapları.",
+        "isActive": true,
+        "isDeletable": true,
+        "order": 5,
+        "publishedAt": null,
+        "categoryId": null,
+        "content": "\n          <h2>Sıkça Sorulan Sorular</h2>\n          <h3>Kent Konut nedir?</h3>\n          <p>Kent Konut, Kocaeli Büyükşehir Belediyesi'nin iktisadi teşekkülü olup, vatandaşlara uygun fiyatlı konut sunmaktadır.</p>\n          <h3>Nasıl başvuru yapabilirim?</h3>\n          <p>Başvurularınızı ofisimize gelerek veya web sitemiz üzerinden yapabilirsiniz.</p>\n          <h3>Hangi bölgelerde projeleriniz var?</h3>\n          <p>Kocaeli'nin çeşitli ilçelerinde projelerimiz bulunmaktadır. Güncel proje listesi için projeler sayfamızı ziyaret edebilirsiniz.</p>\n          <h3>Ödeme seçenekleri nelerdir?</h3>\n          <p>Peşin ödeme, taksitli ödeme ve kredi seçenekleri mevcuttur. Detaylı bilgi için ofisimizle iletişime geçebilirsiniz.</p>\n          <h3>Satış sonrası hizmetler var mı?</h3>\n          <p>Evet, satış sonrası müşteri hizmetlerimiz mevcuttur ve size destek olmaya devam ederiz.</p>\n        ",
+        "excerpt": "Kent Konut hakkında sıkça sorulan sorular ve cevapları.",
+        "imageUrl": null,
+        "metaKeywords": [
+          "sss",
+          "sorular",
+          "cevaplar",
+          "yardım"
+        ],
+        "hasQuickAccess": true
+      }
+    ],
+    "pageSeoMetrics": [],
+    "department": [
+      {
+        "name": "Mali İşler Müdürlüğü",
+        "imageUrl": "/images/departments/mali-isler.jpg",
+        "services": [
+          "Muhasebe",
+          "Bütçe Yönetimi",
+          "Mali Raporlama"
+        ],
+        "order": 2,
+        "isActive": true,
+        "content": "",
+        "directorId": null,
+        "slug": "mali-iler-mdrl",
+        "hasQuickAccess": false,
+        "managerId": null
+      },
+      {
+        "name": "İnsan Kaynakları Müdürlüğü",
+        "imageUrl": "/images/departments/insan-kaynaklari.jpg",
+        "services": [
+          "Personel Yönetimi",
+          "Eğitim",
+          "Gelişim"
+        ],
+        "order": 3,
+        "isActive": true,
+        "content": "",
+        "directorId": null,
+        "slug": "insan-kaynaklar-mdrl",
+        "hasQuickAccess": false,
+        "managerId": null
+      },
+      {
+        "name": "Proje Geliştirme Müdürlüğü",
+        "imageUrl": "/images/departments/proje-gelistirme.jpg",
+        "services": [
+          "Proje Planlama",
+          "Uygulama",
+          "Takip"
+        ],
+        "order": 4,
+        "isActive": true,
+        "content": "",
+        "directorId": null,
+        "slug": "proje-gelitirme-mdrl",
+        "hasQuickAccess": false,
+        "managerId": null
+      },
+      {
+        "name": "Satış ve Pazarlama Müdürlüğü",
+        "imageUrl": "/images/departments/satis-pazarlama.jpg",
+        "services": [
+          "Satış",
+          "Pazarlama",
+          "Müşteri İlişkileri"
+        ],
+        "order": 5,
+        "isActive": true,
+        "content": "",
+        "directorId": null,
+        "slug": "sat-ve-pazarlama-mdrl",
+        "hasQuickAccess": false,
+        "managerId": null
+      },
+      {
+        "name": "Hafriyat Yönetimi Birimi",
+        "imageUrl": "/media/kurumsal/birimler/hafriyat-yonetimi.jpg",
+        "services": [
+          "Hafriyat sahalarının planlanması ve yönetimi",
+          "Hafriyat izin ve ruhsat işlemleri",
+          "Saha güvenliği ve denetimi",
+          "Hafriyat malzemesi kalite kontrolü",
+          "Çevre koruma önlemleri"
+        ],
+        "order": 1,
+        "isActive": true,
+        "content": "Hafriyat Yönetimi Birimi, şehrimizin hafriyat ihtiyaçlarını karşılamak üzere kurulmuş uzman bir birimdir. Modern teknoloji ve çevre dostu yaklaşımlarla hafriyat sahalarını yönetir.",
+        "directorId": null,
+        "slug": "hafriyat-yonetimi-birimi",
+        "hasQuickAccess": false,
+        "managerId": null
+      },
+      {
+        "name": "Teknik İşler Birimi",
+        "imageUrl": "/media/kurumsal/birimler/teknik-isler.jpg",
+        "services": [
+          "Teknik proje hazırlama ve onaylama",
+          "İnşaat denetimi ve kontrolü",
+          "Altyapı planlama ve koordinasyon",
+          "Jeoteknik araştırmalar",
+          "Yapı denetim hizmetleri"
+        ],
+        "order": 2,
+        "isActive": true,
+        "content": "Teknik İşler Birimi, tüm teknik projelerin planlanması, uygulanması ve denetlenmesinden sorumludur. Uzman mühendis kadrosuyla kaliteli hizmet sunar.",
+        "directorId": null,
+        "slug": "teknik-isler-birimi",
+        "hasQuickAccess": false,
+        "managerId": null
+      },
+      {
+        "name": "Çevre ve Sürdürülebilirlik Birimi",
+        "imageUrl": "/media/kurumsal/birimler/cevre-surdurulebilirlik.jpg",
+        "services": [
+          "Çevre etki değerlendirmesi",
+          "Sürdürülebilirlik raporları",
+          "Çevre koruma önlemleri",
+          "Yeşil teknoloji uygulamaları",
+          "Ekolojik denge korunması"
+        ],
+        "order": 3,
+        "isActive": true,
+        "content": "Çevre ve Sürdürülebilirlik Birimi, tüm faaliyetlerin çevre dostu şekilde yürütülmesini sağlar. Gelecek nesillere yaşanabilir bir çevre bırakma misyonuyla çalışır.",
+        "directorId": null,
+        "slug": "cevre-surdurulebilirlik-birimi",
+        "hasQuickAccess": false,
+        "managerId": null
+      },
+      {
+        "name": "Mali İşler Birimi",
+        "imageUrl": "/media/kurumsal/birimler/mali-isler.jpg",
+        "services": [
+          "Bütçe planlama ve takibi",
+          "Mali denetim ve kontrol",
+          "Muhasebe ve raporlama",
+          "Satın alma işlemleri",
+          "Mali analiz ve değerlendirme"
+        ],
+        "order": 4,
+        "isActive": true,
+        "content": "Mali İşler Birimi, kurumun mali kaynaklarının etkin ve verimli kullanılmasını sağlar. Şeffaf mali yönetim anlayışıyla hizmet verir.",
+        "directorId": null,
+        "slug": "mali-isler-birimi",
+        "hasQuickAccess": false,
+        "managerId": null
+      },
+      {
+        "name": "İnsan Kaynakları Birimi",
+        "imageUrl": "/media/kurumsal/birimler/insan-kaynaklari.jpg",
+        "services": [
+          "Personel işe alım süreçleri",
+          "Eğitim ve gelişim programları",
+          "Performans yönetimi",
+          "Özlük işleri",
+          "İş sağlığı ve güvenliği"
+        ],
+        "order": 5,
+        "isActive": true,
+        "content": "İnsan Kaynakları Birimi, kurumun en değerli varlığı olan insan kaynağının gelişimi ve yönetiminden sorumludur. Çalışan memnuniyeti odaklı politikalar uygular.",
+        "directorId": null,
+        "slug": "insan-kaynaklari-birimi",
+        "hasQuickAccess": false,
+        "managerId": null
+      }
+    ]
+  }
+}
