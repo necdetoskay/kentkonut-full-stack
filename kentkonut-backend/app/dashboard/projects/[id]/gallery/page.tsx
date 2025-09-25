@@ -52,9 +52,9 @@ export default function ProjectGalleryPage() {
         <div className="text-center py-12">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Proje Bulunamadı</h1>
           <p className="text-gray-600 mb-6">Aradığınız proje bulunamadı veya erişim yetkiniz yok.</p>
-          <Button onClick={() => router.back()}>
+          <Button onClick={() => router.push('/dashboard/projects')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Geri Dön
+            Projeler Sayfasına Dön
           </Button>
         </div>
       </div>
@@ -68,7 +68,7 @@ export default function ProjectGalleryPage() {
         <div className="flex items-center gap-4">
           <Button
             variant="outline"
-            onClick={() => router.back()}
+            onClick={() => router.push(`/dashboard/projects/${projectId}`)}
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
