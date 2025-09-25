@@ -46,16 +46,11 @@ export const GET = withCors(async (req: NextRequest) => {
     const status = searchParams.get('status');
     const published = searchParams.get('published');
     const search = searchParams.get('search');
-    const slug = searchParams.get('slug'); // Add slug parameter
 
     const skip = (page - 1) * limit;
 
     // Build where clause
     const where: any = {};
-
-    if (slug) {
-      where.slug = slug;
-    }
 
     if (status && status !== 'all') {
       where.status = status;
@@ -77,7 +72,7 @@ export const GET = withCors(async (req: NextRequest) => {
       ];
     }
 
-    const cacheKey = buildCacheKey('project:list', { page, limit, status: status || 'all', published, search, slug });
+    const cacheKey = buildCacheKey('project:list', { page, limit, status: status || 'all', published, search });
     const cached = await getCache<any>(cacheKey);
     if (cached) {
       return NextResponse.json(cached);

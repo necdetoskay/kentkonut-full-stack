@@ -163,29 +163,6 @@ export function TabbedProjectForm({
     setTabValidation(validation);
   }, [formData]);
 
-  // Initialize banner media when initialData changes
-  useEffect(() => {
-    console.log("🔍 [TABBED_FORM] initialData?.bannerUrl:", initialData?.bannerUrl);
-    if (initialData?.bannerUrl) {
-      // Create a mock GlobalMediaFile object from the bannerUrl
-      const bannerMedia: GlobalMediaFile = {
-        id: Date.now(), // Generate a temporary ID as number
-        url: initialData.bannerUrl,
-        filename: initialData.bannerUrl.split('/').pop() || 'banner.jpg',
-        originalName: initialData.bannerUrl.split('/').pop() || 'banner.jpg',
-        mimeType: 'image/jpeg',
-        size: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-      console.log("🔍 [TABBED_FORM] Setting selectedBannerMedia:", bannerMedia);
-      setSelectedBannerMedia(bannerMedia);
-    } else {
-      console.log("🔍 [TABBED_FORM] No bannerUrl found, clearing selectedBannerMedia");
-      setSelectedBannerMedia(null);
-    }
-  }, [initialData?.bannerUrl]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -700,7 +677,7 @@ export function TabbedProjectForm({
                 <div className="space-y-3">
                   <GlobalMediaSelector
                     onSelect={setSelectedBannerMedia}
-                    defaultCategory="banner-images"
+                    defaultCategory="project-banners"
                     restrictToCategory={true}
                     customFolder="media/projeler/banners"
                     placeholder="Banner resmi seçin..."
