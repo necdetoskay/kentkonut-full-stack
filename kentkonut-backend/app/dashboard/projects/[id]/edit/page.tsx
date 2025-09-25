@@ -26,6 +26,7 @@ interface ProjectData {
   publishedAt?: string;
   readingTime: number;
   media?: GlobalMediaFile;
+  bannerUrl?: string;
   tags: Array<{
     tag: {
       id: number;
@@ -147,6 +148,7 @@ export default function EditProjectPage() {
         district: formData.district || null,
         address: formData.address || null,
         mediaId: selectedMedia?.id,
+        bannerUrl: formData.bannerUrl || null,
         published: formData.published,
         publishedAt: formData.publishedAt || undefined,
         readingTime: formData.readingTime,

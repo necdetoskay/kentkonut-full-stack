@@ -48,6 +48,7 @@ interface ProjectFormData {
   publishedAt: string;
   readingTime: number;
   tags: string;
+  bannerUrl?: string;
   hasQuickAccess?: boolean; // Hızlı erişim aktif mi?
   yil?: string;
   blokDaireSayisi?: string;
@@ -97,6 +98,7 @@ export function TabbedProjectForm({
       publishedAt: "",
       readingTime: 3,
       tags: "",
+      bannerUrl: "",
       hasQuickAccess: false, // Hızlı erişim aktif mi?
       yil: "",
       blokDaireSayisi: "",
@@ -104,6 +106,7 @@ export function TabbedProjectForm({
   );
   const [selectedMedia, setSelectedMedia] = useState<GlobalMediaFile | null>(initialSelectedMedia || null);
   const [selectedGalleryItems, setSelectedGalleryItems] = useState<GlobalMediaFile[]>(initialSelectedGalleryItems);
+  const [selectedBannerMedia, setSelectedBannerMedia] = useState<GlobalMediaFile | null>(null);
   const [tabValidation, setTabValidation] = useState<TabValidation>({
     basic: false,
     content: false,
@@ -187,7 +190,13 @@ export function TabbedProjectForm({
       isFolder: item.isFolder
     }));
 
-    await onSubmit(formData, selectedMedia, galleryItemsForSubmit);
+    // Update form data with banner URL
+    const formDataWithBanner = {
+      ...formData,
+      bannerUrl: selectedBannerMedia?.url || ''
+    };
+
+    await onSubmit(formDataWithBanner, selectedMedia, galleryItemsForSubmit);
   };
 
   const getTabIcon = (tabKey: keyof TabValidation, defaultIcon: any) => {
@@ -648,6 +657,61 @@ export function TabbedProjectForm({
                     value={formData.readingTime}
                     onChange={(e) => handleInputChange("readingTime", parseInt(e.target.value))}
                   />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Banner Image */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ImageIcon className="h-5 w-5" />
+                  Banner Resmi
+                  <Badge variant="outline" className="ml-2">
+                    Opsiyonel
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Banner Image Selection/Upload Area */}
+                <div className="space-y-3">
+                  <GlobalMediaSelector
+                    onSelect={setSelectedBannerMedia}
+                    defaultCategory="project-banners"
+                    restrictToCategory={true}
+                    customFolder="media/projeler/banners"
+                    placeholder="Banner resmi seçin..."
+                  />
+                  
+                  {selectedBannerMedia && (
+                    <div className="relative">
+                      <img
+                        src={selectedBannerMedia.url}
+                        alt={selectedBannerMedia.filename}
+                        className="w-full h-32 object-cover rounded-lg border"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="absolute top-2 right-2"
+                        onClick={() => {
+                          setSelectedBannerMedia(null);
+                          handleInputChange('bannerUrl', '');
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                      <div className="absolute bottom-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                        {selectedBannerMedia.filename}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="text-xs text-gray-500">
+                  <Info className="h-3 w-3 inline mr-1" />
+                  Banner resmi proje sayfasının üst kısmında görüntülenir
                 </div>
               </CardContent>
             </Card>

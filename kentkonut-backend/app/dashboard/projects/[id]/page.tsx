@@ -53,6 +53,7 @@ interface ProjectData {
   district?: string;
   address?: string;
   media?: GlobalMediaFile;
+  bannerUrl?: string;
   author: {
     id: string;
     name: string;
@@ -350,6 +351,30 @@ export default function ProjectDashboardPage() {
                   "{project.media.description}"
                 </p>
               )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Project Banner Card */}
+        {project?.bannerUrl && (
+          <Card>
+            <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-t-lg">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <ImageIcon className="h-6 w-6 text-purple-600" />
+                🎨 Proje Banner Resmi
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="relative">
+                <img
+                  src={project.bannerUrl}
+                  alt={`${project.title} Banner`}
+                  className="w-full h-48 object-cover rounded-lg shadow-lg"
+                />
+                <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded-lg text-sm">
+                  Banner Resmi
+                </div>
+              </div>
             </CardContent>
           </Card>
         )}

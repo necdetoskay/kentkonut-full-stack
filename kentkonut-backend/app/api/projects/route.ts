@@ -18,6 +18,7 @@ const projectSchema = z.object({
   district: z.string().optional(),
   address: z.string().optional(),
   mediaId: z.string().optional(),
+  bannerUrl: z.string().optional(),
   published: z.boolean().default(false),
   publishedAt: z.string().optional(),
   readingTime: z.number().default(3),
@@ -167,6 +168,7 @@ export const POST = withCors(async (req: NextRequest) => {
       district: validatedData.district,
       address: validatedData.address,
       mediaId: validatedData.mediaId,
+      bannerUrl: validatedData.bannerUrl,
       published: validatedData.published,
       readingTime: validatedData.readingTime,
       hasQuickAccess: validatedData.hasQuickAccess, // Hızlı erişim aktif mi?

@@ -422,6 +422,7 @@ model Project {
   district        String?
   address         String?
   mediaId         String?
+  bannerUrl       String?        // Proje üst banner resmi URL'i
   viewCount       Int           @default(0)
   readingTime     Int           @default(3)
   published       Boolean       @default(false)

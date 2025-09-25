@@ -17,6 +17,7 @@ const projectSchema = z.object({
   district: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
   mediaId: z.string().optional().nullable(), // Media IDs are string CUIDs in the database
+  bannerUrl: z.string().optional().nullable(), // Proje üst banner resmi URL'i
   published: z.boolean().default(false),
   publishedAt: z.string().optional().nullable(),
   readingTime: z.number().default(3),
@@ -188,6 +189,7 @@ export async function PUT(
       district: validatedData.district,
       address: validatedData.address,
       mediaId: validatedData.mediaId,
+      bannerUrl: validatedData.bannerUrl,
       published: validatedData.published,
       readingTime: validatedData.readingTime,
       hasQuickAccess: validatedData.hasQuickAccess, // Hızlı erişim aktif mi?
