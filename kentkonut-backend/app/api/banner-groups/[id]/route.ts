@@ -21,10 +21,12 @@ export async function GET(
     const bannerGroup = await prisma.bannerGroup.findUnique({
       where: { id },
       include: {
-        primaryPositions: {
-          select: {
-            positionUUID: true,
-            fallbackGroupId: true
+        banners: {
+          where: {
+            isActive: true
+          },
+          orderBy: {
+            order: 'asc'
           }
         }
       }
@@ -37,9 +39,19 @@ export async function GET(
       );
     }
 
-    // Pozisyon bilgisini ekle
-    const positionUUID = bannerGroup.primaryPositions?.[0]?.positionUUID || '';
-    const fallbackGroupId = bannerGroup.primaryPositions?.[0]?.fallbackGroupId || undefined;
+    // Pozisyon bilgisini banner pozisyonları tablosundan al
+    const bannerPosition = await prisma.bannerPosition.findFirst({
+      where: {
+        bannerGroupId: id
+      },
+      select: {
+        positionUUID: true,
+        fallbackGroupId: true
+      }
+    });
+
+    const positionUUID = bannerPosition?.positionUUID || '';
+    const fallbackGroupId = bannerPosition?.fallbackGroupId || undefined;
 
     const bannerGroupWithPosition = {
       ...bannerGroup,
@@ -137,15 +149,16 @@ export async function PUT(
     if (body.positionUUID && body.positionUUID !== 'none') {
       console.log('🔧 Updating banner position:', body.positionUUID, 'for group:', updatedGroup.id);
       
-      await prisma.bannerPosition.upsert({
+      // Önce mevcut pozisyonu sil
+      await prisma.bannerPosition.deleteMany({
         where: {
-          positionUUID: body.positionUUID
-        },
-        update: {
-          bannerGroupId: updatedGroup.id,
-          fallbackGroupId: body.fallbackGroupId || null
-        },
-        create: {
+          bannerGroupId: updatedGroup.id
+        }
+      });
+      
+      // Yeni pozisyonu oluştur
+      await prisma.bannerPosition.create({
+        data: {
           positionUUID: body.positionUUID,
           name: 'Ana Sayfa Üst Banner',
           description: 'Ana sayfa hero banner pozisyonu',
