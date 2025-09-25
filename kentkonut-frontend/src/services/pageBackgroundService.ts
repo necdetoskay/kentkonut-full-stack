@@ -33,6 +33,8 @@ const getBackgroundForPage = async (pageUrl: string): Promise<string | null> => 
     } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 404) {
             // Bu durum, sayfa için özel bir arka plan tanımlanmadığında beklenir.
+            // 404 hatalarını console'da gösterme
+            return null;
         } else {
             console.error(`Arka plan resmi getirilirken hata oluştu (${pageUrl}):`, error);
         }

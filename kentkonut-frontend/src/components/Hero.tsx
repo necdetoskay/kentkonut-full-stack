@@ -14,6 +14,11 @@ const Hero = () => {
   const [bannerGroup, setBannerGroup] = useState<BannerGroup | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [statistics, setStatistics] = useState({
+    devamEdenKonutIsyeri: 0,
+    tamamlananKonut: 0,
+    tamamlananIsyeri: 0
+  });
 
   // Touch gesture states
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -31,6 +36,24 @@ const Hero = () => {
   const getImageUrl = (imageUrl: string) => {
     return imageService.getImageUrl(imageUrl);
   };
+  // İstatistik verilerini yükle
+  const loadStatistics = async () => {
+    try {
+      console.log('📊 İstatistik verileri yükleniyor...');
+      const response = await fetch(`${API_BASE_URL}/api/projects/statistics`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setStatistics(data.data);
+        console.log('✅ İstatistikler yüklendi:', data.data);
+      } else {
+        console.error('❌ İstatistik yükleme hatası:', data.error);
+      }
+    } catch (error) {
+      console.error('❌ İstatistik yükleme hatası:', error);
+    }
+  };
+
   // Banner verilerini yükle
   useEffect(() => {
     const loadBanners = async () => {
@@ -91,6 +114,7 @@ const Hero = () => {
     window.addEventListener('resize', checkMobile);
 
     loadBanners();
+    loadStatistics();
 
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
@@ -271,18 +295,18 @@ const Hero = () => {
       const target = parseInt(counter.textContent || '0');
       let count = 0;
       const updateCounter = () => {
-        const increment = target / 200;
+        const increment = Math.max(1, target / 200);
         if (count < target) {
           count += increment;
-          counter.textContent = Math.ceil(count).toString();
+          counter.textContent = Math.ceil(count).toLocaleString();
           setTimeout(updateCounter, 10);
         } else {
-          counter.textContent = target.toString();
+          counter.textContent = target.toLocaleString();
         }
       };
       updateCounter();
     });
-  }, []);
+  }, [statistics]);
 
   // Loading state göster
   if (isLoading) {
@@ -427,7 +451,7 @@ const Hero = () => {
             <div className="col-md-4">
               <a href="#" target="_self">
                 <div className="counter-box colored">
-                  <span className="counter cc1">0</span>
+                  <span className="counter cc1">{statistics.devamEdenKonutIsyeri}</span>
                   <p className="mt-lg-3">
                     <span className="cc2">Konut - İşyeri</span>
                   </p>
@@ -441,9 +465,9 @@ const Hero = () => {
             <div className="col-md-4">
               <a href="#" target="_self">
                 <div className="counter-box colored">
-                  <span className="counter cc1">10608</span>
+                  <span className="counter cc1">{statistics.tamamlananKonut}</span>
                   <p className="mt-lg-3">
-                    <span className="cc2">Konut</span>
+                    <span className="cc2">Konut Sayısı</span>
                   </p>
                   <p className="mt-0 mt-lg-3">
                     <span className="cc3">Tamamlanan</span>
@@ -455,12 +479,12 @@ const Hero = () => {
             <div className="col-md-4">
               <a href="#" target="_self">
                 <div className="counter-box colored">
-                  <span className="counter cc1">120</span>
+                  <span className="counter cc1">{statistics.tamamlananIsyeri}</span>
                   <p className="mt-lg-3">
-                    <span className="cc2">İşyeri</span>
+                    <span className="cc2">Ticari Ünite</span>
                   </p>
                   <p className="mt-0 mt-lg-3">
-                    <span className="cc3">İşyeri Tamamlanan</span>
+                    <span className="cc3">Tamamlanan</span>
                   </p>
                 </div>
               </a>
